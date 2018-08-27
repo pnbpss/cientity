@@ -11,13 +11,13 @@ require_once APPPATH."views/incPage.php";
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/font-awesome.min.css">
-		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/plugins/morris/morris.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/assets/plugins/morris/morris.css">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/style.css">
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
-		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/cientityStyle.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>css/cientityStyle.css">
     </head>
     <body>
         <div class="main-wrapper">
