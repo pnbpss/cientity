@@ -71,7 +71,7 @@ class User extends CI_controller{
 		}		
 		$sql = "
 			select a.*
-				,isnull(b.name,'บริษัท ในเครือ TJ&&TLL') as corpName
+				,isnull(b.name,'Bps Ltd.,Limited.') as corpName
 				,c.groupstatus
 				,isnull(d.em_status,'') as em_status
 			from EMPBase.dbo.NDUsers a
@@ -92,7 +92,7 @@ class User extends CI_controller{
 				if( $row->PW == $Password){
 					if($row->employeeCode != 'admin' and ($row->em_status == 'R' or $row->em_status == '')){
 						$arr['status'] = 'F';
-						$arr['msg']	   = 'ล้มเหลว รหัสผู้ใช้งานถูกยกเลิก';
+						$arr['msg']	   = 'Login Failed';
 					}else if($row->em_status == "R"){
 						$arr['status'] = 'F';
 						$arr['msg']	   = 'ล้มเหลว กลุ่มผู้ใช้งานถูกยกเลิก ไม่สามารถเข้าสู่ระบบได้ ';
@@ -145,8 +145,7 @@ class User extends CI_controller{
 		
 		return $arr;
 	}
-	public function logout()
-	{
+	public function logout(){
 		$this->session->set_userdata('cientity_logged_in',null);
 		redirect(base_url().'user/loginform/');
 	}
