@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
 		<link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url();?>assets/img/favicon.png">
-        <title>Login - cientity ตั้งใจยนตรการ , ทีแอลแอล โลจิสติกส์</title>
+        <title>Login hrds- cientity demo</title>
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/font-awesome.min.css">
@@ -18,31 +18,22 @@
         <div class="main-wrapper">
 			<div class="account-page">
 				<div class="container">
-					<h3 class="account-title">เข้าสู่ระบบ cientity</h3>
+					<h3 class="account-title">cientity demo</h3>
 					<div class="account-box">
-						<div class="account-wrapper">
-							<!--div class="account-logo">
-								<a href="<?php echo base_url();?>"><img src="<?php echo base_url();?>assets/img/logo2.png" alt="ตั้งใจยนตรการ และ ทีแอลแอล โลจิสติกส์"></a>
-							</div!-->
-							<!--div class="account-logo">
-								<a href="<?php echo base_url();?>"><img src="<?php echo base_url();?>assets/img/TJ_logo.jpg" alt="ตั้งใจยนตรการ และ ทีแอลแอล โลจิสติกส์"></a>
-							</div!-->
+						<div class="account-wrapper">							
 							<?php echo @$loginErrorMessage;?>
-							<form id="bpsInterface_loginForm" action="<?php echo base_url()."user/login";?>">
+							<form id="bpsInterface_loginForm" action="<?php echo base_url()."user/login";?>" method='post'>
 								<div class="form-group form-focus">
-									<label class="control-label">หมายเลขประจำตัวประชาชนหรือรหัสพนักงาน</label>
+									<label class="control-label">user name</label>
 									<input class="form-control floating inputField" name="Username" type="text">
 								</div>
 								<div class="form-group form-focus">
-									<label class="control-label">รหัสผ่าน</label>
+									<label class="control-label">password</label>
 									<input class="form-control floating inputField" name="Password" type="password">
 								</div>
 								<div class="form-group text-center">
-									<button class="btn btn-primary btn-block account-btn inputField"  type="submit">เข้าสู่ระบบ</button>
-								</div>
-								<div class="text-center">
-									ลืมรหัสผ่าน ติดต่อฝ่ายไอที
-								</div>
+									<button class="btn btn-primary btn-block account-btn inputField"  type="submit">login</button>
+								</div>								
 							</form>
 							
 						</div>

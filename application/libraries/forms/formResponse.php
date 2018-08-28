@@ -116,8 +116,8 @@ class formResponse extends mainForms {
 						<div class=\"dropdown\">
 							<a href=\"#\" class=\"action-icon dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\"><i class=\"fa fa-ellipsis-v\"></i></a>
 							<ul class=\"dropdown-menu pull-right\">
-								<li class='cientityEditExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}' data-toggle=\"modal\" data-target=\"#cientityAddEditModal\" data-backdrop=\"static\" data-keyboard=\"false\"><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i> ดู หรือ แก้ไข</a></li>
-								<li class='cientityDeleteExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'><a href=\"#\" data-toggle=\"modal\" data-target=\"#cientityDeleteModal\"><i class=\"fa fa-trash-o m-r-5\"></i> ลบ</a></li>
+								<li class='cientityEditExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}' data-toggle=\"modal\" data-target=\"#cientityAddEditModal\" data-backdrop=\"static\" data-keyboard=\"false\"><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i> view or update</a></li>
+								<li class='cientityDeleteExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'><a href=\"#\" data-toggle=\"modal\" data-target=\"#cientityDeleteModal\"><i class=\"fa fa-trash-o m-r-5\"></i> delete</a></li>
 							</ul>
 						</div>
 					</td>";
@@ -146,7 +146,7 @@ class formResponse extends mainForms {
 		}
 		if($tableRow==""){ //ไม่พบข้อมูล		
 			$table = "<table  class=\"table table-striped custom-table datatable\">";
-			$table.="<tbody><tr><td><div class=\"alert alert-warning\" role=\"alert\">ไม่พบข้อมูล</div></td></tr></tbody";
+			$table.="<tbody><tr><td><div class=\"alert alert-warning\" role=\"alert\">search result not found.</div></td></tr></tbody";
 			$table.="</table>";
 			return $table;
 		}
@@ -687,15 +687,15 @@ class formResponse extends mainForms {
 			}else{
 				$fieldValue = $fieldValue==""?"NULL":"'{$fieldValue}'";
 			}			
-			$updateSql = "update {$tableName} set $columnName = {$fieldValue} where id='{$request[0]}' ";
+			$updateSql = "update {$tableName} set {$columnName} = {$fieldValue} where id='{$request[0]}' ";
 			if(CODING_ENVIROMENT=='develop') $this->response['converted']['updateSql'] = $updateSql;
 			$updateResult = $this->libObject->doDbTransactions($updateSql);
 			$libExtraInfo = $this->libExtraInfo;
 			if($updateResult[0]=='ok'){
-				$this->notify('success',"แก้ไขข้อมูล {$libExtraInfo['descriptions']} แล้ว");
+				$this->notify('success',"Updated {$libExtraInfo['descriptions']} ");
 			}else{
 				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],extraEntityInfos::infos());
-				$this->notify('danger',"แก้ไขข้อมูล {$libExtraInfo['descriptions']} ไม่ได้ เนื่องจาก {$updateResult[1]} ");
+				$this->notify('danger',"Unable to update {$libExtraInfo['descriptions']}, because {$updateResult[1]} ");
 			}
 			return $this->response;
 		}else{

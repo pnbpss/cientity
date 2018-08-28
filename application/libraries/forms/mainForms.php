@@ -111,7 +111,7 @@ class mainForms
 		if ($this->CI->form_validation->run() == FALSE){
 			$errorArray = $this->CI->form_validation->error_array();
 			foreach($errorArray as $val){
-				$this->notify('danger',"ผิดพลาด : ".$val);
+				$this->notify('danger',"Error : ".$val);
 			}
 			return false;
 		}
@@ -153,7 +153,7 @@ class mainForms
 			$errorArray = $this->CI->form_validation->error_array();
 			foreach($errorArray as $val){
 				//echo $val;
-				$this->notify('danger',"ผิดพลาด : ".$val);
+				$this->notify('danger',"Error : ".$val);
 			}
 			return false;
 		}else{
@@ -194,7 +194,7 @@ class mainForms
 						continue;
 					}else{
 						$method = __METHOD__;
-						$this->notify('danger','Fatal Error: มีการตั้งค่า hidden ของฟิลด์ใน extraEntityInfos, แต่ไม่ได้กำหนดค่า default. => '.$method);
+						$this->notify('danger','Fatal Error _001: The hidden keys in extraEntityInfos is defined, but not yet declared default. =&gt; '.$method);
 						return;
 					}
 				}
@@ -229,10 +229,10 @@ class mainForms
 		//ทำการ insert
 		$insertResult = $this->libObject->doDbTransactions($sqlInsert);
 		if($insertResult[0]=='ok'){
-			$this->notify('success',"เพิ่มข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} แล้ว");
+			$this->notify('success',"Added {$allLibExtraInfo[$this->libName]['descriptions']} ");
 		}else{
 			$insertResult[1] = $this->convertDBErrorMessageToUser($insertResult['errorCode'],$insertResult['errorMessage'],$allLibExtraInfo);
-			$this->notify('danger',"เพิ่มข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} ไม่ได้ เนื่องจาก {$insertResult[1]} ");
+			$this->notify('danger',"Unable To add {$allLibExtraInfo[$this->libName]['descriptions']}, because {$insertResult[1]} ");
 		}
 	}
 	/**
@@ -293,7 +293,7 @@ class mainForms
 						continue;
 					}else{
 						$method = __METHOD__;
-						$this->notify('danger','Fatal Error: มีการตั้งค่า hidden ของฟิลด์ใน extraEntityInfos, แต่ไม่ได้กำหนดค่า default. => '.$method);
+						$this->notify('danger','Fatal Error _002: The hidden keys in extraEntityInfos is defined, but not yet declared default. =&gt;  '.$method);
 						return;
 					}
 				}
@@ -323,10 +323,10 @@ class mainForms
 		//ทำการ edit
 		$editResult = $this->libObject->doDbTransactions($finalSqlToEdit);
 		if($editResult[0]=='ok'){
-			$this->notify('success',"บันทึกแก้ไขข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} แล้ว");
+			$this->notify('success',"Updating of {$allLibExtraInfo[$this->libName]['descriptions']} is saved");
 		}else{
 			$editResult[1] = $this->convertDBErrorMessageToUser($editResult['errorCode'],$editResult['errorMessage'],$allLibExtraInfo);
-			$this->notify('danger',"บันทึกแก้ไขข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} ไม่ได้ เนื่องจาก {$editResult[1]} ");
+			$this->notify('danger',"Unable to update {$allLibExtraInfo[$this->libName]['descriptions']}, because {$editResult[1]} ");
 		}
 	}
 	/**
@@ -351,9 +351,8 @@ class mainForms
 			$objectNameLength = $strposTo-$strposFrom;
 			$idxObjectName = substr($errorMessage, $strposFrom, $objectNameLength);
 			//var_dump($idxObjectName);
-			$fieldInvolves = $this->getFieldNameInvolveToUniqueObject($idxObjectName);
-			//$str = "มีข้อมูลของ {{$allLibExtraInfo[$this->libName]['descriptions']}}  ที่ {$fieldInvolves} ใช้ไปแล้ว (บันทึกข้อมูลซ้ำกับที่มีอยู่แล้ว)";
-			$str = "มีข้อมูลของ {$allLibExtraInfo[$this->libName]['descriptions']}  ที่ใช้ {$fieldInvolves} ตามที่ระบุมาไปแล้ว (บันทึกข้อมูลซ้ำกับที่มีอยู่แล้ว)";
+			$fieldInvolves = $this->getFieldNameInvolveToUniqueObject($idxObjectName);			
+			$str = "{$allLibExtraInfo[$this->libName]['descriptions']}  which used with {$fieldInvolves} is exists, unable to save.";
 		}
 		return $str;
 	}
@@ -398,10 +397,10 @@ class mainForms
 		$deleteSql="delete from {$this->CI->db->dbprefix}{$this->libName} where id= '{$idToDelete}' ";
 		$deleteResult = $this->libObject->doDbTransactions($deleteSql);
 		if($deleteResult[0]=='ok'){
-			$this->notify('success',"ลบข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} แล้ว");
+			$this->notify('success',"Deleting of {$allLibExtraInfo[$this->libName]['descriptions']} is completed.");
 		}else{
 			$deleteResult[1] = $this->convertDBErrorMessageToUser($deleteResult['errorCode'],$deleteResult['errorMessage'],$allLibExtraInfo);
-			$this->notify('danger',"ลบข้อมูล {$allLibExtraInfo[$this->libName]['descriptions']} ไม่ได้ เนื่องจาก {$deleteResult[1]} ");
+			$this->notify('danger',"Unable to delete {$allLibExtraInfo[$this->libName]['descriptions']}, because {$deleteResult[1]} ");
 		}
 	}
 	/**
@@ -511,7 +510,7 @@ class mainForms
 				default: $inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 		}
 		$fromToStr = explode('_',$filterOrdinal);
-		$additionalLabel=""; if(isset($fromToStr[1])){ if($fromToStr[1]=='from') {$additionalLabel='(จาก)';} elseif($fromToStr[1]=='to'){$additionalLabel='(ถึง)';}}
+		$additionalLabel=""; if(isset($fromToStr[1])){ if($fromToStr[1]=='from') {$additionalLabel='(from)';} elseif($fromToStr[1]=='to'){$additionalLabel='(to)';}}
 		$str = "
 						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
@@ -589,7 +588,7 @@ class mainForms
 		$inputItem = "
 						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
-								<label class=\"control-label\">#!#!#!#!#!# (จาก)</label>".PHP_EOL."
+								<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
 									<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
 								</div>".PHP_EOL."
@@ -598,7 +597,7 @@ class mainForms
 
 						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
-								<label class=\"control-label\">#!#!#!#!#!# (ถึง)</label>".PHP_EOL."
+								<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
 									<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
 								</div>".PHP_EOL."
@@ -727,7 +726,7 @@ class mainForms
 		$entityOrdinal = $this->entityOrdinal($this->libName);
 		return "
 						<div class=\"col-sm-3 col-xs-6\">  ".PHP_EOL."
-							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">ค้นหา</a>  ".PHP_EOL."
+							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">Search</a>  ".PHP_EOL."
 						</div>".PHP_EOL."
 		";
 	}
@@ -1415,7 +1414,7 @@ class mainForms
 								<div class=\"row\">
 									<div class=\"m-t-20 text-center\">
 										<input type='hidden' class='cientityOperationForAddEditModalInsubModal' value='1' />
-										<button entityOrdinal='{$cientityEntRefNumber}' class=\"btn btn-primary cientitySubEntityConformAddButton\">เพิ่ม</button>
+										<button entityOrdinal='{$cientityEntRefNumber}' class=\"btn btn-primary cientitySubEntityConfirmAddButton\">Add</button>
 									</div>
 								</div>
 							<!--/form!-->

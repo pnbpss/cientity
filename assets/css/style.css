@@ -303,8 +303,8 @@ table.dataTable {margin-bottom: 15px !important;margin-top: 15px !important;}
 .sidebar{top:60px;width:230px;z-index:1041;background-color: #34444c;bottom:0;margin-top:0px;position:fixed;left:0;-webkit-transition: all 0.4s ease; -moz-transition: all 0.4s ease; transition: all 0.4s ease;}
 .sidebar-inner{height:100%;}
 .sidebar-menu ul {font-size: 14px;list-style-type: none;margin: 0;padding: 0;}
-.sidebar-menu li a {color: #b7c0cd;display: block;font-size: 13px;height: auto;line-height: 40px;min-height: 40px;padding: 0 20px;}
-.sidebar-menu li a:hover {color:#fff;}
+.sidebar-menu li a {color: #b7c0cd;display: block;font-size: 12px;height: 25px;line-height: 25px;min-height: 25px;padding: 0 20px;}
+.sidebar-menu li a:hover {color:#49C;}
 .sidebar-menu li a > .badge {margin-top: 10px;}
 .sidebar-menu li.active a {color: #fff;background-color: #263238;}
 .menu-title {color: #f43b48;font-size: 16px;line-height: 40px;min-height: 40px;padding: 0 20px;}
@@ -332,7 +332,7 @@ table.dataTable {margin-bottom: 15px !important;margin-top: 15px !important;}
 	display: inline-block;
 	font-family: 'FontAwesome';
 	text-rendering: auto;
-	line-height: 40px;
+	line-height: 30px;
 	font-size: 18px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

@@ -39,8 +39,8 @@ class User extends CI_controller{
 	}
 	public function login()
 	{
-		$Username = trim($_REQUEST['Username']);
-		$Password = strtoupper(MD5(trim($_REQUEST['Password'])));
+		$Username = trim($this->input->post('Username',true));
+		$Password = strtoupper(MD5(trim($this->input->post('Password',false))));
 		$validateUserResult = $this->validateUser($Username,$Password);
 		if($validateUserResult['status']!='F')
 		{
@@ -50,28 +50,7 @@ class User extends CI_controller{
 		{
 			redirect(base_url().'user/loginform/code01');
 		}
-	}
-	public function loginFromOtherSite()
-	{
-		$sql = "SELECT u.[employeeCode],u.[PW] FROM [EMPBase].[dbo].[NDUsers] u inner join EMPBase.dbo.hrm_humanoPersonAdjust h on u.employeeCode=h.employeeCode where 1=1 and h.em_status in ('P','W') and u.employeeCode=".$this->db->escape($_REQUEST['e'])." ";		
-		$q = $this->db->query($sql);
-		$row = $q->row();
-		if($_REQUEST['s']==md5($row->employeeCode.$row->PW.date("Ymd")))
-		{
-			$validateUserResult = $this->validateUser($row->employeeCode, $row->PW);
-			if($validateUserResult['status']!='F')
-			{
-				redirect(base_url().'');
-			}
-			else
-			{
-				echo "error_404";
-			}
-		}else
-		{
-			echo "error_404";
-		}
-	}
+	}	
 	private function validateUser($U, $P){
 		$arr = array('status'=>'F','msg'=>'','html'=>'');
 		$Username = trim($U);
@@ -89,17 +68,7 @@ class User extends CI_controller{
 			$arr['msg']	   = 'ผิดพลาด โปรดระบุรหัสผ่าน';
 			//echo json_encode($arr); exit;
 			return $arr;
-		}
-		
-		$sql = "select a.*
-					,isnull(b.name,'บริษัท ในเครือ TJ&&TLL') as corpName
-					,c.groupstatus
-					,isnull(d.em_status,'') as em_status
-				from EMPBase.dbo.NDUsers a
-				left join EMPBase.dbo.wb_branchnames b on a.hrmCorpId=b.humanoCode
-				left join EMPBase.dbo.NDGroupusers c on a.groupuser=c.groupuser
-				left join EMPBase.dbo.hrm_humanoPersonAll d on a.employeeCode=d.employeeCode
-				where (a.employeeCode = '".$Username."' or a.IDNo = '".$Username."') ";		
+		}		
 		$sql = "
 			select a.*
 				,isnull(b.name,'บริษัท ในเครือ TJ&&TLL') as corpName

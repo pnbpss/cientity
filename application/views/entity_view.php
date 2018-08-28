@@ -25,7 +25,7 @@ require_once APPPATH."views/incPage.php";
 					</a>
                 </div>
                 <div class="page-title-box pull-left">
-					<h3>TJ & TLL cientity</h3>
+					<h3>HRDS for CI-Entity demo</h3>
                 </div>
 				<a id="mobile_btn" class="mobile_btn pull-left" href="#sidebar"><i class="fa fa-bars" aria-hidden="true"></i></a>
 				<ul class="nav navbar-nav navbar-right user-menu pull-right">
@@ -152,11 +152,11 @@ require_once APPPATH."views/incPage.php";
 							<h4 class="page-title"><?php incPage::display($entityThDescription);?></h4>
 						</div>
 						<div id='cientityAddNewEntityRecord' class="col-sm-8 col-xs-9 text-right m-b-20">
-							<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> เพิ่ม<?php incPage::display($entityThDescription);?></a>
-							<div class="view-icons">
+							<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>Add <?php incPage::display($entityThDescription);?></a>
+							<!--div class="view-icons">
 								<a href="clients.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
 								<a href="clients-list.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
-							</div>
+							</div!-->
 						</div>
 					</div>
 					<!-- filter row start!-->
