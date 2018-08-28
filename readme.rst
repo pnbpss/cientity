@@ -6,8 +6,6 @@ CI-Entity is extension of `CodeIgniter<https://codeigniter.com/>`_. Its goal is
 to help developers create their business projects faster. CI-Entity helps reduce
 creating data entry interface for each entity.
 
-`user guide change log <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/changelog.rst>`_.
-
 *******************
 Requirements
 *******************
@@ -21,10 +19,13 @@ SQL Server 2008 or newer
 Installation
 ************
 
+Installation guide will be avalaible next.
 
 ************
 configuration
 ************
+
+Installation guide will be avalaible next.
 
 *******
 License
