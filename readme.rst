@@ -2,7 +2,7 @@
 What is CI-Entity
 ###################
 
-CI-Entity is extension of `CodeIgniter<https://codeigniter.com/>`_. Its goal is 
+CI-Entity is extension of `CodeIgniter <https://codeigniter.com/>`_. Its goal is 
 to help developers create their business projects faster. CI-Entity helps reduce
 creating data entry interface for each entity.
 
@@ -10,9 +10,9 @@ creating data entry interface for each entity.
 Requirements
 *******************
 
-PHP version 7.00 or newer
-CodeIgniter version 3.x or newer
-SQL Server 2008 or newer 
+PHP version 7.00 or newer_
+CodeIgniter version 3.x or newer_
+SQL Server 2008 or newer_ 
 
 
 ************
