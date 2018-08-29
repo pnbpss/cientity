@@ -151,13 +151,18 @@ require_once APPPATH."views/incPage.php";
 						<div class="col-sm-4 col-xs-3">
 							<h4 class="page-title"><?php incPage::display($entityThDescription);?></h4>
 						</div>
-						<div id='cientityAddNewEntityRecord' class="col-sm-8 col-xs-9 text-right m-b-20">
-							<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>Add <?php incPage::display($entityThDescription);?></a>
-							<!--div class="view-icons">
-								<a href="clients.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
-								<a href="clients-list.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
-							</div!-->
-						</div>
+						<?php
+							if($customizedEntity===false){
+						?>
+							<div id='cientityAddNewEntityRecord' class="col-sm-8 col-xs-9 text-right m-b-20">
+								<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>Add <?php incPage::display($entityThDescription);?></a>
+								<!--div class="view-icons">
+									<a href="clients.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
+									<a href="clients-list.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
+								</div!-->
+							</div>
+						<?php } 
+						?>
 					</div>
 					<!-- filter row start!-->
 					<?php incPage::display($filterRow);?>

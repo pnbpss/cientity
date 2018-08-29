@@ -163,7 +163,7 @@ class formResponse extends mainForms {
 		}
 		if(isset($subModalInfo['subModal'][$this->libName]['editable'])) {
 			if($subModalInfo['subModal'][$this->libName]['editable']){
-				$tableHead .= "<th>เลือก <input type='checkbox' class='cientityAction cientitySelectToggleAll' cientityEntityReference='{$this->entityOrdinal}'></th>";
+				$tableHead .= "<th>All <input type='checkbox' class='cientityAction cientitySelectToggleAll' cientityEntityReference='{$this->entityOrdinal}'></th>";
 			}else{
 				$tableHead .= "";
 			}

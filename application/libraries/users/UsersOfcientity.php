@@ -20,25 +20,26 @@ class UsersOfcientity
 	}
 	private function getMenus($userName,$extraEntityInfoDesc)
 	{
-		if(strtolower($userName)!='admin')
+		if(strtolower($userName)!='sysadmin')
 		{
-			$sql = "select top 1 groupuser from {$this->CI->db->dbprefix}gntUsers "
-			." where employeeCode = '".$userName."' ";
-			$q = $this->CI->db->query($sql);
-			$row = $q->row();
-			$conditions = "and p.usergroup='{$row->groupuser}'";
+			
 			$sql = "
-				select tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId from {$this->CI->db->dbprefix}gntTaskGroups tg left join {$this->CI->db->dbprefix}gntTasks t on tg.id=t.groupId left join {$this->CI->db->dbprefix}gntPrivileges p on t.id=p.taskId where 1=1  {$conditions} and t.display=1 order by tg.ordering, t.ordering ";
+				select tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId 
+				from {$this->CI->db->dbprefix}sysUsers u
+				left join {$this->CI->db->dbprefix}sysUserGroups ug on ug.id=u.groupId
+				left join {$this->CI->db->dbprefix}gntPrivileges p on ug.id=p.userGroupId 
+				left join {$this->CI->db->dbprefix}gntTasks t on p.taskId=t.id 
+				left join {$this->CI->db->dbprefix}gntTaskGroups tg on t.taskGroupId=tg.id 
+				where 1=1 and t.display=1 and u.userName='{$userName}'
+				order by tg.ordering, t.ordering ";
 		}else{
 			$conditions = "";
 			$sql = "
-			select distinct tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId
-			from
-			{$this->CI->db->dbprefix}gntTaskGroups tg left join
-			{$this->CI->db->dbprefix}gntTasks t on tg.id=t.groupId left join
-			{$this->CI->db->dbprefix}gntPrivileges p on t.id=p.taskId
+			select distinct tg.id taskGroupId,tg.ordering,tg.groupName taskGroupName,t.taskName,t.id taskId
+			from {$this->CI->db->dbprefix}gntTaskGroups tg 
+			left join {$this->CI->db->dbprefix}gntTasks t on tg.id=t.taskGroupId 			
 			where 1=1  and t.display=1
-			order by tg.id,t.taskName
+			order by tg.ordering,t.taskName
 			";
 		}		
 		$q = $this->CI->db->query($sql);
@@ -51,7 +52,7 @@ class UsersOfcientity
 				$menus[$row->taskGroupName] = [];
 			}
 			$taskDescription = (isset($extraEntityInfoDesc[$row->taskName]['descriptions']))?$extraEntityInfoDesc[$row->taskName]['descriptions']:"_".$row->taskName;
-			array_push($menus[$row->taskGroupName],['taskId'=>$row->taskId,'taskName'=>$row->taskName,'description'=>$taskDescription]);
+			array_push($menus[$row->taskGroupName],['taskId'=>$row->taskId,'taskName'=>$row->taskName,'description'=>"&nbsp;".$taskDescription]);
 			$tempTaskGroupName=$row->taskGroupName;
 		}
 		return $menus;

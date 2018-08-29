@@ -29,7 +29,7 @@ class extraEntityInfos {
 								,'format'=>['startDate'=>"replace(CONVERT(varchar(max),__#@!!@#__,103),'-','/') startDate"] //format ที่จะใช้ดึงออกมาแสดงในหน้า edit 
 								,'subModal'=>[
 											'devClassEnrollists' =>[
-													'label'=>'Student List' //หากระบุ label จะเอา label นี้ไปใช้ หากไม่ระบุ จะไป เอา descriptions ของ entity
+													'label'=>'Enrollments' //หากระบุ label จะเอา label นี้ไปใช้ หากไม่ระบุ จะไป เอา descriptions ของ entity
 													,'alterView'=>'devClassEnrollistsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 													,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
 													,'editable'=>True// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
@@ -289,7 +289,7 @@ class extraEntityInfos {
 								//,'hidden'=>['createdDate','createdBy']
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 ในฟิลเตอร์ rows
 											'classId'=>'devClasses.descriptions'
-											,'employeeId'=>'devEmployees.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
+											,'employeeId'=>'devEmployeesView.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
 											,'acknowledgedId'=>'sysAcknowledges.descriptions'
 											,'refusedId'=>'sysRefuses.descriptions'							
 											]
@@ -368,7 +368,7 @@ class extraEntityInfos {
 								//,'hidden'=>['createdDate','createdBy']
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 ในฟิลเตอร์ rows
 											'classId'=>'devClasses.descriptions'
-											,'employeeId'=>'devEmployees.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
+											,'employeeId'=>'devEmployeesView.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
 											]
 								,'fieldLabels'=>[ //ฟิลด์ label ในหน้า Addedit Modal (หากไม่ระบุ จะไปเอา ใน description จากฐานข้อมูลแทน)
 											'classId'=>'Class Descriptions'							
@@ -674,7 +674,10 @@ class extraEntityInfos {
 							]
 						]
 		#endregion devSubjectCourse
-		,'repClassExpenseReports'=>[]
+		,'repExpenseReports'=>[
+			'customized'=>true
+			,'descriptions'=>'Expense reports'
+		]
 	];
 	
 	public static function infos(){

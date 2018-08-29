@@ -51,14 +51,25 @@ class M extends CI_Controller {
 			$viewData = self::getViewData();
 			$viewData['activeMenuItem'] = $taskId;
 			
-			$viewData['header_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['header_JS_CSS']))?extraEntityInfos::infos[$entityName]['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
-			$viewData['footer_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['footer_JS_CSS']))?extraEntityInfos::infos[$entityName]['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
-			$viewData['entityThDescription']= (isset(extraEntityInfos::infos[$entityName]['descriptions']))?extraEntityInfos::infos[$entityName]['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
+			//$viewData['header_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['header_JS_CSS']))?extraEntityInfos::infos[$entityName]['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
+			//$viewData['footer_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['footer_JS_CSS']))?extraEntityInfos::infos[$entityName]['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
+			//$viewData['entityThDescription']= (isset(extraEntityInfos::infos[$entityName]['descriptions']))?extraEntityInfos::infos[$entityName]['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
 			
 			$forms = new mainForms($entityName);
-			$viewData['filterRow'] = $forms->createFilterRow();
+			$formExtraInfo = $forms->_getLibExtraInfo();
 			
-			$viewData['addEditModal'] = $forms->createAddEditModal();
+			$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
+			$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
+			$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
+			if((isset($formExtraInfo['customized'])) && ($formExtraInfo['customized']===true)){
+				$viewData['filterRow'] = $forms->libObject->createFilterRow();			
+				$viewData['addEditModal'] = $forms->libObject->createSearchResultZone();
+				$viewData['customizedEntity'] = true;
+			}else{
+				$viewData['filterRow'] = $forms->createFilterRow();			
+				$viewData['addEditModal'] = $forms->createAddEditModal();
+				$viewData['customizedEntity'] = false;
+			}
 			
 			$this->load->view('entity_view',$viewData);
 		}
@@ -173,7 +184,7 @@ class M extends CI_Controller {
 			$subFormRequest = $this->input->post('subEntityInfo',true);	
 			$subForm = new formResponse($subFormRequest);
 			$subForm->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
-			$response['subModelResults'] = $subForm->searchResultsForSubModel($subModalInfo);
+			$response['subModalResults'] = $subForm->searchResultsForSubModel($subModalInfo);
 		}				
 		
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 

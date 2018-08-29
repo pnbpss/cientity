@@ -350,7 +350,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: cientity_base_url+'m/loadDataToEditInModal'
 			,data:dataToPost
-                                                ,type:"POST"
+            ,type:"POST"
 			,dataType:'json'
 			,success:function(data){				
 				if(data.results.fields){
@@ -519,7 +519,7 @@ $(document).ready(function() {
 	* en:load data of sub-entity and put into table of sub-entity
 	*/
 	function cientityLoadDataToSubModalTable(){
-		//วนหาอันที่ active ก่อน
+		//th:วนหาอันที่ active ก่อน
 		//en:loop to find active navbar
 		var cientitySubEntityModalPanelId = -1;
 		$(".cientitySubEntityModalNavBar li").each(function(){
@@ -529,7 +529,7 @@ $(document).ready(function() {
 		});
 		
 		
-		//เอา ค่าของฟิลด์ทั้งหมดส่งไปใน mainEntityInfo เพราะไม่รู้ว่าอันไหนคือ id
+		//th:เอา ค่าของฟิลด์ทั้งหมดส่งไปใน mainEntityInfo เพราะไม่รู้ว่าอันไหนคือ id
 		var dataToPost = new Object();
 		dataToPost.mainEntityInfo = new Object();
 		dataToPost.subEntityInfo = new Object();
@@ -550,7 +550,10 @@ $(document).ready(function() {
 			,success:function(data){
 				$(".searchProgressBarRowSubModel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").addClass('hide');	
 				$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").empty();
-				$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").html(data.subModelResults.results);
+				if(data.subModalResults){
+					$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
+					.html(data.subModalResults.results);
+				}
 				cientityInitDataTableAndOtherControl("cientitysubModalDatatable", cientitySubEntityModalPanelId);
                                                         
 			}

@@ -18,6 +18,7 @@ class additionalValidation {
 	];
 	
 	const validationErrorMessage = [
+		/**/
 		/*
 		'min_length'=>'{field} ต้องยาวอย่างน้อย {param} ตัวอักษร'
 		,'required'=> 'ยังไม่ได้กรอก {field}'

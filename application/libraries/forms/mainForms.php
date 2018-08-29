@@ -26,18 +26,22 @@ class mainForms
 		$this->CI =& get_instance();
 		$this->CI->load->database();
 
-		//libObject is class entity in entity.php that will be loaded for use.
-		$this->libObject = $this->_loadLibrary($libName);
-
 		//libExtraInfo is extra information of each libObject that will be fetch for compose input or form or sub-form
 		$this->libExtraInfo = $this->_libExtraInfo($libName);
-
+		
+		//libObject is class entity in entity.php that will be loaded for use.
+		$this->libObject = $this->_loadLibrary($libName);
+			
 		//name of the library or entity
 		$this->libName = $libName;
-
-		//standard response format, will be used to response to front-end
-		$this->response = $this->stdResponseFormat();
 		
+		if((isset($this->libExtraInfo['customized'])) && ($this->libExtraInfo['customized']===true)){
+			//do something else...
+		}else{					
+
+			//standard response format, will be used to response to front-end
+			$this->response = $this->stdResponseFormat();
+		}
 	}
 	public function _setRequestME($index, $val){
 		$this->_REQUESTM[$index] = $val;
@@ -1461,7 +1465,7 @@ class mainForms
 							<div class='col-xs-8'>
 								<span class='pull-right'>
 									<button type=\"button\" class=\"btn btn-sm btn-secondary cientityShowAddEditSubmodalPanel\" cientitySubEntityModalPanelId='{$entityOrdinal}' role='button'>
-										<i class=\"fa fa-plus\"></i> เพิ่ม{$label}
+										<i class=\"fa fa-plus\"></i> add {$label}
 									</button>
 								</span>
 							</div>
@@ -1469,8 +1473,8 @@ class mainForms
 								<div class=\"dropdown\">
 										<a href=\"#\" class=\"action-icon dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\"><i class=\"fa fa-ellipsis-v\"></i></a>
 										<ul class=\"dropdown-menu pull-right\">
-											<li class='cientityToggleSelectedSubEntityCheckbox' cientityEntityReference='{$entityOrdinal}'><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i>สลับการเลือก</a></li>
-											<li class='cientityDeleteExistingSubEntityRecord' cientityEntityReference='{$entityOrdinal}'><a href=\"#\"><i class=\"fa fa-trash-o m-r-5\"></i>ลบที่เลือก</a></li>
+											<li class='cientityToggleSelectedSubEntityCheckbox' cientityEntityReference='{$entityOrdinal}'><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i>toggle selected</a></li>
+											<li class='cientityDeleteExistingSubEntityRecord' cientityEntityReference='{$entityOrdinal}'><a href=\"#\"><i class=\"fa fa-trash-o m-r-5\"></i>delete selected</a></li>
 										</ul>
 									</div>
 							</div>
