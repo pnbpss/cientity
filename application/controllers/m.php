@@ -131,7 +131,7 @@ class M extends CI_Controller {
 		$extraEntityInfoDesc = extraEntityInfos::getAllDescriptions();		
 		$this->load->library('users/UsersOfcientity');
 		$user = new UsersOfcientity;
-		$user->init($this->session['employeeCode'],$extraEntityInfoDesc);
+		$user->init($this->session['userName'],$extraEntityInfoDesc);
 		$userMenus = $user->rtMenues();		
 		$viewData['menus'] = $userMenus;
 		$viewData['userInfo'] = $this->session;		

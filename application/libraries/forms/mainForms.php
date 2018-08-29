@@ -1335,7 +1335,7 @@ class mainForms
 		$q = $this->CI->db->query($sql);
 		$i = 0;
 		$response['results'] = [];
-		array_push($response['results'], ['id'=>'','text'=>'เลือก']);
+		array_push($response['results'], ['id'=>'','text'=>'select..']);
 		foreach($q->result() as $row)		{
 			array_push($response['results'], ['id'=>$row->id,'text'=>$row->name]);
 			$i++;
@@ -1377,7 +1377,7 @@ class mainForms
 								<div class=\"row\">
 									<div class=\"m-t-20 text-center\">
 										<input type='hidden' class='cientityOperationForAddEditModal'  />
-										<button entityOrdinal='{$cientityEntRefNumber}' class=\"btn btn-primary addEditModalSubmitButton\">บันทึก</button>
+										<button entityOrdinal='{$cientityEntRefNumber}' class=\"btn btn-primary addEditModalSubmitButton\">Save</button>
 									</div>
 								</div>
 							<!--/form!-->

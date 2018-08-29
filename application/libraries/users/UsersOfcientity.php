@@ -10,27 +10,26 @@ class UsersOfcientity
 		$this->CI->load->database();
 		
 	}
-	public function init($employeeCode,$extraEntityInfoDesc)
+	public function init($userName,$extraEntityInfoDesc)
 	{
-		$this->menus = $this->getMenus($employeeCode,$extraEntityInfoDesc);
+		$this->menus = $this->getMenus($userName,$extraEntityInfoDesc);
 	}
 	public function rtMenues()
 	{
 		return $this->menus;
 	}
-	private function getMenus($employeeCode,$extraEntityInfoDesc)
+	private function getMenus($userName,$extraEntityInfoDesc)
 	{
-		if($employeeCode!='admin')
+		if(strtolower($userName)!='admin')
 		{
 			$sql = "select top 1 groupuser from {$this->CI->db->dbprefix}gntUsers "
-			." where employeeCode = '".$employeeCode."' ";
+			." where employeeCode = '".$userName."' ";
 			$q = $this->CI->db->query($sql);
 			$row = $q->row();
 			$conditions = "and p.usergroup='{$row->groupuser}'";
 			$sql = "
 				select tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId from {$this->CI->db->dbprefix}gntTaskGroups tg left join {$this->CI->db->dbprefix}gntTasks t on tg.id=t.groupId left join {$this->CI->db->dbprefix}gntPrivileges p on t.id=p.taskId where 1=1  {$conditions} and t.display=1 order by tg.ordering, t.ordering ";
-		}else
-		{
+		}else{
 			$conditions = "";
 			$sql = "
 			select distinct tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId

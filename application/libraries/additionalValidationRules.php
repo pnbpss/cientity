@@ -18,7 +18,7 @@ class additionalValidation {
 	];
 	
 	const validationErrorMessage = [
-		
+		/*
 		'min_length'=>'{field} ต้องยาวอย่างน้อย {param} ตัวอักษร'
 		,'required'=> 'ยังไม่ได้กรอก {field}'
                 ,'is_unique'=> '{field} ที่ระบุมา มีใช้อยู่แล้ว'		
@@ -29,6 +29,7 @@ class additionalValidation {
 		,'valid_emails'=>'{field} {param} ที่ระบุมา ผิดรูปแบบ'
 		,'valid_email'=>'{field} {param} ที่ระบุมา ผิดรูปแบบ'
 		,'decimal'=>'{field} ต้องเป็นทศนิยม'
+		*/
 	];
 	public static function validationErrorMessage()
 	{
