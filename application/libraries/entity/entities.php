@@ -16,12 +16,6 @@ abstract class entities{
 			,$additionalValidateRules = [] /* validate ของแต่ละคอลัมน์ เพิ่มเติม ซึ่งจะไปกำหนด ใน class ชื่อตาราง  */
 			,$stdValidationRules = [] /* กฎ ของการ validate ที่ได้จาก constraint, column_width, not null, data type  ในฐานข้อมูล */
 			;
-	 
-	
-	abstract public function _select($columns, $conditions); // $columns is array, $conditions is array
-	abstract public function _update($data,$id); //$data is array,$id is int
-	abstract public function _insert($data); //$data is array
-	abstract public function _delete($id); //$id is int
 	abstract public function getColumnlist($entityName); //$entityName is string
 	abstract public function getColumnDescription($entityName); //get column description from db 
 	abstract public function getColumnRefKeyFrom($entityName); //get which field column reference from $entityName is string 
@@ -32,4 +26,5 @@ abstract class entities{
 	abstract public function makeEntityInterface(); //make interface for insert keylist, and for front end
 	abstract public function syncColumnListAndRef($columnListInfo, $columnRefKeyFrom); // seek columnlist and add reference key info 
 	abstract public function makeStdValidationRules(); // make standard validation rules for CodeIgniter form_validation helper
+	abstract public function doDbTransactions($sql); 
 }

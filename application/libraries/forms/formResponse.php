@@ -3,7 +3,7 @@ require_once(APPPATH.'libraries/forms/mainForms.php');
 class formResponse extends mainForms {
 	private $entityOrdinal;
 	public $_REQUEST;
-	public function __construct($request)
+	function __construct($request)
 	{				
 		$_allLibInfo = extraEntityInfos::infos;		
 		$this->entityOrdinal=(int) $request['entityOrdinal'];
@@ -33,7 +33,11 @@ class formResponse extends mainForms {
 	 * @return object 
 	 *	object of search result from executed composed SQL string
 	 */
-	public function searchResults($subModalInfo=[]){		
+	function _setSession($sessionData){
+		$this->session = $sessionData;
+		$this->libObject->_saveSessionData($this->session);
+	}
+	function searchResults($subModalInfo=[]){		
 		$libInfos = $this->libExtraInfo;
 		$libDisplaySearchAttribute = $libInfos['searchAttributes']['display'];
 		$libHiddenSearchAttribute = isset($libInfos['searchAttributes']['hidden'])?$libInfos['searchAttributes']['hidden']:[];		
@@ -68,7 +72,12 @@ class formResponse extends mainForms {
 		else //ถ้าเป็น search ที่มาจาก filterRow ในหน้าหลัก
 		{
 			$sqlCondition = " where 1=1 ".$this->createWhereConditions($request,$libDisplaySearchAttribute, $libHiddenSearchAttribute);
+		}		
+				
+		if(method_exists($this->libName,'additionalWhereInFilterRow')){
+			$sqlCondition.=$this->libObject->additionalWhereInFilterRow();
 		}
+		
 		if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //เอาไว้ดูเฉยๆใน ajax response
 		$parameters->sql['condition'] = $sqlCondition;
 		
@@ -494,7 +503,7 @@ class formResponse extends mainForms {
 	 * @return array 
 	 *	array of operation results
 	 */ 		
-	public function saveAddEditData()
+	function saveAddEditData()
 	{		
 		$pass = $this->formValidate($this->_REQUEST);
 		if($pass){
@@ -519,7 +528,7 @@ class formResponse extends mainForms {
 	 * @return array 
 	 *	array of operation results
 	 */ 
-	public function deleteData()
+	function deleteData()
 	{
 		parent::deleteData();
 		return $this->response;
@@ -531,7 +540,7 @@ class formResponse extends mainForms {
 	 * @return array 
 	 *	array of data and information for referenced field 
 	 */ 
-	public function loadDataToEditInModal(){
+	function loadDataToEditInModal(){
 		$response = mainForms::stdResponseFormat();		
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();			
 		$request = $this->_REQUEST;
@@ -607,7 +616,7 @@ class formResponse extends mainForms {
 	 * @return int
 	 *	
 	 */ 
-	public function getIdFieldValueAndSubModalInfo(){
+	function getIdFieldValueAndSubModalInfo(){
 		//ดึงดูว่า id คือตัวไหน
 		$request = $this->_REQUEST;
 		
@@ -636,7 +645,7 @@ class formResponse extends mainForms {
 	 * @return string
 	 *	html of datatable 
 	 */
-	public function searchResultsForSubModel($subModalInfo){
+	function searchResultsForSubModel($subModalInfo){
 		//เช็คเบื้องต้นก่อน 
 		//มี alterView หรือยัง		
 		if(!isset($subModalInfo['subModal'][$this->libName]['alterView'])){
@@ -665,7 +674,7 @@ class formResponse extends mainForms {
 	/**
 	 * compose sql string and do update record specified from sub-entity
 	 */
-	public function updateSubEntityRecord(){
+	function updateSubEntityRecord(){
 		$request = $this->_REQUEST;
 		$tableName = $this->CI->db->dbprefix."".$this->libName;
 		$columnName = $this->getSubEntityColumnName($request[1]);		

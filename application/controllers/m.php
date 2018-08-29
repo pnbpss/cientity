@@ -132,6 +132,8 @@ class M extends CI_Controller {
 	public function getRowListByConditionsInFilterRow()
 	{
 		$formResponse = new formResponse($this->input->post(null,true));
+		$formResponse->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
+		
 		$response['searchResults'] = $formResponse->searchResults();
 		//$response['_request'] = $_REQUEST; //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);		
@@ -150,7 +152,7 @@ class M extends CI_Controller {
 	}	
 	public function saveAddEditData(){
 		$formResponse = new formResponse($this->input->post(null,true));
-		$formResponse->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
+		$formResponse->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
 		
 		$response['results'] = $formResponse->saveAddEditData();
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
@@ -158,7 +160,7 @@ class M extends CI_Controller {
 	}
 	public function deleteData(){
 		$formResponse = new formResponse($this->input->post(null,true));
-		$formResponse->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
+		$formResponse->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
 		
 		$response['results'] = $formResponse->deleteData();
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
@@ -173,7 +175,7 @@ class M extends CI_Controller {
 		//$mainFormRequest = $_REQUEST['mainEntityInfo'];		
 		$mainFormRequest = $this->input->post('mainEntityInfo',true);	
 		$mainForm = new formResponse($mainFormRequest);
-		$mainForm->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
+		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
 		$mainFormLibExtraInfo = $mainForm->_getLibExtraInfo();
 		
@@ -183,7 +185,7 @@ class M extends CI_Controller {
 			//$subFormRequest = $_REQUEST['subEntityInfo'];
 			$subFormRequest = $this->input->post('subEntityInfo',true);	
 			$subForm = new formResponse($subFormRequest);
-			$subForm->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
+			$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 			$response['subModalResults'] = $subForm->searchResultsForSubModel($subModalInfo);
 		}				
 		
@@ -199,7 +201,7 @@ class M extends CI_Controller {
 		$hereRequest = $this->input->post(null,true);
 		$_REQUESTM = $hereRequest['mainEntityInfo'];	
 		$mainForm = new formResponse($_REQUESTM);
-		$mainForm->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
+		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
 		//$mainEntityIdForSubEntity คือ ค่าฟิลด์ id ของ mainEntity ที่ POST มา ใน  $_REQUEST['mainEntity'] เช่น หาก mainEntity เป็น devClasses นี่คือฟิลด์ id ของ devClasses
 		$mainEntityIdForSubEntity = $mainForm->getIdToInsertForSubEntity();
@@ -208,7 +210,7 @@ class M extends CI_Controller {
 		
 		$_REQUESTS = $hereRequest['subEntityInfo'];
 		$subForm = new formResponse($_REQUESTS);
-		$subForm->session = $this->session; //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์	
+		$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์	
 		$subFormLibName = $subForm->libName();		
 		foreach($mainRefTo as $column){
 			if($column['referenced_to_libName']==$subFormLibName){

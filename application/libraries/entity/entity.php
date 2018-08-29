@@ -44,7 +44,7 @@ class entity extends entities{
 	/** 
 	* CI store &get_instance for referencing to CodeIgniter resources.
 	*/	
-	private $CI; 	
+	private $CI,$sessionData=[]; 	
 	
 	public $infoForAdditionalValidate = []; //for use in additional entity validation for example see devClassExtInstructors.php
 	public $infoForAdditionalValidateSubEntity = []; //for use in additional entity validation for example see devClassExtInstructors.php
@@ -91,18 +91,18 @@ class entity extends entities{
 		}	
 		
 	}
-	public function _select($columns, $conditions) // $columns is array, $conditions is array
-	{
+	public function _saveSessionData($sessionData){ 	
+		$this->sessionData = $sessionData;
 	}
-	public function _update($data,$id) //$data is array,$id is int
-	{
+	public function _retSessionData(){
+		return $this->sessionData;
 	}
 	public function _insert($data) //$data is array
 	{
 		//echo "inserted";
 	}
-	public function _delete($id) //$id is int
-	{
+	function _returnDbPrefix(){
+		return $this->CI->db->dbprefix;
 	}
 	/**
 	* @return object type of current entity 

@@ -30,8 +30,8 @@ class mainForms
 		$this->libExtraInfo = $this->_libExtraInfo($libName);
 		
 		//libObject is class entity in entity.php that will be loaded for use.
-		$this->libObject = $this->_loadLibrary($libName);
-			
+		$this->libObject = $this->_loadLibrary($libName);		
+		
 		//name of the library or entity
 		$this->libName = $libName;
 		

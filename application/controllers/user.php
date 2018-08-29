@@ -50,7 +50,7 @@ class User extends CI_controller{
 			return $arr;
 		}		
 		$sql = "
-			select a.id,d.employeeCode,d.titleName,a.userName
+			select a.id,d.employeeCode,d.titleName,a.userName,c.id userGroupId,d.id employeeId
 			,case when isnull(d.firstName,'')='' then a.userName else d.firstName end Fname
 			,d.lastName,d.nick,d.gender,d.workStart,d.workEnd,d.IDNo,d.positionName,d.officeName,d.em_status,d.email,d.mobile
 			,isnull(d.em_status,'') as em_status

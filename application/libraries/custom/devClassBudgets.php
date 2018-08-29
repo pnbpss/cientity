@@ -10,4 +10,12 @@ class devClassBudgets extends entity{
 	{ 
 		return $this->getTableName(); 
 	} 
+	function additionalWhereInFilterRow(){
+		$session = $this->_retSessionData();
+		if($session['userGroupId']===7){ //user group is users
+			//var_dump($session);
+			//$dbPrefix = $this->_returnDbPrefix();
+			return " and 1=0 ";
+		}		
+	}
 } 
