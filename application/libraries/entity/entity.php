@@ -80,13 +80,11 @@ class entity extends entities{
 		list($this->columnDescriptionsColumnIndexed,$this->revisedColumnDescriptions) = $this->reviseColumnDescriptions($this->columnDescriptions); 
 				
 		//หากเป็น view ไม่ต้องสร้าง validation rules (U=table)
-		if($this->ObjectType=='U')
-		{
+		if($this->ObjectType=='U'){
 			/* เอา definition ของคอลัมน์ เช่น ความกว้าง ชนิดข้อมูล มาสร้าง validation rules, stdValidationRules จะถูกรวมกับ AdditionalValidation ที่กำหนดไว้ในไฟล์ additionalValidationRules.php ด้วยแล้ว ด้วย method mergeWithAdditionalRules()
 			*/
 			$this->stdValidationRules = $this->makeStdValidationRules(); 
-		}elseif($this->ObjectType=='V')
-		{
+		}elseif($this->ObjectType=='V'){
 			$this->stdValidationRules = [];
 		}	
 		
@@ -96,12 +94,8 @@ class entity extends entities{
 	}
 	public function _retSessionData(){
 		return $this->sessionData;
-	}
-	public function _insert($data) //$data is array
-	{
-		//echo "inserted";
-	}
-	function _returnDbPrefix(){
+	}	
+	public function _returnDbPrefix(){
 		return $this->CI->db->dbprefix;
 	}
 	/**
@@ -109,8 +103,7 @@ class entity extends entities{
 	* 
 	* Each entity have type of it, there two type of entity, View or Table
 	*/
-	public function getDbObjectType($entityName)
-	{
+	public function getDbObjectType($entityName){
 		$sql = "SELECT sobjects.name,''+replace(sobjects.[type],' ','')+'' [type] FROM sysobjects sobjects where sobjects.name='{$entityName}'";
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
@@ -155,8 +148,7 @@ class entity extends entities{
 	* @return array
 	*	the informations of each column of specified entity in array format.
 	*/
-	public function getColumnlist($entityName) //$entityName is string
-	{
+	public function getColumnlist($entityName){ //$entityName is string	
 		$fullEntityName = $this->CI->db->database.'.dbo.'.$entityName;
 		$sql = "
 			SELECT c.name 'ColumnName',t.Name 'Datatype',c.max_length 'MaxLength',c.precision ,c.scale ,c.is_nullable,c.is_identity,c.default_object_id,ISNULL(i.is_primary_key, 0) 'PrimaryKey',i.is_unique,i.is_unique_constraint,i.name index_name
@@ -198,8 +190,7 @@ class entity extends entities{
 	* @return array
 	*	description which specified in database.table.column.description
 	*/
-	public function getColumnDescription($entityName)
-	{
+	public function getColumnDescription($entityName){
 		$fullEntityName = $this->CI->db->database.'.dbo.'.$entityName;
 		$sql = "
 		select 
@@ -243,8 +234,7 @@ class entity extends entities{
 	* @return array 
 	*	table.column that the entity is referenced from.
 	*/
-	public function getColumnRefKeyFrom($entityName) //$entityName is string 
-	{
+	public function getColumnRefKeyFrom($entityName){ //$entityName is string 	
 		$fullEntityName = $this->CI->db->database.'.dbo.'.$entityName;
 		$sql = "SELECT  obj.name AS FK_NAME,sch.name AS [schema_name],tab1.name AS [table],col1.name AS [column],tab2.name AS [referenced_table],col2.name AS [referenced_column]
 			FROM sys.foreign_key_columns fkc
@@ -293,8 +283,7 @@ class entity extends entities{
 	* @return array 
 	*       list of column and that the entity is referenced to, on the other hand we should say the entity have foreign for 
 	*/
-	public function getColumnRefKeyTo($entityName) //$entityName is string 
-	{
+	public function getColumnRefKeyTo($entityName){ //$entityName is string 	
 		$fullEntityName = $this->CI->db->database.'.dbo.'.$entityName;
 		$sql = "			
 			SELECT  obj.name AS FK_NAME,
@@ -374,7 +363,7 @@ class entity extends entities{
 	* @return array 
 	*	array of merged of $this->columnListInfo and $this->columnRefKeyFrom
 	*/
-	public function syncColumnListAndRef($columnListInfo, $columnRefKeyFrom) 	{
+	public function syncColumnListAndRef($columnListInfo, $columnRefKeyFrom){
 		
 		$syncedColumnlistInfoWithRefKey = $columnListInfo;
 		foreach($columnRefKeyFrom as $rKey => $rVal)
@@ -680,6 +669,17 @@ class entity extends entities{
 			}
 		}
 		return null;
+	}
+	public function insertUpdateAllowed($userId){
+		$entityName = get_class($this);
+		$sql = "SELECT p.[id],[userGroupId],[taskId],[allowSave],u.userName FROM [hds_gntPrivileges] p left join hds_gntTasks t on p.taskId=t.id left join hds_sysUserGroups ug on p.userGroupId=ug.id left join hds_sysUsers u on ug.id=u.groupId where u.id='{$userId}' and t.taskName='{$entityName}' and allowSave='Y' ";
+		$q = $this->CI->db->query($sql);
+		$row = $q->row();
+		if(isset($row->userName)){		
+			return true;
+		}else{
+			return false;
+		}
 	}
 	/**	
 	*

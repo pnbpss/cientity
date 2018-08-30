@@ -12,9 +12,8 @@ class devClassBudgets extends entity{
 	} 
 	function additionalWhereInFilterRow(){
 		$session = $this->_retSessionData();
-		if($session['userGroupId']===7){ //user group is users
-			//var_dump($session);
-			//$dbPrefix = $this->_returnDbPrefix();
+		if($session['userGroupId']===7){ //user group is users			
+			//force user in users group unable to list class expense
 			return " and 1=0 ";
 		}		
 	}

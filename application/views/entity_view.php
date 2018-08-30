@@ -416,14 +416,15 @@ require_once APPPATH."views/incPage.php";
 				<div class="modal-dialog">
 					<div class="modal-content modal-md">
 						<div class="modal-header">
-							<h4 class="modal-title">ลบ <?php incPage::display($entityThDescription);?></h4>
+							<h4 class="modal-title">Delete selected <?php incPage::display($entityThDescription);?> Record.</h4>
 						</div>
 						<div class="modal-body card-box">
-							<p>แน่ใจว่าจะลบ?</p>
-							<div class="m-t-20"> <a href="#" class="btn btn-default" data-dismiss="modal">ปิด</a>
+							<p>Are you sure?</p>
+							<div class="m-t-20"> 
+								<a href="#" class="btn btn-default" data-dismiss="modal">No, close</a>
 								<input type='hidden' id='cientityEntityIdToDelete'>
 								<input type='hidden' id='cientityDataIdToDelete'>
-								<button id='cientityConfirmDelete' type="submit" class="btn btn-danger">ลบ</button>
+								<button id='cientityConfirmDelete' type="submit" class="btn btn-danger">YES!</button>
 							</div>
 						</div>
 					</div>

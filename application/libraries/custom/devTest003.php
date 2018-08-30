@@ -1,7 +1,7 @@
 <?php  
-/** create by application/controllers/createEntityClassLibrary , since 05:14:05 */ 
+/** create by application/controllers/createEntityClassLibrary , since 08:41:04 */ 
 require_once(APPPATH.'libraries\entity\entity.php');  
-class gntTasks extends entity{	 
+class devTest003 extends entity{	 
 	private function getTableName() 
 	{ 
 		return $this->name; 

@@ -6,15 +6,8 @@
 class mainForms
 {
 	protected $CI, $obj,$libExtraInfo,$libName;
-	private $searchAttributesNotExist = "
-					<div class=\"row filter-row\">
-						<div class=\"col-sm-3 col-xs-6\">
-							<div class=\"form-group form-focus\">
-								<label class=\"control-label\">filter ###### is not created in extraEntityInfos.php</label>
-							</div>
-						</div>
-					</div>
-	";
+	const notFoundLibExtraInfoKey ="<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Not found ##### key of Entity in infos::extraEntityInfo</label></div></div></div>";
+	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in extraEntityInfos.php.</label></div></div></div>";
 	/**
 	*	maxSelectOptionShow is number of row of every select2 component that will be selected
 	*/
@@ -75,8 +68,7 @@ class mainForms
 	*		true if passed, or false if not passed
 	*/
 	protected function formValidate($_request){
-		//var_dump($_request);
-		//var_dump($_REQUEST);
+		
 		$this->CI->load->library('form_validation');
 		list($columnsWithOrdered, $allLibExtraInfo)=$this->getColumnOrdered();
 
@@ -394,6 +386,11 @@ class mainForms
 	*/
 	protected function deleteData()
 	{
+		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
+			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+			return;
+		}
+		
 		//list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
 		$allLibExtraInfo = $this->getColumnOrdered()[1];
 		//$idToDelete = $this->escapeSQL($_REQUEST['dataId']);
@@ -840,14 +837,14 @@ class mainForms
 	public function createFilterRow()	{
 		//ถ้ายังไม่มีกำหนด searchAtributes ใน extraEntityInfos
 		if( !(isset($this->libExtraInfo['searchAttributes']))){
-			return str_replace('######',$this->libName,$this->searchAttributesNotExist);
+			return str_replace('######',$this->libName,self::searchAttributesNotExist);
 		}else{
 			$searchAttributes = $this->libExtraInfo['searchAttributes'];
 		}
 
 		//ถ้ายังไม่มีกำหนด display ใน searchAtributes ใน extraEntityInfos
 		if( !(isset($searchAttributes['display']))){
-			return str_replace('######',$this->libName,$this->searchAttributesNotExist);
+			return str_replace('######',$this->libName,selff::searchAttributesNotExist);
 		}else{
 			$searchAttributes = $this->libExtraInfo['searchAttributes'];
 		}
@@ -1086,6 +1083,9 @@ class mainForms
 	 */
 	private function createEachInputForModal($allLibExtraInfo,$key,$column,$columns)
 	{
+		if(!(isset($allLibExtraInfo[$this->libName]))){
+			return str_replace('#####',$this->libName,self::notFoundLibExtraInfoKey);
+		}
 		$columnWitdth = isset($allLibExtraInfo[$this->libName]['addEditModal']['columnWidth'][$key])?$allLibExtraInfo[$this->libName]['addEditModal']['columnWidth'][$key]:6;
 		$requiredIndicator = "";
 
@@ -1101,13 +1101,12 @@ class mainForms
 		if(isset($column['references'])){ //หาก column นั้น มี reference key จาก table อื่น
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" tabindex=\"-1\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
-		}elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$key])){//ถึงแม้จะไม่ได้ระบุว่า มี reference ใน syncedColumnlistInfoWithRefKey แต่ระบุ reference มาใน extraEntityInfos[$libName][addEditModal][reference] เช่น 'empIDNo'=>'devEmployees.IDNoAndFullName' ก็ให้สร้าง select2 ด้วย
+		}
+		//ถึงแม้จะไม่ได้ระบุว่า มี reference ใน syncedColumnlistInfoWithRefKey แต่ระบุ reference มาใน extraEntityInfos[$libName][addEditModal][reference] เช่น 'empIDNo'=>'devEmployees.IDNoAndFullName' ก็ให้สร้าง select2 ด้วย
+		elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$key])){
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
-		}else{
-			//$tempColumns = $this->libObject->syncedColumnlistInfoWithRefKey;
-			//var_dump($column);exit;
-			//var_dump($column); exit;
+		}else{			
 			$dataType = $columns[$key]['Datatype'];
 			switch($dataType)
 			{
@@ -1127,7 +1126,7 @@ class mainForms
 
 					default: $inputString = "<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 			}
-			//$inputString="<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\">";
+			
 		}
 
 		//ถ้ากำหนด fieldLabels มาจาก extraEntityInfos

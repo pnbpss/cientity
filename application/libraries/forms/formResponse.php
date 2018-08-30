@@ -503,18 +503,15 @@ class formResponse extends mainForms {
 	 * @return array 
 	 *	array of operation results
 	 */ 		
-	function saveAddEditData()
-	{		
-		$pass = $this->formValidate($this->_REQUEST);
-		if($pass){
+	function saveAddEditData(){		
+		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
+			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+		}elseif($this->formValidate($this->_REQUEST)){
 			if($this->_REQUEST['operation']==='1'){ parent::insertData(); }
 			if($this->_REQUEST['operation']==='0'){ parent::editData(); }
-		} 
-		else
-		{
+		}else{
 			return $this->response;
-		}
-		
+		}		
 		//$this->notify('warning','คุณอาจจจะสับสนระหว่าง ห้องเรียน กับวิชาเรียนได้');
 		//$this->notify('danger','ยังไม่ได้กรอกข้อมูลวัน เดือน ปี เกิด ');
 		//$this->notify('success','บันทึกข้อมูลสำเร็จ');	
@@ -681,9 +678,11 @@ class formResponse extends mainForms {
 		//convert date and time 
 		$fieldValue = $request[2];
 		
-		//for use in case of additional validation, for example see devClassExtInstructors.php		
-		
-		if($this->formValidateForSubEntity($columnName, $fieldValue)){
+				
+		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
+			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+		}elseif($this->formValidateForSubEntity($columnName, $fieldValue)){
+			//in case of additional validation, for example see devClassExtInstructors.php. 
 			
 			$this->libObject->infoForAdditionalValidateSubEntity = ['idValue'=>$request[0], 'tableName'=>$tableName, 'columnToUpate'=>$columnName];
 			if(in_array($this->_getColumnDataType($this->libObject, $columnName),['date','datetime'])){

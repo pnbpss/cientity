@@ -12,10 +12,10 @@ class devClassEnrollists extends entity{
 	} 
 	function additionalWhereInFilterRow(){
 		$session = $this->_retSessionData();
-		if($session['userGroupId']===7){ //user group is users
-			//var_dump($session);
+		if($session['userGroupId']===7){ //user group is users			
 			$dbPrefix = $this->_returnDbPrefix();
-			return " and {$dbPrefix}devClassEnrollists.employeeId in ('{$session['employeeId']}') ";
+			//force user in users group can list only their enrolled class
+			return " and {$dbPrefix}devClassEnrollists.employeeId in ('{$session['employeeId']}') "; 
 		}		
 	}
 } 

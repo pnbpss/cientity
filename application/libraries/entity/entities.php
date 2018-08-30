@@ -26,5 +26,8 @@ abstract class entities{
 	abstract public function makeEntityInterface(); //make interface for insert keylist, and for front end
 	abstract public function syncColumnListAndRef($columnListInfo, $columnRefKeyFrom); // seek columnlist and add reference key info 
 	abstract public function makeStdValidationRules(); // make standard validation rules for CodeIgniter form_validation helper
-	abstract public function doDbTransactions($sql); 
+	abstract public function _saveSessionData($sessionData); // save session for use in prviledges checking
+	abstract public function doDbTransactions($sql);  //perform db transaction 
+	abstract public function _retSessionData(); //return session data
+	abstract public function _returnDbPrefix(); //return CodeIgniter table prefix 
 }

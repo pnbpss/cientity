@@ -11,9 +11,7 @@ class extraEntityInfos {
 		#region devClasses
 		'devClasses'=>[
 							'descriptions' => 'Classes'
-							,'defaultOrientation'=>'list'
-							//,'parent'=>['devSubjectCourse.scId','devClassStatuses.statusId']
-							//,'children'=>[]
+							,'defaultOrientation'=>'list'							
 							,'addEditModal'=>[ //ข้อมูลประกอบของ addEditModal 
 								'dummy'=>[]
 								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
@@ -174,9 +172,6 @@ class extraEntityInfos {
 		#region devExpenseTypes
 		,'devExpenseTypes'=>[
 							'descriptions' => 'Types of Expense'
-							,'defaultOrientation'=>'list'
-							,'parent'=>[]
-							,'children'=>[]
 							,'addEditModal'=>[
 								'dummy'=>[]
 								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
@@ -218,9 +213,7 @@ class extraEntityInfos {
 						#endregion devExpenseTypes
 		#region devClassBudgets
 		,'devClassBudgets'=>[
-							'descriptions' => 'Class Expenses'
-							,'parent'=>[]
-							,'children'=>[]
+							'descriptions' => 'Class Expenses'							
 							,'addEditModal'=>[
 								'dummy'=>[]
 								//,'columnOrdering'=>['id','classId','expenseId','amount','comments']
@@ -280,9 +273,7 @@ class extraEntityInfos {
 		#endregion
 		#region devClassEnrollists
 		,'devClassEnrollists'=>[
-							'descriptions' => 'Class Enrollments'
-							,'parent'=>[]
-							,'children'=>[]
+							'descriptions' => 'Class Enrollments'							
 							,'addEditModal'=>[
 								'dummy'=>[]
 								,'columnOrdering'=>['id','classId','employeeId','acknowledgedId','refusedId','testTime']
@@ -359,9 +350,7 @@ class extraEntityInfos {
 		#endregion devClassEnrollists
 		#region devClassInstructors
 		,'devClassInstructors'=>[
-							'descriptions' => 'Class\'s Internal Instructors'
-							,'parent'=>[]
-							,'children'=>[]
+							'descriptions' => 'Class\'s Internal Instructors'							
 							,'addEditModal'=>[
 								'dummy'=>[]
 								//,'columnOrdering'=>['id','classId','employeeId','acknowledgedId','refusedId']
@@ -532,9 +521,7 @@ class extraEntityInfos {
 		#endregion devLocations
 		#region devCourses
 		,'devCourses'=>[
-							'descriptions' => 'Courses'
-							,'parent'=>[]
-							,'children'=>[]
+							'descriptions' => 'Courses'							
 							,'addEditModal'=>[
 								'dummy'=>[]
 								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
@@ -585,9 +572,6 @@ class extraEntityInfos {
 		#endregion devCourses
 		#region devSubjects
 		,'devSubjects'=>[	'descriptions' => 'Subjects'
-						,'defaultOrientation'=>'list'
-						//,'parent'=>['preSubjectId','closedId']
-						,'children'=>[]
 						,'addEditModal'=>[
 							'dummy'=>[]
 							//,'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
@@ -636,8 +620,6 @@ class extraEntityInfos {
 		#region devSubjectCourse
 		,'devSubjectCourse'=>[
 							'descriptions' => 'Course\'s Subjects'
-							,'parent'=>[]
-							,'children'=>[]
 							,'addEditModal'=>[
 									'dummy'=>[]
 									,'columnOrdering'=>['id','courseId','subjectId']
@@ -674,6 +656,9 @@ class extraEntityInfos {
 							]
 						]
 		#endregion devSubjectCourse
+		,'devTest001'=>[
+				'descriptions' => 'just for test 001'
+		]
 		,'repExpenseReports'=>[
 			'customized'=>true
 			,'descriptions'=>'Expense reports'
