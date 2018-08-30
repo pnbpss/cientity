@@ -1,21 +1,24 @@
 <?php
 class extraEntityInfos {
+	
+	//const FRPLCEMNT4FMT, defined constant in constants.php (APPPAHT/config/constants.php)
+	
 	const default_header_JS_CSS=[		
 		'assets/css/bootstrap.min.css','assets/css/dataTables.bootstrap.min.css','assets/css/font-awesome.min.css','assets/css/select2.min.css','assets/css/bootstrap-datetimepicker.min.css','assets/plugins/summernote/dist/summernote.css','assets/css/style.css'
 	];
 	const default_footer_JS_CSS=[
 		'assets/js/jquery-3.2.1.min.js','assets/js/bootstrap.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap.min.js','assets/js/jquery.slimscroll.js','assets/plugins/morris/morris.min.js','assets/js/select2.min.js','assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/app.js','assets/plugins/summernote/dist/summernote.min.js','js/defaultForEntity.js'
 	];
-		
+	
 	const infos = [
 		#region devClasses
 		'devClasses'=>[
-							'descriptions' => 'Classes'
+							'descriptions' => 'Classes/Seminar/Training'
 							,'defaultOrientation'=>'list'							
-							,'addEditModal'=>[ //ข้อมูลประกอบของ addEditModal 
-								'dummy'=>[]
-								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
-								//,'columnWidth'=>['id'=>2,'code'=>2,'name'=>8,'preSubjectId'=>6,'preCourseId'=>6,'shopDuration'=>3,'classDuration'=>3]
+							,'addEditModal'=>[ //addEditModal information for create addEditModal
+								'dummy'=>[] // nothing, just lazy to put comma in case of commenting next element
+								,'columnOrdering'=>['id','scId','startDate','locationId','statusId','descriptions','capacity','createdBy','createdDate']
+								,'columnWidth'=>['descriptions'=>12]
 								,'hidden'=>['createdDate','createdBy']
 								,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_user_func_getSession::IDNo"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _user_func_getSession คือฟังก์ชั่นใน
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
@@ -23,8 +26,8 @@ class extraEntityInfos {
 											,'scId'=>'devSubjectCourseView.courseAndSubject'
 											,'locationId'=>'devLocations.descriptions'
 											]
-								,'fieldLabels'=>['scId'=>'Course Code and Subject\'s Name']
-								,'format'=>['startDate'=>"replace(CONVERT(varchar(max),__#@!!@#__,103),'-','/') startDate"] //format ที่จะใช้ดึงออกมาแสดงในหน้า edit 
+								,'fieldLabels'=>['scId'=>'Course Code and Subject\'s Name','capacity'=>'class capacity']
+								,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] //format ที่จะใช้ดึงออกมาแสดงในหน้า edit 
 								,'subModal'=>[
 											'devClassEnrollists' =>[
 													'label'=>'Enrollments' //หากระบุ label จะเอา label นี้ไปใช้ หากไม่ระบุ จะไป เอา descriptions ของ entity
@@ -56,21 +59,20 @@ class extraEntityInfos {
 													,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 													,'editable'=>true// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
 													,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
-											]
-												
+											]												
 										]
 							]
 							,'searchAttributes'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row
 												'display'=>[ //ตัวที่จะแสดงออกมาให้เลือก
-													"devClasses.startDate" //หากเป็น date สร้างสองอัน เพื่อ between 
-													//,"devCourses.name::devSubjectCourse.courseId::devClasses.scId" //ต้องระบุ entityName ด้วย
-													,"devSubjects.name::devSubjectCourse.subjectId::devClasses.scId"										
+													"devClasses.startDate" //หากเป็น date สร้างสองอัน เพื่อ between 													
+													,"devSubjects.name::devSubjectCourse.subjectId::devClasses.scId" //ต้องระบุ entityName ด้วย										
 													,"devLocations.descriptions::devClasses.locationId;;Select Location"
 													//;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง (จะไม่เอา descriptions ใน column นั้นมาใช้)
+													,"devClasses.capacity"
 													,"devClasses.descriptions"
 													,"devClassStatuses.descriptions::devClasses.statusId;;Class Status" //;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง
-													
-												]
+													]
+												,'between'=>['devClasses.capacity']  //between is that will be created search filter from and to, it only applicable with none-referenced field
 												,'hidden'=>[ //เงื่อนไขที่จะใช้ร่วมในการค้นด้วย แต่ไม่แสดงออกมา
 													"devClasses.createdDate > dateadd(year,-1,getdate())"
 													,"devClasses.descriptions not like '%test%' "
@@ -79,21 +81,22 @@ class extraEntityInfos {
 							,'selectAttributes'=>[ //ข้อมูลประกอบของการ select ออกมาเพื่อแสดง หลังจาก ค้น
 												'fields'=>[ //มีฟิลด์อะไรบ้าง
 														 'devCourses.name'
-														 ,'devSubjects.name'
+														 ,'devSubjects.name'														
 														,'devLocations.code;;Location Code'
 														,'devLocations.descriptions;;Location Desc.'
 														,'devClasses.startDate;;Start Date'
 														,'devClasses.descriptions;;Class Desc.'
+														,'devClasses.capacity;;capacity'
 														,'devClassStatuses.descriptions;;Status'
 													]
 												,'format'=>[ //รูปแบบที่จะแสดงออกมาหลังจากคลิกปุ่มค้น
-													'devClasses.startDate'=>"CONVERT(varchar(max),__#@!!@#__,103) startDate"
-													//'devClasses.startDate'=>"CONVERT(varchar(max),__#@!!@#__,108) startDate"
-													,'devCourses.name'=>"__#@!!@#__ courseName"
-													,'devSubjects.name'=>"__#@!!@#__ subjectName"
-													,'devClasses.descriptions'=>"__#@!!@#__ classDescription"
-													,'devLocations.descriptions'=>"__#@!!@#__ locationDescription"
-													,'devClassStatuses.descriptions'=>"__#@!!@#__ statusDescription"
+													'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"
+													//'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",108) startDate"
+													,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
+													,'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
+													,'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
+													,'devLocations.descriptions'=>"".FRPLCEMNT4FMT." locationDescription"
+													,'devClassStatuses.descriptions'=>"".FRPLCEMNT4FMT." statusDescription"
 													]
 											]
 							,'join'=>[
@@ -246,9 +249,9 @@ class extraEntityInfos {
 														,'devClassBudgets.comments;;Expense Descriptions'
 													]
 												,'format'=>[ //รูปแบบที่จะแสดงออกมาหลังจากคลิกปุ่มค้น
-													'devClasses.startDate'=>"CONVERT(varchar(max),__#@!!@#__,103) startDate"
-													,'devClasses.descriptions'=>'__#@!!@#__ classDescription'													
-													,'devExpenseTypes.name'=>'__#@!!@#__ expenseTypeName'
+													'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"
+													,'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
+													,'devExpenseTypes.name'=>"".FRPLCEMNT4FMT." expenseTypeName"
 													]
 												,'editableInSubEntity'=>[ 
 															//editable is information that tell formResponse to create input in datatable, its item must be subset of selectAttributes,
@@ -289,15 +292,10 @@ class extraEntityInfos {
 											,'employeeId'=>'PID, First Name and Last Name ']
 							]
 							,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
-											'display'=>[
-													//"devClassEnrollistsView.locationDescriptions;;สถานที่อบรม" 
-													"devClassEnrollistsView.locationCode;;Location Code"
-													//,'devSubjects.name::devSubjectCourse.subjectId::devClasses.scId::classId;;ชื่อวิชา'
-													//,'devClasses.startDate::classId'
+											'display'=>[													
+													"devClassEnrollistsView.locationCode;;Location Code"													
 													,'devClassEnrollistsView.employeeFullName;;Employee Name'
-													,'devClassEnrollistsView.classDescriptions;;Class Descriptions'
-													//,'devEmployees.officeName;;ฝ่ายของพนักงาน'
-													//,'devClassEnrollistsView.id'
+													,'devClassEnrollistsView.classDescriptions;;Class Descriptions'													
 													]
 											,'between'=>[]
 							]
@@ -316,11 +314,11 @@ class extraEntityInfos {
 															//,'devClassEnrollistsView.testTime;;ทดสอบเวลา'
 														]
 													,'format'=>[
-														//'devClasses.descriptions'=>"__#@!!@#__ classDescription"
-														'devClassEnrollistsView.testDate'=>"replace(CONVERT(varchar(max),__#@!!@#__,103),'-','/') testDate"
-														,'devClassEnrollistsView.testDateTime'=>"CONVERT(varchar(10),__#@!!@#__,103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(__#@!!@#__ as time), 0), 7), 6, 0, ' ') testDateTime"
-														,'devClassEnrollistsView.testTime'=>"STUFF(RIGHT(' ' + CONVERT(VarChar(7),__#@!!@#__, 0), 7), 6, 0, ' ') testTime"
-													]
+														//'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
+														'devClassEnrollistsView.testDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') testDate"
+														,'devClassEnrollistsView.testDateTime'=>"CONVERT(varchar(10),".FRPLCEMNT4FMT.",103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(".FRPLCEMNT4FMT." as time), 0), 7), 6, 0, ' ') testDateTime"
+														,'devClassEnrollistsView.testTime'=>"STUFF(RIGHT(' ' + CONVERT(VarChar(7),".FRPLCEMNT4FMT.", 0), 7), 6, 0, ' ') testTime"
+													]													
 													,'editableInSubEntity'=>[ //editable is information that tell formResponse to create input in datatable
 															'refused'=>'l::refusedId' //for create select2 and link to sysRefuses, l:refusedId measn link and use field refusedId in addEditModal=>references
 															,'acknowledged'=>'l::acknowledgedId'
@@ -387,7 +385,7 @@ class extraEntityInfos {
 													,'devClassInstructorsView.comments;;Comment or Descriptions'
 													]
 											,'format'=>[
-												//'devClasses.descriptions'=>"__#@!!@#__ classDescription"
+												//'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
 											]
 											,'editableInSubEntity'=>[ //see description in 'devClassEnrolllists'
 												'percentLoad'=>'percentLoad'
@@ -444,7 +442,7 @@ class extraEntityInfos {
 															,"devClassExtInstructorsView.emailAddress;;e-mail" 
 															]
 													,'format'=>[
-														//'devClasses.descriptions'=>"__#@!!@#__ classDescription"
+														//'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
 													]
 													,'editableInSubEntity'=>[ //see description in 'devClassEnrolllists'
 															'percentLoad'=>'percentLoad'
@@ -493,7 +491,7 @@ class extraEntityInfos {
 															,'sysClosed.descriptions;;เปิดใช้อยู่'									
 														]
 													,'format'=>[											
-														'sysClosed.descriptions'=>"__#@!!@#__ closedDescription"
+														'sysClosed.descriptions'=>"".FRPLCEMNT4FMT." closedDescription"
 														]
 											]
 							,'join'=>[
@@ -646,8 +644,8 @@ class extraEntityInfos {
 																										
 												]
 											,'format'=>[
-												'devSubjects.name'=>"__#@!!@#__ subjectName"
-												,'devCourses.name'=>"__#@!!@#__ courseName"
+												'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
+												,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
 											]												
 										]
 							,'join'=>[

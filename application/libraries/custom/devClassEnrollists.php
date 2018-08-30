@@ -16,6 +16,8 @@ class devClassEnrollists extends entity{
 			$dbPrefix = $this->_returnDbPrefix();
 			//force user in users group can list only their enrolled class
 			return " and {$dbPrefix}devClassEnrollists.employeeId in ('{$session['employeeId']}') "; 
-		}		
+		}else{
+			return '';
+		}
 	}
 } 

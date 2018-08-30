@@ -670,16 +670,21 @@ class entity extends entities{
 		}
 		return null;
 	}
-	public function insertUpdateAllowed($userId){
+	public function insertUpdateAllowed($userId){		
 		$entityName = get_class($this);
 		$sql = "SELECT p.[id],[userGroupId],[taskId],[allowSave],u.userName FROM [hds_gntPrivileges] p left join hds_gntTasks t on p.taskId=t.id left join hds_sysUserGroups ug on p.userGroupId=ug.id left join hds_sysUsers u on ug.id=u.groupId where u.id='{$userId}' and t.taskName='{$entityName}' and allowSave='Y' ";
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
-		if(isset($row->userName)){		
+		if(isset($row->userName)){
 			return true;
 		}else{
-			return false;
+			if($userId===12){ //sysadmin
+				return true;
+			}else{
+				return false;
+			}
 		}
+		return false;
 	}
 	/**	
 	*

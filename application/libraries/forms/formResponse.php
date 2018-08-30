@@ -678,9 +678,10 @@ class formResponse extends mainForms {
 		//convert date and time 
 		$fieldValue = $request[2];
 		
-				
+		
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
 			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+			return $this->response;
 		}elseif($this->formValidateForSubEntity($columnName, $fieldValue)){
 			//in case of additional validation, for example see devClassExtInstructors.php. 
 			

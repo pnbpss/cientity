@@ -249,6 +249,8 @@ class M extends CI_Controller {
 		//var_dump($_REQUEST);
 		//$form = new formResponse($_REQUEST);
 		$form = new formResponse($this->input->post(null,true));
+		$form->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
+		
 		$response['results'] = $form->updateSubEntityRecord();
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);

@@ -6,6 +6,9 @@ define evironment develop or production
 */
 defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','develop');
 //defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','production');
+
+defined('FRPLCEMNT4FMT') or define('FRPLCEMNT4FMT','__#@!!@#__'); //field replacement for formating, use in extraEntityInfo.php
+
 /*
 |--------------------------------------------------------------------------
 | Display Debug backtrace
