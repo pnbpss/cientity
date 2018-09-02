@@ -760,22 +760,22 @@ class mainForms
 	  *	html string of filter row
 	 */
 	public function createFilterRow()	{
-		
-		//ถ้ายังไม่มีกำหนด searchAtributes ใน extraEntityInfos
+				
+		//if search searchAttributes haven't been declared yet, then return searchAttributesNotExist
 		if( !(isset($this->libExtraInfo['searchAttributes']))){
 			return str_replace('######',$this->libName,self::searchAttributesNotExist);
 		}else{
 			$searchAttributes = $this->libExtraInfo['searchAttributes'];
 		}
 
-		//ถ้ายังไม่มีกำหนด display ใน searchAtributes ใน extraEntityInfos
+		//if search searchAttributes['display'] haven't been declared yet, then return searchAttributesNotExist
 		if( !(isset($searchAttributes['display']))){
 			return str_replace('######',$this->libName,selff::searchAttributesNotExist);
 		}else{
 			$searchAttributes = $this->libExtraInfo['searchAttributes'];
 		}
 		
-		//load entity ที่เกี่ยวข้องออกมาก่อน
+		//load library of entity that involved this current entity
 		foreach($searchAttributes['display'] as $key=>$item){ 
 			$fieldInfo = explode(";;",$item);
 			$fields = explode("::",$fieldInfo[0]);
@@ -791,7 +791,8 @@ class mainForms
 
 			list($entityName, $columnName) = explode(".",$fields[0]);
 
-			if(isset($searchAttributes['between'])){  //ถ้าระบุ between มา
+			//if between is specified
+			if(isset($searchAttributes['between'])){  
 				if(in_array($fields[0], $searchAttributes['between'])){ //ถ้าฟิลด์นั้นอยู่ใน between				
 					$cStr=$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_from',$fields)
 						 .$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_to',$fields);
@@ -802,7 +803,7 @@ class mainForms
 				$cStr=$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal,$fields);
 			}
 
-			//ถ้ากำหนดชื่อเรียกมาเองจาก extraEntityInfos ให้เอาจาก extraEntityInfos
+			//if specified custom descriptin in extraEntityInfos, then use the specified
 			$columnDescriptions = isset($fieldInfo[1]) ?$fieldInfo[1] :$this->_getFieldDescriptions($entities[$entityName],  $columnName) ;
 
 			$replacedCStr = str_replace("#!#!#!#!#!#",$columnDescriptions,$cStr);
@@ -816,14 +817,14 @@ class mainForms
 		return "<div class=\"row filter-row\">".$str."</div>";
 
 	}
-	 /**
-	  * <p><pre>
+	 /**	  
 	  * get option list for select2 which will be used at filter row or add/edit interface
-	  * create sql string and of involved to "properties"-the information which tell this method that what is table and colum name should be query, and execute the sql string
-	  * 
-	  * </pre><p>	 
+	  * create SQL string and of involved to "properties"-the information which tell this
+	  *  method that what is table and colum name should be query , and execute the SQL string
 	  * @param string properties
-	  *	The "properties" contains ordinal position of table and column name in allLibExtranInfo and is in the following format: i_j_k_l, i=order of entity, j= order of 'searchAttribute', k=order of 'display', l=order of filed should be query 
+	  *	The "properties" contains ordinal position of table and column name in allLibExtranInfo 
+	  * and is in the following format: i_j_k_l, i=order of entity, j= order of 'searchAttribute', 
+	  * k=order of 'display', l=order of filed should be query 
 	  * @param string condition
 	  *	user search keyword, typed on select2 search bar
 	  * @return array 
@@ -870,36 +871,35 @@ class mainForms
 			$i++;
 		}
 		$sql = "select top ".($this->maxSelectOptionShow)." id, {$columnName} name from {$this->CI->db->dbprefix}{$tableName} where {$columnName} like '{{%".$this->CI->db->escape($conditions)."%}}' order  by id desc";
-		$sql = str_replace("'{{%'","'%",$sql);
-		$sql = str_replace("'%}}'","%'",$sql);
-		//echo $sql; exit;
-		$q = $this->CI->db->query($sql);
-		$i = 0;
+		$sql2 = str_replace("'{{%'","'%",$sql);
+		$sqlFinal = str_replace("'%}}'","%'",$sql2);
+		
+		$q = $this->CI->db->query($sqlFinal);		
 		$response['results'] = [];
-		array_push($response['results'], ['id'=>'','text'=>'เลือกเพื่อค้น']);
+		array_push($response['results'], ['id'=>'','text'=>'select for search']);
 		foreach($q->result() as $row)		{
-			array_push($response['results'], ['id'=>$row->id,'text'=>$row->name]);
-			$i++;
+			array_push($response['results'], ['id'=>$row->id,'text'=>$row->name]);			
 		}
 		return $response;
 	}
-	 /**
-	  * <p><pre>
+	 /**	  
 	  * get ordering of column of entity which should be displayed in add/edit in main page of entity and in sub-entity
-	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.
-	  * </pre><p>	 	  
+	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.	  
 	  * @return array [array columnsWithOrdered, array allLibExtraInfo, array columns]
 	  *	the main purpose of this method is find columnsWithOrdered=column ordering, other return value, such as allLibExtraInfo, columns is junk because we can get these value in everywhere in this object
 	  */
 	protected function getColumnOrdered(){
-		/**entity properties ที่เกี่ยวข้อง
+		/** 
+		* entity properties ที่เกี่ยวข้อง
 		*	1. syncedColumnlistInfoWithRefKey list ของคอลัมน์ใน table และมีตัวบอก reference key
 		*	2. revisedColumnDescriptions เป็นคำอธิบายของแต่ละคอลัมน์
 		*	3. stdValidationRules
 		*/
 		$tempColumns = $this->libObject->syncedColumnlistInfoWithRefKey;
 		$columns = [];
-		foreach($tempColumns as $key => $val){  //จัด syncedColumnlistInfoWithRefKey ใหม่ โดยให้ชื่อคอลัมน์เป็นคีย์		
+		
+		//re-organize syncedColumnlistInfoWithRefKey, make column name as key
+		foreach($tempColumns as $key => $val){  
 			$newKey = $val['ColumnName'];
 			unset($val['ColumnName']);
 			$columns[$newKey] = $val;
@@ -914,8 +914,6 @@ class mainForms
 		}else{
 			$columnsWithOrdered = $columns;
 		}
-		
-			
 		
 		return [$columnsWithOrdered, $allLibExtraInfo, $columns];
 	}
