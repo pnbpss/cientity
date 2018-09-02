@@ -1,8 +1,8 @@
 <?php
 /**
-* mainForms เป็นคลาสที่เอาไว้สร้างฟอร์ม input ต่างๆ เช่น ตัวเลือกสำหรับค้นหา, ฟอร์มสำหรับกรอกข้อมูลต่างๆ
-* และอาจจะ validate input จากฟอร์มก่อน update, insert, delete ไปยัง database
-*/
+ * mainForms is Class which use for create HTML components such as input field in filter row, or input component in mainModal. 
+ * It also perform form validation.
+ */
 class mainForms
 {
 	protected $CI, $obj,$libExtraInfo,$libName;
@@ -54,47 +54,28 @@ class mainForms
 	/**
 	* return library name or entity name
 	* @return string
-	* 	name of the entity or libray
+	* 	name of the entity or library
 	*/
 	public function libName(){
 		return $this->libName;
 	}
 	/**
-	* <p><pre>
 	* validate the submit $_REQUEST for update or insert by using stdValidationRules.
 	* Looping through columnListInfo and validate one by one of column. if valdation error occured then put error message into response.
-	* </pre><p>
 	* @return boolean
 	*		true if passed, or false if not passed
 	*/
 	protected function formValidate($_request){
 		
-		$this->CI->load->library('form_validation');
+		$this->CI->load->library('form_validation');		
 		list($columnsWithOrdered, $allLibExtraInfo)=$this->getColumnOrdered();
 
-		//แปลง order ของ filterform เป็น column
-		$request = [];
-		$index = 0;
-		foreach($columnsWithOrdered as $fieldName=>$colInfos){
-			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //ไม่ต้อง validate fied hidden
-				if(in_array($fieldName, $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
-					$index++;
-					continue;
-				}
-			}
-			if(isset($_request[''.$index])){ $request[$fieldName] = $_request[''.$index]; }
-			if(CODING_ENVIROMENT=='develop') $this->response['converted'][$fieldName] = @$_request[''.$index];
-			if(isset($colInfos['references'])){
-				if(!(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]))){
-					$this->notify('danger'," {$fieldName} got references in db, but references for {$fieldName} not defined in addEditModal. ");
-				}
-			}
-			$index++;
-			//(bugId 28010804-01) กรณี validate unique ไปใช้ วิธี insert เข้า database ไปเลย แล้วค่อยเอา error message ของ database มาใช้ดีกว่า
-		}
+		//convert ordering into column name
+		$request = $this->_convertOrdeingToColumnName($_request,$columnsWithOrdered,$allLibExtraInfo);
+		
 		$this->CI->form_validation->set_data($request);
 		$rules = $this->libObject->stdValidationRules[$this->libName];
-		//var_dump($rules);
+		
 		foreach($rules as $val){
 			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //ไม่ต้อง validate fied hidden
 				if(in_array($val['field'], $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
@@ -110,11 +91,38 @@ class mainForms
 				$this->notify('danger',"Error : ".$val);
 			}
 			return false;
-		}
-		else
-		{
+		}else{
 			return true;
 		}
+	}
+	/**
+	 * call from formValidate to maintain 20 lines per method
+	 * @param array $_request
+	 * @param array $columnsWithOrdered
+	 * @param array $allLibExtraInfo
+	 * @return array
+	 */
+	private function _convertOrdeingToColumnName($_request,$columnsWithOrdered,$allLibExtraInfo){
+		$request = [];
+		$index = 0;
+		foreach($columnsWithOrdered as $fieldName=>$colInfos){
+			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //ไม่ต้อง validate fied hidden
+				if(in_array($fieldName, $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
+					$index++;
+					continue;
+				}
+			}
+			if(isset($_request[''.$index])){ $request[$fieldName] = $_request[''.$index]; }
+			//if(CODING_ENVIROMENT=='develop') $this->response['converted'][$fieldName] = @$_request[''.$index];
+			if(isset($colInfos['references'])){
+				if(!(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]))){
+					$this->notify('danger'," {$fieldName} got references in db, but references for {$fieldName} not defined in addEditModal. ");
+				}
+			}
+			$index++;
+			//(bugId 28010804-01) กรณี validate unique ไปใช้ วิธี insert เข้า database ไปเลย แล้วค่อยเอา error message ของ database มาใช้ดีกว่า
+		}
+		return $request;
 	}
 	/**
 	 * validate $_REQUEST sent from front-end in case of updating sub-entity
@@ -128,9 +136,7 @@ class mainForms
 	protected function formValidateForSubEntity($columnName, $value){
 		$this->CI->load->library('form_validation');
 		$this->CI->form_validation->set_data([$columnName=>$value]);
-		$rules = $this->libObject->stdValidationRules[$this->libName];
-		//var_dump($rules);
-		//var_dump($value);
+		$rules = $this->libObject->stdValidationRules[$this->libName];		
 		$haveRules = false;
 		foreach($rules as $cRules){
 			if($cRules['field']===$columnName){
@@ -142,13 +148,11 @@ class mainForms
 		}
 		if($haveRules===false){
 			return true;
-		}
-		//var_dump($columnLabel);
+		}		
 		$this->CI->form_validation->set_rules($columnName, $columnLabel, $conlumnRules, additionalValidation::validationErrorMessage());
 		if ($this->CI->form_validation->run() == FALSE){
 			$errorArray = $this->CI->form_validation->error_array();
-			foreach($errorArray as $val){
-				//echo $val;
+			foreach($errorArray as $val){				
 				$this->notify('danger',"Error : ".$val);
 			}
 			return false;
@@ -156,15 +160,13 @@ class mainForms
 			return true;
 		}
 	}
-	/**
-	* <p><pre>
+	/**	
 	 * construct an SQL string and perform insert data to table by sending SQL string to this->libObject->doDbTransactions.
-	 * .it will put message into response in case of error, or no error.
-	* </pre><p>
+	 * .it will put message into response in case of error, or no error.	
 	*/
 	protected function insertData(){		
 		
-		//preparing field and data(เตรียมฟิลด์ และข้อมูล)
+		//preparing field and data
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();		
 		
 		//for use in case of additional validation, for example see devClassExtInstructors.php
@@ -173,19 +175,20 @@ class mainForms
 		$index = 0;
 		$insertFields=""; $insertValues="";
 		foreach($columnsWithOrdered as $fieldName=>$colInfos)	{
-			if($colInfos['is_identity']==1){ //ถ้าเป็นฟิลด์ auto increment ให้ข้ามไปเลย
+			// if field is auto increment thn by pass
+			if($colInfos['is_identity']==1){ 
 				$index++;
 				continue;
 			}
-			//echo $fieldName."|||";
-			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //fied hidden ต้องไปดูว่า ระบุ default มาจาก extraEntityInfos หรือไม่ก่อน
+			
+			//if the field is specied as hidden, then verify that it have been specified default value.
+			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ 
 				if(in_array($fieldName, $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
 					if(isset($allLibExtraInfo[$this->libName]['addEditModal']['default'][$fieldName])){
 						$insertFields.="{{".$fieldName."}}";
 						$thisFieldVal = $this->makeSqlFromSpecifiedDefault($allLibExtraInfo[$this->libName]['addEditModal']['default'][$fieldName]);
 						$thisFieldVal = $thisFieldVal==""?"NULL":"".$thisFieldVal."";
-						$insertValues .= "{{".$thisFieldVal."}}";
-						//$insertValues .= "{$fieldName}=>{{".$thisFieldVal."}}";
+						$insertValues .= "{{".$thisFieldVal."}}";						
 						$index++;
 						continue;
 					}else{
@@ -207,22 +210,20 @@ class mainForms
 			$thisFieldVal = $thisFieldVal===""?"NULL":"'".$this->escapeSQL($thisFieldVal)."'";
 			$insertValues .= "{{".$thisFieldVal."}}";
 
-			//$insertValues .= "{$fieldName}=>{{".$_REQUEST[''.$index]."}}";
-			//$request[$fieldName] = $_REQUEST[''.$index];
 			$index++;
 		}
 		if(CODING_ENVIROMENT==='develop'){ $this->response['converted']['insertValue'] = $insertValues;}
 		if(CODING_ENVIROMENT==='develop'){ $this->response['converted']['insertFields'] = $insertFields;}
-		//จบ เตรียมฟิลด์ และข้อมูล
+		
 
-		//create sql(สร้าง sql)
+		//create sql for insert
 		$insertFieldSql = str_replace("}}",")",str_replace ("{{","insert into {$this->CI->db->dbprefix}{$this->libName}(",str_replace("}}{{",",",$insertFields)));
 		$insertValuesSql = str_replace("}}",");",str_replace ("{{"," values (",str_replace("}}{{",",",$insertValues)));
 		
 		$sqlInsert = $insertFieldSql.$insertValuesSql;
 		if(CODING_ENVIROMENT==='develop'){ $this->response['converted']['sqlInsert'] = $sqlInsert;}
-		//echo "=={$sqlInsert}=="; exit;
-		//ทำการ insert
+
+		//insert data by using doDbTransactions
 		$insertResult = $this->libObject->doDbTransactions($sqlInsert);
 		if($insertResult[0]=='ok'){
 			$this->notify('success',"Added {$allLibExtraInfo[$this->libName]['descriptions']} ");
@@ -231,21 +232,20 @@ class mainForms
 			$this->notify('danger',"Unable To add {$allLibExtraInfo[$this->libName]['descriptions']}, because {$insertResult[1]} ");
 		}
 	}
-	/**
-	* <p><pre>
+	/**	
 	 * get id value of related main-entity for use in insert sql of sub-entity. $_REQUEST contain the value id of main-entity
-	* </pre><p>	
 	* @return string 
 	*	field value of main-entity which sub-entity is referenced from
 	*/
 	public function getIdToInsertForSubEntity(){
 		//list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();		
-		list($columnsWithOrdered, $allLibExtraInfo)=$this->getColumnOrdered();		
+		list($columnsWithOrdered)=$this->getColumnOrdered();		
 		$index = 0;
 		$idToEdit="";
 		foreach($columnsWithOrdered as $colInfos){
 
-			if($colInfos['is_identity']==1){ // is_identity mean id of main entity
+			// is_identity mean id of main entity
+			if($colInfos['is_identity']==1){ 
 				$this->_REQUESTM[''.$index] = $this->_REQUESTM[''.$index];
 				$idToEdit ="{$this->_REQUESTM[''.$index]}";
 				$index++;
@@ -260,9 +260,9 @@ class mainForms
 	 * After execution is finished it put the message result into response 
 	* </pre><p>		
 	*/
-	protected function editData(){
-		//$this->CI->load->library('input');
-		//เตรียมฟิลด์ และข้อมูล
+	protected function editData(){		
+		
+		//preparing fields for update sql
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
 		
 		//for use in case of additional validation, for example see devClassExtInstructors.php
@@ -272,16 +272,16 @@ class mainForms
 		$editSql="update {$this->CI->db->dbprefix}{$this->libName} set ";
 		$idToEdit="";
 		foreach($columnsWithOrdered as $fieldName=>$colInfos)	{
-
-			if($colInfos['is_identity']==1){ //ถ้าเป็นฟิลด์ auto increment ให้ข้ามไปเลย แสดงว่าเป็น id
-				//$_REQUEST[''.$index] = $this->escapeSQL($_REQUEST[''.$index]);
-				
+			
+			// if field is auto increment thn by pass
+			if($colInfos['is_identity']==1){ 				
 				$idToEdit ="".$this->escapeSQL($this->CI->input->post(''.$index,true))."";
 				$index++;
 				continue;
 			}
-
-			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))) //fied hidden ต้องไปดูว่า ระบุ default มาจาก extraEntityInfos หรือไม่ก่อน
+			
+			//if the field is specied as hidden, then verify that it have been specified default value.
+			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))) 
 			{
 				if(in_array($fieldName, $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
 					if(isset($allLibExtraInfo[$this->libName]['addEditModal']['default'][$fieldName])){
@@ -294,8 +294,7 @@ class mainForms
 					}
 				}
 			}
-
-			//$thisFieldVal = $_REQUEST[''.$index];
+			
 			$thisFieldVal = $this->escapeSQL($this->CI->input->post(''.$index, true));
 
 			if(in_array($colInfos['Datatype'], ['date','datetime'])){
@@ -307,16 +306,14 @@ class mainForms
 			$editSql.="{{{$fieldName}={$thisFieldVal}}}";
 			$index++;
 		}
-		//if(CODING_ENVIROMENT=='develop') $this->response['converted']['editSql'] = $editSql;
-		//จบ เตรียมฟิลด์ และข้อมูล
 
-		//สร้าง sql
+		//create sql for update
 		$editSql .= " where id = '{$idToEdit}' ";
 		$finalSqlToEdit = str_replace("}}","",str_replace ("{{","",str_replace("}}{{",",",$editSql)));
 
-		//if(CODING_ENVIROMENT=='develop') $this->response['converted']['editSql'] = $editSql;
+		if(CODING_ENVIROMENT=='develop') $this->response['converted']['editSql'] = $editSql;
 
-		//ทำการ edit
+		//perform updating by using doDbTransaction method
 		$editResult = $this->libObject->doDbTransactions($finalSqlToEdit);
 		if($editResult[0]=='ok'){
 			$this->notify('success',"Updating of {$allLibExtraInfo[$this->libName]['descriptions']} is saved");
@@ -325,10 +322,8 @@ class mainForms
 			$this->notify('danger',"Unable to update {$allLibExtraInfo[$this->libName]['descriptions']}, because {$editResult[1]} ");
 		}
 	}
-	/**
-	* <p><pre>
-	 * convert DBErrorMessageToUser, 
-	* </pre><p>
+	/**	
+	 * convert DBErrorMessageToUser, 	
 	* @param int errorCode
 	*	error code from performed SQL execution
 	* @param string errorMessage
@@ -340,7 +335,8 @@ class mainForms
 	*/
 	protected function convertDBErrorMessageToUser($errorCode, $errorMessage, $allLibExtraInfo){
 		$str=$errorMessage;
-		//var_dump($errorMessage); //Cannot insert duplicate key row in object 'dbo.hds_devSubjectCourse' with unique index 'devSubjectCourseIdx'
+		
+		//for example "an not insert duplicate key row in object 'dbo.hds_devSubjectCourse' with unique index 'devSubjectCourseIdx'"
 		if($errorCode==2601){
 			$strposFrom = strpos($errorMessage, "' with unique index '")+21;
 			$strposTo = strpos($errorMessage,"'",$strposFrom);
@@ -379,21 +375,17 @@ class mainForms
 		return $rtcolumnNameList;
 	}
 	/**
-	* <p><pre>
 	 *  construct "delete from.." SQL string for delete data of entity and send it to execute at libObject->doDbTransactions. 
 	 * After execution is finished it put the message result into response 
-	* </pre><p>		
 	*/
 	protected function deleteData()
 	{
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
 			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
 			return;
-		}
+		}		
 		
-		//list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
-		$allLibExtraInfo = $this->getColumnOrdered()[1];
-		//$idToDelete = $this->escapeSQL($_REQUEST['dataId']);
+		$allLibExtraInfo = $this->getColumnOrdered()[1];		
 		$idToDelete = $this->escapeSQL($this->CI->input->post('dataId',true));
 		$deleteSql="delete from {$this->CI->db->dbprefix}{$this->libName} where id= '{$idToDelete}' ";
 		$deleteResult = $this->libObject->doDbTransactions($deleteSql);
@@ -434,46 +426,42 @@ class mainForms
 	*	two element array [table name, column name]
 	*/	
 	protected function _getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $ordinal){
+		
+		/**
+		 *  get the first element of array split by "::". The first element is table and column name of selected.
+		 * for example devClassStatuses.descriptions::devClasses.statusId
+		 */
 		$temp1 = explode(";;",$libDisplaySearchAttribute[(int)$ordinal]);
 		$temp2 = explode("::",$temp1[0]);
-		//ถ้ามีหลายฟิลด์ ที่เชื่อมกันมา ให้เอาฟิลด์สุดท้าย เช่น  devSubjects.name::devSubjectCourse.subjectId::scId เอา scId (ผิด2018-08-05)
-		//หรือ devClassStatuses.descriptions::devClasses.statusId เอา devClasses.statusId(ผิด2018-08-05)
-		// ที่ถูกคือ เอาตัวแรกนั่นแหละ เพราะมัน join กันอยู่แล้ว bug-id 20180805-01
-		/*
-		//ยกเลิก
-		if(sizeof($temp2)>1){
-			$index = sizeof($temp2) - 1;
-		}else{
-			$index = 0;
-		}
-		*/
-		/*เอาใหม่*/
+		
 		$index = 0;
 
-		//ระเบิดด้วย .
+		/**
+		 * Get the first element of array split by ".". The first element is table name.
+		 */
 		$temp3 = explode(".",$temp2[$index]);
-
-		//หากแตกออกเป็นสอง นั่นหมายถึงข้างหน้าคือชือตาราง
-		if(sizeof($temp3)>1)
-		{
-			$returnTableAndColumName = explode(".",$temp2[$index]); //for example return devClasses.descriptions
-
-			//ถ้า searchAtributes ของฟิลด์นั้น มีหลาย table ส่ง id กลับไป หาก table เดียว ส่ง ชื่อฟิลด์ของ table นั้นกลับไป(bug-id 20180805-01)
+		
+		//if splited to two elements array then the first element is table name.
+		if(sizeof($temp3)>1){
+			
+			//for example return devClasses.descriptions
+			$returnTableAndColumName = explode(".",$temp2[$index]); 
+			
+			//if searchAtributes of current field contains more than one table, then send key 'id' back
 			$returnTableAndColumName[1] = (sizeof($temp2))>1?'id':$returnTableAndColumName[1];
 
 			return $returnTableAndColumName;
-		}
-		else //หากไม่แตกออกเป็นสอง ส่ง '' กลับไปเพื่อให้ตัวที่เรียกมาไปเอา current library
+		}		
+		//if not split to two element, return blank string. This will use current library in select SQL.
+		else 
 		{
 			return array('',$temp3[0]); //for example return devClasses.descriptions
 		}
 	}
 	
 	/**
-	* <p><pre>
-	*  create html of each input in extraEntityInfo[entityName][searchAttributes]
-	* </pre><p>
-	* @param array obj
+	*  create HTML of each input in extraEntityInfo[entityName][searchAttributes]
+	* @param array OBJ
 	*	array of information of current entity
 	* @param string entityName
 	*	name of current entity
@@ -487,50 +475,35 @@ class mainForms
 	*	two element array [table name, column name]
 	*/	
 	private function _eachFilter($obj, $columnName, $filterOrdinal, $fields){
-		//ถ้าเป็นคอลัมน์ที่ต้องสร้างเป็น option โดยไปเอามาจาก table อื่น ให้ return _createSelectOptionFilter
+		
+		//if data to display is derived from other table then create select input by using _createSelectOptionFilter
 		if(sizeof($fields)>1){
 			return $this->_createSelectOptionFilter($filterOrdinal, $fields[0]);
 		}
 
 		$dataType = $this->_getColumnDataType($obj, $columnName);
-		switch($dataType)
-		{
+		switch($dataType){
 			case 'int':
 				$inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 			break;
-			case 'char':
-			case 'varchar':
-			case 'text':
-			case 'nchar':
-			case 'nvarchar':
-			case 'ntext':
+			case 'char':	case 'varchar':case 'text':case 'nchar':case 'nvarchar':case 'ntext':
 				$maxLength = $this->_getColumnLength($obj, $columnName);
 				$inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" maxlength=\"{$maxLength}\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 			break;
-			case 'datetime':
-			case 'date': //หากเป็น input date, หรือ datetime return function _inputDateItem เลย
-				return $this->_inputDateItem($filterOrdinal);
-			break;
-				default: $inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
+			case 'datetime': case 'date': // return function _inputDateItem if datatype is date or datetime
+				return $this->_inputDateItem($filterOrdinal);			
+			default: $inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 		}
 		$fromToStr = explode('_',$filterOrdinal);
 		$additionalLabel=""; if(isset($fromToStr[1])){ if($fromToStr[1]=='from') {$additionalLabel='(from)';} elseif($fromToStr[1]=='to'){$additionalLabel='(to)';}}
-		$str = "
-						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
-							<div class=\"form-group form-focus\">".PHP_EOL."
-								<label class=\"control-label\">#!#!#!#!#!#{$additionalLabel}</label>".PHP_EOL."
-								{$inputItem}
-							</div>".PHP_EOL."
-						</div>".PHP_EOL."
-			";
+		
+		$str = "<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL.
+			"<label class=\"control-label\">#!#!#!#!#!#{$additionalLabel}</label>".PHP_EOL."{$inputItem}</div>".PHP_EOL."</div>".PHP_EOL."";
 		return $str;
-	}
+	}	
 	
-	// ดึง option กรณีที่เป็น select input กรณีที่เป็น	
-	/**
-	* <p><pre>
+	/**	
 	*  create html of each input in extraEntityInfo[entityName][searchAttributes] in case of referenced from other table
-	* </pre><p>	
 	* @param string filterOrdinal
 	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
 	* @param array fields
@@ -573,14 +546,12 @@ class mainForms
 
 			";
 		return $str;
-	}
+	}	
 	
-	/*
-	* กรณีเป็น inputdate ให้ส่งกลับไป สอง input นั่นคือ จาก และ ถึง
-	*/
 	/**
 	* <p><pre>
-	*  create html of each input  in extraEntityInfo[entityName][searchAttributes] in case of its type is date
+	*  create html of each input  in extraEntityInfo[entityName][searchAttributes] in case of its type is date.
+	*  In this case,datetime datatype, the input will be created twice, from and to.
 	* </pre><p>	
 	* @param string filterOrdinal
 	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]	
@@ -611,11 +582,8 @@ class mainForms
 		return $inputItem;
 	}
 	
-	/**
-	* <p><pre>
-	*  compose information for select2 to initialize after page is loaded. the information consists of entity order number, field order number, etc. 
-	* (option สำหรับเอาไปสร้าง property ของ select2 ให้ดึง datasource มาจาก ajax)
-	* </pre><p>	
+	/**	
+	*  compose information for select2 to initialize after page is loaded. the information consists of entity order number, field order number, etc. 		
 	* @param string filterOrdinal
 	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]	
 	* @return string
@@ -656,14 +624,9 @@ class mainForms
 		}
 		$baseUrl=base_url();
 		return "infoForAjaxOptions=\"{$baseUrl}m/infoForAjaxOptions/{$properties}\" ";
-	}
+	}	
 	/**
-	* ดึงข้อมูลของ column ออกมา
-	*/
-	/**
-	* <p><pre>
 	* fetch specified column informations
-	*  </pre><p>	
 	* @param object obj
 	*	this entity information 
 	* @param string columnName
@@ -681,12 +644,7 @@ class mainForms
 		return [];
 	}
 	/**
-	* ดึง dataType ของ column ออกมา เช่น varchar, char, int, datetime ฯลฯ
-	*/
-	/**
-	* <p><pre>
 	* return datatype of column such as varchar, char, int
-	*  </pre><p>	
 	* @param object obj
 	*	this entity information 
 	* @param string columnName
@@ -699,12 +657,7 @@ class mainForms
 		return $columnInfo['Datatype'];
 	}
 	/**
-	* ดึง length ของ column ออกมา
-	*/
-	/**
-	* <p><pre>
-	*	return max-length of column 
-	*  </pre><p>	
+	* return max-length of column 
 	* @param object obj
 	*	this entity information 
 	* @param string columnName
@@ -717,12 +670,7 @@ class mainForms
 		return $columnInfo['MaxLength'];
 	}	
 	/**
-	* สร้างแต่ละ ปุ่มค้นใน filter row
-	*/
-	/**
-	* <p><pre>
 	*	construct html code of search button in filter row
-	*  </pre><p>		
 	* @return string
 	*	HTML code of "search" button in filter row which contains important information such as entityOrdinal.
 	*/
@@ -734,23 +682,21 @@ class mainForms
 						</div>".PHP_EOL."
 		";
 	}
-	/**
-		คืนค่าลำดับที่ entity ใน array extraEntityInfos เพื่อเอาไว้ใช้งานในเรื่องต่างๆ
-		หากยังไม่มีจะคืนค่า -1 (notFound)
-	*/	
+	
 	/**
 	* <p><pre>
-	*	loop through this->_AllLibExtraInfo until found the specified libName
+	*	loop through this->_AllLibExtraInfo until found the specified libName.
+	 * This method return the ordinal position of library(entity) in array of $this->_AllLibExtraInfo.
 	*  </pre><p>
 	* @param string libName
 	* @return int
-	*	ordinal position of specified libName in this->_AllLibExtraInfo series
+	*	in case of not found return -1
 	*/
 	private function entityOrdinal($libName){
 		$allLibInfo = $this->_AllLibExtraInfo();
 		$entityOrdinal=0;
 		$notFound = true;
-		foreach($allLibInfo as $key=>$val)	{
+		foreach(array_keys($allLibInfo) as $key)	{
 			if($key==$libName){
 				$notFound = false;
 				break;
@@ -759,14 +705,9 @@ class mainForms
 		}
 		return $notFound?(-1):$entityOrdinal;
 	}
-
-	/*
-	* load library ที่เกี่ยวข้องเพื่อเอาไว้ใช้งาน
-	*/
-	/**
-	* <p><pre>
+	
+	/**	
 	*	load library of entity in APPPATH/libraries/custom folder, this is important part of using cientity
-	*  </pre><p>
 	* @param string libName
 	*	name of specified library
 	* @return object
@@ -777,14 +718,9 @@ class mainForms
 		$this->CI->load->library('custom/'.$libName);
 		$obj = new $libName;
 		return $obj;
-	}
-	/*
-	* load library extrainfo ของ libname เพื่อเอาไว้ใช้งาน
-	*/
+	}	
 	/**
-	* <p><pre>
 	*	load extra information of specified entity of APPPATH/libraries/extraEntityInfos.php, this is important part of using cientity
-	*  </pre><p>
 	* @param string libName
 	*	name of specified library
 	* @return array
@@ -795,24 +731,16 @@ class mainForms
 		return isset(extraEntityInfos::infos[$libName])?extraEntityInfos::infos[$libName]:[];
 	}
 
-	/*
-	* load library extrainfo ของ ของทั้งหมด เพื่อเอาไว้ใช้งาน
-	*/
 	/**
-	* <p><pre>
-	*	fetch all library extra info 
-	*  </pre><p>
+	* fetch all library extra info 
 	* @return array	
 	*/
-	private function _AllLibExtraInfo()
-	{
+	private function _AllLibExtraInfo(){
 		$this->CI->load->library('extraEntityInfos');
 		return extraEntityInfos::infos;
 	}
 	 /**
-	  * <p><pre>
 	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
-	  * </pre><p>
 	  * @param object obj
 	  *	object of entity which working on
 	  * @param string columnName
@@ -820,24 +748,19 @@ class mainForms
 	  * @return string
 	  *	the description of field that use as label in add or edit form at front-end.
 	 */	
-	protected function _getFieldDescriptions($obj, $columnName)
-	{
-		//list ($entityName, $columnName) = explode(".",$fields);
+	protected function _getFieldDescriptions($obj, $columnName){
+
 		$tempData = explode("||",$obj->columnDescriptionsColumnIndexed[$columnName]['descriptions']);
 		return $tempData[0];
 	}
 
-	/**
-	* createFilterRow เพื่อสร้างแต่ละ item ใน filter row ในแต่ละหน้าของ entity
-	*/
-	 /**
-	  * <p><pre>
+	 /**	  
 	  * construct the filter row on first page of each entity at front end
-	  * </pre><p>	 
 	  * @return string
 	  *	html string of filter row
 	 */
 	public function createFilterRow()	{
+		
 		//ถ้ายังไม่มีกำหนด searchAtributes ใน extraEntityInfos
 		if( !(isset($this->libExtraInfo['searchAttributes']))){
 			return str_replace('######',$this->libName,self::searchAttributesNotExist);
@@ -851,15 +774,15 @@ class mainForms
 		}else{
 			$searchAttributes = $this->libExtraInfo['searchAttributes'];
 		}
-
-		foreach($searchAttributes['display'] as $key=>$item){ //load entity ที่เกี่ยวข้องออกมาก่อน		
+		
+		//load entity ที่เกี่ยวข้องออกมาก่อน
+		foreach($searchAttributes['display'] as $key=>$item){ 
 			$fieldInfo = explode(";;",$item);
 			$fields = explode("::",$fieldInfo[0]);
 			list($entityName, $columnName) = explode(".",$fields[0]);
 			$entities[$entityName] = $this->_loadLibrary($entityName);
 		}
-
-		//var_dump($searchAttributes); exit;
+		
 		reset($searchAttributes['display']);
 		$str = ""; $filterOrdinal=0;
 		foreach($searchAttributes['display'] as $key=>$item){
@@ -890,11 +813,7 @@ class mainForms
 		}
 		$str.=$this->_searchButton();
 
-		return "
-				<div class=\"row filter-row\">
-					".$str."
-				</div>
-				";
+		return "<div class=\"row filter-row\">".$str."</div>";
 
 	}
 	 /**

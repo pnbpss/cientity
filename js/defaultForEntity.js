@@ -385,7 +385,7 @@ $(document).ready(function() {
 	//put references information for select2 in addEditModal
 	function cientityPutRefDataIntoAddEditForm(references){		
 		references.forEach(function(item,index){			
-			var tempArr = item.split('#++||||++#');
+			var tempArr = item.split('#++||||++#'); 
 			var itemIdex = tempArr[0];
 			//th:เผื่อ ฟิลด์ references นั้น มีค่าเป็น null
 			//en:prevent error if current field is null

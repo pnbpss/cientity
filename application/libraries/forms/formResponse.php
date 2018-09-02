@@ -323,42 +323,26 @@ class formResponse extends mainForms {
 	 */
 	protected function getSelectListColumnDescriptions($libraryName){
 		//$selectFields = extraEntityInfos::infos[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
-		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //แก้ bugId 20180808-01
-				
+		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //แก้ bugId 20180808-01				
 		$returnArray = [];
-		foreach($selectFields as $item){ //load entity เพื่อจะได้เอา descriptions ของแต่ละ field ออกมา		
-			if(is_array($item)){ //ถ้ามีฟิลด์ซ้อนกันใน 1 array item 			
-				foreach($item as $key2 => $item2)
-				{
-					$temp = explode(";;",$item2);
-					//if description was specified in extraEntityInfo then use the specified.
-					if(isset($temp[1])){
-						array_push($returnArray, $temp[1]);
-					}else{ //use column description which specified in database design
-						list($entityName, $columnName) = explode(".",$temp[0]);
-						$obj = $this->_loadLibrary($entityName);
-						array_push($returnArray, $obj->revisedColumnDescriptions[$columnName][0]);
-					}
-				}				
-			}else{
-				$temp = explode(";;",$item);
-				if(isset($temp[1])){ //ถ้ากำหนด descriptions มาเอง(ไม่เอา description ของ column ในฐานข้อมูล				
-					array_push($returnArray, $temp[1]);
-				}else{ //ไปเอา descriptions ของ column ในฐานข้อมูล				
-					list($entityName, $columnName) = explode(".",$temp[0]);
-					$obj = $this->_loadLibrary($entityName);
-					array_push($returnArray, 
-							(isset($obj->revisedColumnDescriptions[$columnName][0])?$obj->revisedColumnDescriptions[$columnName][0]:"_coLdescError_")
-							);
-				}
-			}
+		//loop for each field in fields 
+		foreach($selectFields as $item){ 
+			$temp = explode(";;",$item);
+			//if the description, behind ;; is, is specified then use the specified in extraEntityInfo
+			if(isset($temp[1])){ 				
+				array_push($returnArray, $temp[1]);
+			}else{ //if not specified in extraEntityInfo then use description of column which specified in database design.
+				list($entityName, $columnName) = explode(".",$temp[0]);
+				$obj = $this->_loadLibrary($entityName);
+				array_push($returnArray, 
+						(isset($obj->revisedColumnDescriptions[$columnName][0])?$obj->revisedColumnDescriptions[$columnName][0]:"_coLdescError_")
+						);
+			}			
 		}		
 		return $returnArray;
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	loop through array in key 'join' of current library to create "join" clause for searching 
-	 * </pre><p>	 
+	 * loop through array in key 'join' of current library to create "join" clause for searching 
 	 * @param array joinInfo
 	 *	array of joining from extraEntityInfos.php, specified in key 'join' 
 	 * @param string libName
@@ -376,9 +360,7 @@ class formResponse extends mainForms {
 		return $joinSqlStr;
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	create "join" clause for searching 
-	 * </pre><p>	 
+	 * create "join" clause for searching 
 	 * @param array joinInfo
 	 *	array of joining from extraEntityInfos.php, specified in each key 'join' 	 
 	 * @return string
@@ -386,21 +368,21 @@ class formResponse extends mainForms {
 	 */
 	private function getJoinOn($joinOnInfo){
 		$joinOnSqlStr="";
-		$orItemsStr="";
-		foreach($joinOnInfo as $key => $orItems){
-			$andItemStr="";
-			foreach($orItems as $key2 => $andItems){				
-				$andItemStr.="<<<{$this->CI->db->dbprefix}{$andItems[0]}{$andItems[1]}{$this->CI->db->dbprefix}{$andItems[2]}>>>";
+		$orItemsStrCollect="";
+		foreach($joinOnInfo as $orItems){
+			$andItemStrCollect="";
+			foreach($orItems as $andItems){				
+				$andItemStrCollect.="<<<{$this->CI->db->dbprefix}{$andItems[0]}{$andItems[1]}{$this->CI->db->dbprefix}{$andItems[2]}>>>";
 			}
-			$andItemStr = str_replace('>>><<<',' and ',$andItemStr);
-			$andItemStr = str_replace('<<<','(',$andItemStr);
-			$andItemStr = str_replace('>>>',')',$andItemStr);
-			$orItemsStr.="<<<{$andItemStr}>>>";
+			$andItemStr1 = str_replace('>>><<<',' and ',$andItemStrCollect);
+			$andItemStr2 = str_replace('<<<','(',$andItemStr1);
+			$andItemStr3 = str_replace('>>>',')',$andItemStr2);
+			$orItemsStrCollect.="<<<{$andItemStr3}>>>";
 		}
-		$orItemsStr = str_replace('>>><<<',' or ',$orItemsStr);
-		$orItemsStr = str_replace('<<<','(',$orItemsStr);
-		$orItemsStr = str_replace('>>>',')',$orItemsStr);
-		$joinOnSqlStr.=$orItemsStr;
+		$orItemsStr1 = str_replace('>>><<<',' or ',$orItemsStrCollect);
+		$orItemsStr2 = str_replace('<<<','(',$orItemsStr1);
+		$orItemsStr3 = str_replace('>>>',')',$orItemsStr2);
+		$joinOnSqlStr.=$orItemsStr3;
 		return $joinOnSqlStr;
 	}
 	/**	 
@@ -414,7 +396,7 @@ class formResponse extends mainForms {
 	 * @param array libHiddenSearchAttribute
 	 *	array in "hidden" key in 'libraryName'=>searchAttributes in extraEntityInfos.php, hidden conditions that will be co-use for searching
 	 * @return string
-	 *	"where" clause, sql string part 
+	 *	"where" clause, SQL string part 
 	 */
 	private function createWhereConditions($request,$libDisplaySearchAttribute, $libHiddenSearchAttribute){
 		$sqlCondition="";
@@ -422,52 +404,83 @@ class formResponse extends mainForms {
 			if($condition!=""){
 				//$condition = $this->escapeSQL($condition);				
 				$searchAttributeKey = explode("_",$ordinal);
-				if(isset($searchAttributeKey[1])){ //หาก ordinal ถูก ส่งมาพร้อมกับเครื่องหมาย _ นั่นหมายถึง between
-					if($searchAttributeKey[1]=='from'){
-						list($tableName,$columnName) =$this->_getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $searchAttributeKey[0]);						
-						$tableName = $tableName==''?$this->libName:$tableName;
-						$obj = new mainForms($tableName); //สร้าง object ของ tableName ขึ้นมาใหม่เพื่อเช็ค dataType
-						if(in_array($obj->libObject->columnDataType($columnName),array('date','datetime'))){ //ถ้า datatype เป็น datetime ต้องแปลง format ก่อน						
-							list($year,$month,$day) = $this->splitAndConvertDate($condition);
-							$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} >= '{$year}/{$month}/{$day}'";							
-						}else{
-							$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} >= '{$condition}'";
-						}
-					}elseif($searchAttributeKey[1]=='to'){
-						list($tableName,$columnName) =$this->_getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $searchAttributeKey[0]);		
-						$tableName = $tableName==''?$this->libName:$tableName;
-						$obj = new mainForms($tableName); //สร้าง object ของ tableName ขึ้นมาใหม่เพื่อเช็ค dataType
-						if(in_array($obj->libObject->columnDataType($columnName),array('date','datetime'))){ //ถ้า datatype เป็น datetime ต้องแปลง format ก่อน						
-							list($year,$month,$day) = $this->splitAndConvertDate($condition);
-							$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} <= '{$year}/{$month}/{$day}'";						
-						}else{
-							$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} <= '{$condition}'";
-						}
-					}
-				}else{
-					list($tableName,$columnName) =$this->_getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $searchAttributeKey[0]);
-					$tableName = $tableName==''?$this->libName:$tableName;
-					$obj = new mainForms($tableName); //สร้าง object ของ tableName ขึ้นมาใหม่เพื่อเช็ค dataType		
-					
-					if(in_array($obj->libObject->columnDataType($columnName),array('varchar','nvarchar','char'))){ //ถ้า datatype เป็น char, varchar, nvarchar จะเกิดจาก การเอาฟิลด์ varchar มาต่อกันใน view
-						$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} like '%{$condition}%'";						
-					}elseif(in_array($obj->libObject->columnDataType($columnName),array('int','bigint'))){
-						$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} = '{$condition}'";
-					}
-				}
+				$sqlCondition.=$this->_SQLCondition($searchAttributeKey,$libDisplaySearchAttribute,$condition,$sqlCondition);
 			}
 		}
-		
-		foreach($libHiddenSearchAttribute as $key=>$val){ //ฟิลด์ที่ซ่อน แต่ต้องเอาเงื่อนไขไปประกอบร่วมในการ search 
+		//include hidden fields in "where" clause
+		foreach($libHiddenSearchAttribute as $val){ 
 			$sqlCondition.= " and {$this->CI->db->dbprefix}{$val}";
 		}
 		return $sqlCondition;
 	}
-	/**	 
-	 * <p><pre>	 
-	 *	distinguish operation and send data to save in mainForms.insertData or mainForms.editData
-	 * </pre><p>	 	 
-	 * @return array 
+	/**
+	 * use by createWhereConditions to avoid too many nested blocks, and to maintain 20 lines per method
+	 * @param array $searchAttributeKey
+	 * @param array $libDisplaySearchAttribute
+	 * @param string $condition
+	 * @param string $sqlCondition
+	 * @return string
+	 */
+	private function _SQLCondition($searchAttributeKey,$libDisplaySearchAttribute,$condition,$sqlCondition){
+		
+		list($tableName,$columnName) =$this->_getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $searchAttributeKey[0]);	
+		// if $searchAttributeKey is array that means condition is from and to (between)
+		if(isset($searchAttributeKey[1])){ 
+			$sqlCondition.=$this->_getFromAndToCond($tableName,$columnName,$condition,$searchAttributeKey,$sqlCondition);
+		}else{			
+			$tableName = $tableName==''?$this->libName:$tableName;
+			//create object of mainForm class for create where conditions by datatype distinguishing  
+			$obj = new mainForms($tableName); 
+			
+			//if datatype characteristic is string
+			if(in_array($obj->libObject->columnDataType($columnName),array('varchar','nvarchar','char','nchar','text','ntext'))){ //ถ้า datatype เป็น char, varchar, nvarchar จะเกิดจาก การเอาฟิลด์ varchar มาต่อกันใน view
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} like '%{$condition}%'";						
+			}elseif(in_array($obj->libObject->columnDataType($columnName),array('int','bigint','decimal','float','tinyint','smallint','money'))){
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} = '{$condition}'";
+			}else{
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} = '{$condition}'";
+			}
+		}
+		return $sqlCondition;
+	}
+	/**
+	 * use by _SQLCondition to avoid too many nested blocks, and to maintain 20 lines per method
+	 * @param string $tableName
+	 * @param string $columnName
+	 * @param string $condition
+	 * @param array $searchAttributeKey
+	 * @param string $sqlCondition
+	 * @return string
+	 */
+	private function _getFromAndToCond($tableName,$columnName,$condition,$searchAttributeKey,$sqlCondition){		
+		if($searchAttributeKey[1]=='from'){									
+			$tableName = $tableName==''?$this->libName:$tableName;
+			//create object of mainForm class for create where conditions by datatype distinguishing  
+			$obj = new mainForms($tableName); 
+			//if datatype is date or datetime, its format must be converted
+			if(in_array($obj->libObject->columnDataType($columnName),array('date','datetime'))){ 
+				list($year,$month,$day) = $this->splitAndConvertDate($condition);
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} >= '{$year}/{$month}/{$day}'";							
+			}else{
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} >= '{$condition}'";
+			}
+		}elseif($searchAttributeKey[1]=='to'){
+			$tableName = $tableName==''?$this->libName:$tableName;
+			//create object of mainForm class for create where conditions by datatype distinguishing
+			$obj = new mainForms($tableName); 
+			//if datatype is date or datetime, its format must be converted
+			if(in_array($obj->libObject->columnDataType($columnName),array('date','datetime'))){ 
+				list($year,$month,$day) = $this->splitAndConvertDate($condition);
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} <= '{$year}/{$month}/{$day}'";						
+			}else{
+				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} <= '{$condition}'";
+			}
+		}
+		return $sqlCondition;
+	}
+	/**	 	 
+	 * distinguish operation and send data to save in mainForms.insertData or mainForms.editData
+	  * @return array 
 	 *	array of operation results
 	 */ 		
 	function saveAddEditData(){		
@@ -479,16 +492,16 @@ class formResponse extends mainForms {
 		}else{
 			return $this->response;
 		}		
-		//$this->notify('warning','คุณอาจจจะสับสนระหว่าง ห้องเรียน กับวิชาเรียนได้');
-		//$this->notify('danger','ยังไม่ได้กรอกข้อมูลวัน เดือน ปี เกิด ');
-		//$this->notify('success','บันทึกข้อมูลสำเร็จ');	
-		
+		/*
+		 * example use of $this->notify($type, $message);
+		- $this->notify('warning','you may not confused with...');
+		- $this->notify('danger','birthdate can not left blank.');
+		- $this->notify('success','Deletion is completed');	
+		*/
 		return $this->response;
 	}
-	/**	 
-	 * <p><pre>	 
-	 *	call parent::deleteData() for delete data 
-	 * </pre><p>	 	 
+	/**	 	 
+	 *	call parent::deleteData() for delete data 	 
 	 * @return array 
 	 *	array of operation results
 	 */ 
@@ -498,101 +511,119 @@ class formResponse extends mainForms {
 		return $this->response;
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	perform loading specified record to put in edit form in addEditModal at front-end
-	 * </pre><p>	 	 
+	 *	perform loading specified record to put in edit form in addEditModal at front-end	 
 	 * @return array 
 	 *	array of data and information for referenced field 
 	 */ 
-	function loadDataToEditInModal(){
-		$response = mainForms::stdResponseFormat();		
-		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();			
+	function loadDataToEditInModal(){			
+		list($columnsWithOrdered, $allLibExtraInfo)=$this->getColumnOrdered();			
 		$request = $this->_REQUEST;
 		
-		//(bugId 20180806-01) หากระบุ format ในการแสดงผลในหน้า addEditModal มา
+		//(bugId 20180806-01) //if format of dispaly is specified in AddEditModal (FRPLCEMNT4FMT is specified)
 		$columnLists = $this->libObject->revisedColumnDescriptions;
-		$selectColumn="";
-		foreach($columnLists as $kk=>$vv){ //kk=columnName
+		$selectColumnInit="";
+		foreach(array_keys($columnLists) as $kk){ //kk=columnName
 			if(isset($allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])){
-				$selectColumn .= "{{".str_replace(FRPLCEMNT4FMT,$kk,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])."}}";
+				$selectColumnInit .= "{{".str_replace(FRPLCEMNT4FMT,$kk,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])."}}";
 			}else{
-				$selectColumn .= "{{".$kk."}}";
+				$selectColumnInit .= "{{".$kk."}}";
 			}
 		}
-		$selectColumn = str_replace("}}","",str_replace("{{","",str_replace("}}{{",',',$selectColumn)));		
+		$selectColumn = str_replace("}}","",str_replace("{{","",str_replace("}}{{",',',$selectColumnInit)));		
 		
-		$sql = "select {$selectColumn} from {$this->CI->db->dbprefix}{$this->libName} where id={$request['id']}";
-		
+		$sql = "select {$selectColumn} from {$this->CI->db->dbprefix}{$this->libName} where id={$request['id']}";		
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
 		$rowArray = (array) $row;
+		
+		//perform get data for modal
+		$this->extend_loadDataToEditInModal($columnsWithOrdered,$allLibExtraInfo,$rowArray);
 				
-		$index = 0;
-		foreach($columnsWithOrdered as $fieldName=>$colInfos)	{
-			//array_push($this->response['converted'], $rowArray[$fieldName]);
-			array_push($this->response['fields'], $rowArray[$fieldName]);
-			if(isset($colInfos['references'])){ //ถ้าใน syncedColumnlistInfoWithRefKey มีฟิลด์ response ของ column นั้น แสดงว่า มีการอ้างไปถึงฟิลด์อื่น
-				//$references[$index] = ;
-				if(!(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]))){					
-					$this->notify('danger'," {$fieldName} got references in db, but references for {$fieldName} not defined in addEditModal. ");	
-				}				
-				list($refTableName, $refFieldName) = explode(".",$allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]);
-				if($rowArray[$fieldName]===""){ //ถ้า ตารางหลัก ฟิลด์นี้มีค่าเป็น null ถึงแม้จะ reference ก็ให้ข้ามไปเลย 						
-					$index++;
-					continue;
-				}
-				$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";
-				//echo $refSql;
-				$refQ = $this->CI->db->query($refSql);
-				$refRow = $refQ->row();
-				$refRowArray = (array) $refRow;
-				if(isset($refRowArray['id'])){ //if record exists 
-					array_push($this->response['references'], $index."#++||||++#".$refRowArray['id']."#++||||++#".$refRowArray['name']);
-				}
-			}
-			elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName])){ //ถึงแม้จะไม่ได้ระบุว่า มี reference ใน syncedColumnlistInfoWithRefKey แต่ระบุ reference มาใน extraEntityInfos[$libName][addEditModal][reference] เช่น 'empIDNo'=>'devEmployees.IDNoAndFullName' ก็ให้สร้าง select2 ด้วย 
-				list($refTableName, $refFieldName) = explode(".",$allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]);
-				if($rowArray[$fieldName]===""){ //ถ้า ตารางหลัก ฟิลด์นี้มีค่าเป็น null ถึงแม้จะ reference ก็ให้ข้ามไปเลย 						
-					$index++;
-					continue;
-				}
-				$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";
-				//echo $refSql;
-				$refQ = $this->CI->db->query($refSql);
-				$refRow = $refQ->row();
-				$refRowArray = (array) $refRow;
-				//$references[$index] = $refRowArray;
-				//var_dump($refRowArray); exit;
-				array_push($this->response['references'], $index."#++||||++#".$refRowArray['id']."#++||||++#".$refRowArray['name']);
-			}
-			$index++;
-		}		
 		return $this->response;
 	}
-	
-	/*
-		ดึงสมาชิกใน _REQUEST ที่ส่งมาว่า ตัวไหนคือ id ที่ใช้อ้างถึง ใช้สำหรับ query ให้ submodal
-	*/
+	/**
+	 * use by loadDataToEditInModal to avoid too many nested blocks, and to maintain 20 lines per method
+	 * @param array $columnsWithOrdered
+	 * @param array $allLibExtraInfo
+	 * @param array $rowArray
+	 */
+	private function extend_loadDataToEditInModal($columnsWithOrdered,$allLibExtraInfo,$rowArray){
+		$index = 0;
+		foreach($columnsWithOrdered as $fieldName=>$colInfos)	{			
+			array_push($this->response['fields'], $rowArray[$fieldName]);			
+			
+			//if value is null then by pass
+			if($rowArray[$fieldName]===""){ 
+				$index++;
+				continue;
+			}
+			
+			//if column is foreign key from other table 
+			if(isset($colInfos['references'])){ 
+				$this->extend_loadDataToEditInModal_getRef($index,$fieldName,$allLibExtraInfo,$rowArray);				
+			}
+			
+			/**
+			 * in case of none-references but it have been specified in extraEntityInfos[$libName][addEditModal][reference]. 
+			 * For instance, 'empIDNo'=>'devEmployees.IDNoAndFullName'. This must create select2 for this situation.
+			 */			
+			elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName])){ 
+				$this->extend_loadDataToEditInModal_getNoneRef($index,$fieldName,$allLibExtraInfo,$rowArray);				
+			}
+			$index++;
+		}
+	}
+	/**
+	 * use by extend_loadDataToEditInModal to avoid too many nested blocks, and to maintain 20 lines per method
+	 * @param type $index
+	 * @param type $fieldName
+	 * @param type $allLibExtraInfo
+	 * @param type $rowArray
+	 */
+	private function extend_loadDataToEditInModal_getRef(&$index,$fieldName,$allLibExtraInfo,$rowArray){
+		if(!(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]))){					
+			$this->notify('danger'," {$fieldName} got references in db, but references for {$fieldName} not defined in addEditModal. ");	
+		}				
+		list($refTableName, $refFieldName) = explode(".",$allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]);		
+		$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";
+		//echo $refSql;
+		$refQ = $this->CI->db->query($refSql);
+		$refRow = $refQ->row();
+		$refRowArray = (array) $refRow;
+		if(isset($refRowArray['id'])){ //if record exists 
+			array_push($this->response['references'], $index."#++||||++#".$refRowArray['id']."#++||||++#".$refRowArray['name']);
+		}
+	}
+	/**
+	 *  use by extend_loadDataToEditInModal to avoid too many nested blocks, and to maintain 20 lines per method
+	 * @param type $index
+	 * @param type $fieldName
+	 * @param type $allLibExtraInfo
+	 * @param type $rowArray
+	 */
+	private function extend_loadDataToEditInModal_getNoneRef(&$index,$fieldName,$allLibExtraInfo,$rowArray){
+		list($refTableName, $refFieldName) = explode(".",$allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]);			
+		$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";
+		//echo $refSql;
+		$refQ = $this->CI->db->query($refSql);
+		$refRow = $refQ->row();
+		$refRowArray = (array) $refRow;		
+		array_push($this->response['references'], $index."#++||||++#".$refRowArray['id']."#++||||++#".$refRowArray['name']);
+	}	
 	/**	 
-	 * <p><pre>	 
-	 *	get field value,id of record, of data in main-entity for use in insert sql of sub-entity
-	 * </pre><p>	 	 
-	 * @return int
-	 *	
+	 * get field value,id of record, of data in main-entity for use in insert SQL of sub-entity	 
+	 * @return int	 
 	 */ 
-	function getIdFieldValueAndSubModalInfo(){
-		//ดึงดูว่า id คือตัวไหน
-		$request = $this->_REQUEST;
-		
-		//$subEntityOrdinal = $request['entityOrdinal']; //subentity ที่ส่งมาคืออะไร เอามาเก็บไว้ก่อน		
+	function getIdFieldValueAndSubModalInfo(){		
+		//use $request instead of $this->_REQUEST to prevent accidentally modify its contents.
+		$request = $this->_REQUEST;			
 		unset($request['entityOrdinal']);
 		
 		$columnListsInfo = $this->libObject->columnListInfo;
 		$index=0;
 		foreach($columnListsInfo as $key=>$val)
 		{
-			if($val['ColumnName']=='id')
-			{
+			if($val['ColumnName']=='id')	{
 				$valueToReturn = $request[$index];				
 			}
 			unset($request[$key]);
@@ -601,26 +632,24 @@ class formResponse extends mainForms {
 		return ['idValue'=>$valueToReturn, 'subModal'=>$this->libExtraInfo['addEditModal']['subModal']];
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	verify that alterView of subModal is exists or not, if not then return warning message, in the other nand,
+	 * verify that alterView of subModal is exists or not, if not then return warning message, in the other nand,
 	 * remove suppressed field that have been specified in subModalInfo and 
 	 * perform call searchResult() to search for submodal for send back to put in datatable of sub-modal(sub-entity)	 
-	 * </pre><p>	 	 
 	 * @return string
-	 *	html of datatable 
+	 *	HTML of data-table 
 	 */
 	function searchResultsForSubModel($subModalInfo){
-		//เช็คเบื้องต้นก่อน 
-		//มี alterView หรือยัง		
+		//precheck
+		//alterview haven declared or not
 		if(!isset($subModalInfo['subModal'][$this->libName]['alterView'])){
-			return ['results'=>'ยังไม่ได้กำหนด alter view ใน submodal '];
+			//return ['results'=>'ยังไม่ได้กำหนด alter view ใน submodal '];
+			return ['results'=>'Alterview in submodal have not been declared.'];
 		}
-		
-		//เอา suppress field ออก selectAttributeFields		
+				
+		//remove selectAttributeFields['suppressedFields']
 		if(isset($subModalInfo['subModal'][$this->libName]['suppressedFields'])){
 			
-			$suppressFields = $subModalInfo['subModal'][$this->libName]['suppressedFields'];
-			//var_dump($suppressFields);
+			$suppressFields = $subModalInfo['subModal'][$this->libName]['suppressedFields'];		
 			
 			$selectAttributeFields = $this->libExtraInfo['selectAttributes']['fields'];
 			foreach($selectAttributeFields as $key=>$val)
@@ -636,35 +665,21 @@ class formResponse extends mainForms {
 		return $this->searchResults($subModalInfo);
 	}
 	/**
-	 * compose sql string and do update record specified from sub-entity
+	 * compose SQL string and do update record specified from sub-entity
 	 */
 	function updateSubEntityRecord(){
-		$request = $this->_REQUEST;
-		$tableName = $this->CI->db->dbprefix."".$this->libName;
-		$columnName = $this->getSubEntityColumnName($request[1]);		
-		//convert date and time 
-		$fieldValue = $request[2];
-		
+		list($request, $tableName, $columnName, $fieldValue) = $this->_getInfoForUpdateSubEntity();
 		
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
-			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}."); 
 			return $this->response;
 		}elseif($this->formValidateForSubEntity($columnName, $fieldValue)){
-			//in case of additional validation, for example see devClassExtInstructors.php. 
-			
+			//in case of additional validation, for example see devClassExtInstructors.php. 		
 			$this->libObject->infoForAdditionalValidateSubEntity = ['idValue'=>$request[0], 'tableName'=>$tableName, 'columnToUpate'=>$columnName];
-			if(in_array($this->_getColumnDataType($this->libObject, $columnName),['date','datetime'])){
-				if($request[2]!==""){
-					$convertedDate = $this->splitAndConvertDate($request[2]);
-					$fieldValue = "'".$convertedDate[0]."/".$convertedDate[1]."/".$convertedDate[2]."'";
-				}else{
-					$fieldValue="NULL";
-				}
-			}else{
-				$fieldValue = $fieldValue==""?"NULL":"'{$fieldValue}'";
-			}			
+			$fieldValue = $this->_getFieldValueForSubModal($request,$columnName,$fieldValue);
+						
 			$updateSql = "update {$tableName} set {$columnName} = {$fieldValue} where id='{$request[0]}' ";
-			if(CODING_ENVIROMENT=='develop') $this->response['converted']['updateSql'] = $updateSql;
+			//if(CODING_ENVIROMENT=='develop'){ $this->response['converted']['updateSql'] = $updateSql;}
 			$updateResult = $this->libObject->doDbTransactions($updateSql);
 			$libExtraInfo = $this->libExtraInfo;
 			if($updateResult[0]=='ok'){
@@ -679,6 +694,38 @@ class formResponse extends mainForms {
 		}		
 	}
 	/**
+	 * call from updateSubEntityRecord to avoid too many nested blocks.
+	 * @return array 
+	 */
+	private function _getInfoForUpdateSubEntity(){
+		$request = $this->_REQUEST; 
+		$tableName = $this->CI->db->dbprefix."".$this->libName; 
+		$columnName = $this->getSubEntityColumnName($request[1]);		
+		//convert date and time 
+		$fieldValue = $request[2];	
+		return [$request, $tableName, $columnName, $fieldValue];
+	}
+	/**
+	 * call from updateSubEntityRecord to avoid too many nested blocks.
+	 * @param array $request
+	 * @param array $columnName
+	 * @return string
+	 *	string in form of SQL update value
+	 */
+	private function _getFieldValueForSubModal($request,$columnName,$fieldValue){
+		if(in_array($this->_getColumnDataType($this->libObject, $columnName),['date','datetime'])){
+			if($request[2]!==""){
+				$convertedDate = $this->splitAndConvertDate($request[2]);
+				$fieldValue = "'".$convertedDate[0]."/".$convertedDate[1]."/".$convertedDate[2]."'";
+			}else{
+				$fieldValue="NULL";
+			}
+		}else{
+			$fieldValue = $fieldValue==""?"NULL":"'{$fieldValue}'";
+		}
+		return $fieldValue;
+	}
+	/**
 	 * get column name for use in update "CLAUSE", requested from sup-entity updating
 	 * @param string $refKey
 	 * @return string
@@ -688,18 +735,27 @@ class formResponse extends mainForms {
 		$index=0;
 		foreach($this->libExtraInfo['selectAttributes']['editableInSubEntity'] as $key=>$val){
 			if($index===((int)$refKey)){
-				if($key===$val){
-					return $key;
-				}else{
-					$temp = explode("::", $val);
-					foreach($this->libExtraInfo['addEditModal']['references'] as $key2=>$val2){
-						if($temp[1]==$key2){
-							return $key2;
-						}
-					}
-				}
+				return $this->extend_getSubEntityColumnName($key,$val);
 			}
 			$index++;
+		}
+	}
+	/**
+	 * call from getSubEntityColumnName to avoid too many nested blocks.
+	 * @param string $key
+	 * @param string $val
+	 * @return string
+	 */
+	private function extend_getSubEntityColumnName($key,$val){
+		if($key===$val){
+			return $key;
+		}else{
+			$temp = explode("::", $val);
+			foreach(array_keys($this->libExtraInfo['addEditModal']['references']) as $key2){
+				if($temp[1]==$key2){
+					return $key2;
+				}
+			}
 		}
 	}
 }
