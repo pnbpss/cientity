@@ -9,12 +9,12 @@ require_once APPPATH."views/incPage.php";
         <link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url();?>assets/img/favicon.png">
         <title>HRD - <?php incPage::display($entityThDescription);?></title>
 		<link href="https://fonts.googleapis.com/css?family=Tahoma:300,400,500,600,700" rel="stylesheet">
-        <?php incPage::header_JS_CSS($header_JS_CSS); ?>
+		 <?php incPage::header_JS_CSS($header_JS_CSS); ?>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
-		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/cientityStyle.css">
+		<link rel="stylesheet" type="text/css" href="<?php echo base_url();?>css/cientityStyle.css">
     </head>
     <body>
         <div class="main-wrapper">

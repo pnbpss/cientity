@@ -1,35 +1,37 @@
 <?php
+	/*
+	
+	  CI_Entity version 1.0          
+	 
+	  Copyright CI_Entity LLC (c) 2018 
+	 
+	 This file is a part of CI_Entity.                                    
+	                                                                     
+	 CI_Entity is free software; you can copy, modify, and distribute it  
+	 under the terms of the GNU Affero General Public License           
+	 Version 1.00, 01 September 2018 and the CI_Entity Licensing Exception.   
+	                                                                     
+	  CI_Entity is distributed in the hope that it will be useful, but     
+	  WITHOUT ANY WARRANTY; without even the implied warranty of         
+	  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               
+	  See the GNU Affero General Public License for more details.        
+	                                                                     
+	  You should have received a copy of the GNU Affero General Public   
+	  License and the CI_Entity Licensing Exception along               
+	  with this program; if not, contact CI_Entity LLC                     
+	  at pnbpss[AT]gmail[DOT]com. If you have questions about the    
+	  GNU Affero General Public License or the licensing of CI_Entity,     
+	  see the CI_Entity license FAQ at http://www.cientity.com/licensing        	 
+	 */
+
 require_once(APPPATH.'libraries/entity/entities.php');
 require_once(APPPATH."libraries/additionalValidationRules.php");
 
-/*
-	+--------------------------------------------------------------------+
-	 | CI_Entity version 1.0                                                |
-	 +--------------------------------------------------------------------+
-	 | Copyright CI_Entity LLC (c) 2004-2017                                |
-	 +--------------------------------------------------------------------+
-	 | This file is a part of CI_Entity.                                    |
-	 |                                                                    |
-	 | CI_Entity is free software; you can copy, modify, and distribute it  |
-	 | under the terms of the GNU Affero General Public License           |
-	 | Version 3, 19 November 2007 and the CI_Entity Licensing Exception.   |
-	 |                                                                    |
-	 | CI_Entity is distributed in the hope that it will be useful, but     |
-	 | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-	 | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-	 | See the GNU Affero General Public License for more details.        |
-	 |                                                                    |
-	 | You should have received a copy of the GNU Affero General Public   |
-	 | License and the CI_Entity Licensing Exception along                  |
-	 | with this program; if not, contact CI_Entity LLC                     |
-	 | at pnbpss[AT]gmail[DOT]com. If you have questions about the        |
-	 | GNU Affero General Public License or the licensing of CI_Entity,     |
-	 | see the CI_Entity license FAQ at http://www.cientity.com/licensing        |
-	 +--------------------------------------------------------------------+
-	 */
+	
+	
 	/**
 	 *
-	 * @package forms
+	 * @package entity
 	 * @copyright CI_Entity LLC (c) 2018
 	 * @author Panu Boonpromsook <pnbpss@gmail.com>
 	 */
@@ -37,9 +39,11 @@ require_once(APPPATH."libraries/additionalValidationRules.php");
 	 /*
 	limitations:
 	1. does not support manay-to-many relations, you have to normalized all entity relations to one-to-one or one-to-many
-	2. 
+	2. does not support datatype binary,varbinary,image,bit,timestamp,sql_variant,uniqueidentifier,xml,cursor,table
 	*/
-
+/**
+ * Entity class is representation of table from database
+ */
 class entity extends entities{
 	/** 
 	* CI store &get_instance for referencing to CodeIgniter resources.
@@ -55,22 +59,37 @@ class entity extends entities{
 		$this->CI->load->database();
 		$this->setName($this->CI->db->dbprefix(get_class($this))); 
 		
-		//type Of Object object (view or table)
+		/**
+		 * type Of Object object (view or table)
+		 */
 		$this->ObjectType = $this->getDbObjectType($this->name); 
 		
-		//list ของ คอลัมน์ใน table นั้นๆ  มาเก็บใน columnListInfo
+		/**
+		* columnListInfo stores  list of columns in a table, and column information such as, is_index, is_primary, is_null, etc
+		*/
 		$this->columnListInfo = $this->getColumnlist($this->name); 
 		
-		// ดึง list ของ คำอธิบาย จาก description ใน table นั้นๆ 
+		/**
+		 * columnDescriptions is Description of columns. This, for example, will be use for display as label in addEditModal.
+		 */
 		$this->columnDescriptions = $this->getColumnDescription($this->name); 
 		
-		// ดึง parent of column(foreign key of) 
+		/**
+		 * columnRefKeyFrom stores informations of referenced-from of columns
+		 * for instance, if current entity is employeeSalaries then column employeeId is foreign key in table employeeSalaries which referenced from column id in table employees		 
+		 */
 		$this->columnRefKeyFrom = $this->getColumnRefKeyFrom($this->name); 
 		
-		// ดึง children of column(foreign key of) 
+		/**
+		 * columnRefKeyTo stores informations of referenced-to of columns
+		 * for instance, if current entity is employees then column id in table employees is use as foreign key of column employeeSalaries.employeeId 
+		 */
 		$this->columnRefKeyTo = $this->getColumnRefKeyTo($this->name); 
 		
 		// เอา list ของคอลัมน์ (getColumnlist) มา เชื่อมกับ list ของ reference (getColumnRefKey)
+		/**
+		 * 
+		 */
 		$this->syncedColumnlistInfoWithRefKey = $this->syncColumnListAndRef($this->columnListInfo, $this->columnRefKeyFrom); 
 		
 		//ทำ entity เพื่อเอาไว้ใช้สำหรับ สร้าง insert string และ  front end (ทำหน้าสำหรับ user interface)
@@ -89,12 +108,27 @@ class entity extends entities{
 		}	
 		
 	}
+	/**
+	 * 
+	 * @param array $sessionData
+	 *	session data, which was created on user signing in.
+	 */
 	public function _saveSessionData($sessionData){ 	
 		$this->sessionData = $sessionData;
 	}
+	/**
+	 * 
+	 * @return array 
+	 *	session data, which was created on user signing in and kept in this->sessionData
+	 */
 	public function _retSessionData(){
 		return $this->sessionData;
-	}	
+	}
+	/**
+	 * 
+	 * @return string
+	 *	the prefix of table defined in APPPATH/config/config.php
+	 */
 	public function _returnDbPrefix(){
 		return $this->CI->db->dbprefix;
 	}
@@ -587,15 +621,11 @@ class entity extends entities{
 			$rules.="{{required}}";
 		}
 		
-		if ($columnInfo['Datatype']=='int')
-		{
-			$rules.="{{integer}}";
-		}elseif($columnInfo['Datatype']=='varchar'){
-			$rules.="{{max_length[".$columnInfo['MaxLength']."]}}"; 
-		}elseif($columnInfo['Datatype']=='char'){
-			$rules.="{{exact_length[".$columnInfo['MaxLength']."]}}"; 
-		}elseif($columnInfo['Datatype']=='decimal')
-		{			
+		if (in_array($columnInfo['Datatype'],['int','tinyint','smallint','bigint'])){
+			$rules.="{{integer}}";		
+		}elseif(in_array($columnInfo['Datatype'],['char','varchar','text','nchar','nvarchar','ntext'])){
+			$rules.="{{max_length[".$columnInfo['MaxLength']."]}}"; 			
+		}elseif(in_array($columnInfo['Datatype'],['decimal','numeric','smallmoney','money','float','real'])){
 			$rules.="{{decimal}}";
 		}
 		/*

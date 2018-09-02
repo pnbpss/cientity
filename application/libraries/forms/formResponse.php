@@ -24,10 +24,8 @@ class formResponse extends mainForms {
 		
 		$this->libObject->_REQUESTE = $this->_REQUEST;
 	}
-	/**	 
-	 * <p><pre>	 
-	 *	compose sql string for search and send back to front end. there are two search case, first, search from filter row, second search from sub-entity
-	 * </pre><p>	 
+	/**
+	 * Compose SQL string for search and send back to front end. there are two search case, first, search from filter row, second search from sub-entity
 	 * @param subModalInfo array
 	 *	incase of search from subModal(sub-entity) this variable will be contains an information of subModal(sub-entity)
 	 * @return object 
@@ -60,7 +58,7 @@ class formResponse extends mainForms {
 		$parameters->sql['join'] = $sqlJoin;
 		
 		//create where clause		
-		//ถ้าเป็น search ที่มาจาก subModal
+		//if search conditions submited from subModal
 		if(isset($subModalInfo['subModal'][$this->libName])){
 			//return ['idValue'=>$valueToReturn, 'subModal'=>$this->libExtraInfo['addEditModal']['subModal']];
 			$idValue = $this->escapeSQL($subModalInfo['idValue']);
@@ -68,9 +66,7 @@ class formResponse extends mainForms {
 			$fieldName=$temp[1];
 			$sqlCondition = " where 1=1 and {$this->CI->db->dbprefix}{$this->libName}.{$fieldName}='{$idValue}' ";			
 			
-		}
-		else //ถ้าเป็น search ที่มาจาก filterRow ในหน้าหลัก
-		{
+		}else{ //if search condition submited from filter row in mainModal
 			$sqlCondition = " where 1=1 ".$this->createWhereConditions($request,$libDisplaySearchAttribute, $libHiddenSearchAttribute);
 		}		
 				
@@ -81,7 +77,7 @@ class formResponse extends mainForms {
 		if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //เอาไว้ดูเฉยๆใน ajax response
 		$parameters->sql['condition'] = $sqlCondition;
 		
-		//สร้างหัวคอลัมน์
+		//create column header row for search result table
 		$headerArray = $this->getSelectListColumnDescriptions($this->libName);
 		
 		$response->results = $this->_getResultFromSQL($parameters->sql,$headerArray,$subModalInfo);
@@ -89,9 +85,7 @@ class formResponse extends mainForms {
 		return $response;
 	}
 	/**	 
-	 * <p><pre>	 
 	 *	execute SQL string which composed in this->searchResults and return search result in HTML format to front-end.
-	 * </pre><p>	 
 	 * @param array sqlObj 
 	 *	consists of SQL string select, join and condition
 	 * @param array headerArray
@@ -101,8 +95,7 @@ class formResponse extends mainForms {
 	 * @return string 
 	 *	HTML string of table, which will be use as dataTable
 	 */
-	private function _getResultFromSQL($sqlObj,$headerArray,$subModalInfo=[])
-	{
+	private function _getResultFromSQL($sqlObj,$headerArray,$subModalInfo=[]){
 		$sqlStr = $sqlObj['select'].$sqlObj['join'].$sqlObj['condition'];		
 		$q = $this->CI->db->query($sqlStr);
 		$tableRow="";
@@ -110,6 +103,7 @@ class formResponse extends mainForms {
 			$rowArray = (array)$row;
 			$tableData="";
 			foreach($rowArray as $key=>$val)	{
+				//if key is dataId, 
 				if($key=='CIEntityDataId'){
 					continue;
 				}
@@ -153,13 +147,14 @@ class formResponse extends mainForms {
 			}			
 			$tableRow .= "<tr cientityDataIdRow='{$row->CIEntityDataId}_{$this->entityOrdinal}'>".$tableData."</tr>";
 		}
-		if($tableRow==""){ //ไม่พบข้อมูล		
+		//not found
+		if($tableRow==""){ 
 			$table = "<table  class=\"table table-striped custom-table datatable\">";
 			$table.="<tbody><tr><td><div class=\"alert alert-warning\" role=\"alert\">search result not found.</div></td></tr></tbody";
 			$table.="</table>";
 			return $table;
 		}
-		//ดึงหัวคอลัมน์ออกมา
+		//fetch column header
 		reset($rowArray);
 		$tableHead="<thead>";
 		$colIndex=0;
@@ -176,8 +171,7 @@ class formResponse extends mainForms {
 			}else{
 				$tableHead .= "";
 			}
-			$datableClass='cientitysubModalDatatable';
-			//var_dump($this->_REQUEST);
+			$datableClass='cientitysubModalDatatable';			
 			$subEntityOrdinalInfo = "cientitySubEntityModalPanelId='{$this->_REQUEST['entityOrdinal']}'";
 		}else{
 			$tableHead .= "<th>action</th>";
@@ -193,9 +187,7 @@ class formResponse extends mainForms {
 		return $table;
 	}
 	/**	 
-	 * <p><pre>	 
 	 *	distinguish datatype between date and datetime and time and return format for datepicker
-	 * </pre><p>	 
 	 * @param string dataType
 	 *	data type
 	 * @return string
@@ -219,11 +211,11 @@ class formResponse extends mainForms {
 	 *	html of td
 	 */
 	private function _getTdTableData($key, $val,$subModalInfo){		
-		//(isset($subModalInfo['subModal']))
 		$libInfos = $this->libExtraInfo;		
 		if((isset($libInfos['selectAttributes']['editableInSubEntity'][$key])) && (isset($subModalInfo['subModal']))){ //if editable data in td, and called from display in submodal
-			$cientityKeyReference = $this->_referenceKeyForSubModalEditTable($libInfos['selectAttributes']['editableInSubEntity'], $key);			
-			if($key==$libInfos['selectAttributes']['editableInSubEntity'][$key]){ //if it is input text
+			$cientityKeyReference = $this->_referenceKeyForSubModalEditTable($libInfos['selectAttributes']['editableInSubEntity'], $key);
+			 //if it is input text
+			if($key==$libInfos['selectAttributes']['editableInSubEntity'][$key]){
 				//dont forget date or datetime input				
 				$dataType = $this->_getColumnDataTypeDirectlyForSubEntityRowInput($key, $libInfos);
 				if(in_array($dataType,['date','datetime','time'])){
@@ -232,8 +224,8 @@ class formResponse extends mainForms {
 					$datetimeInputInfo = ['',''];
 				}
 				return "<input  type='text' class='form-control input-sm cientitySubModalEditTd {$datetimeInputInfo[0]}' {$datetimeInputInfo[1]}  cientityKeyReference='{$cientityKeyReference}' value='{$val}' cientityRollbackValue=\"{$val}\" />";
-			}else{				
-				//return  $this->getSelectInputForSubEntity($key, $val);
+			//if not input text then create select2	
+			}else{		
 				return $this->_inputSelectForSubEntity($key,$val,$cientityKeyReference);
 			}
 		}else{
@@ -241,9 +233,7 @@ class formResponse extends mainForms {
 		}
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	compose select input for sub-entity, get value from text
-	 * </pre><p>	 
+	 * compose select input for sub-entity, get value from text
 	 * @param string key
 	 *	display field name key 
 	 * @param string text
@@ -254,8 +244,7 @@ class formResponse extends mainForms {
 	 *	html of "select" 
 	 */
 	private function _inputSelectForSubEntity($key,$text,$cientityKeyReference){		
-		$linkInfo = $this->libExtraInfo['selectAttributes']['editableInSubEntity'][$key];
-		//var_dump($linkInfo);			
+		$linkInfo = $this->libExtraInfo['selectAttributes']['editableInSubEntity'][$key];			
 		
 		$linkKey = explode("::",$linkInfo);
 		$ajaxInputOption = $this->_getSelect2Info($linkKey[1],$this->libExtraInfo);
@@ -273,9 +262,7 @@ class formResponse extends mainForms {
 		return $html;
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	looking for ordinal number of element in $libInfos['selectAttributes']['editableInSubEntity'][$key]
-	 * </pre><p>	 
+	 * looking for ordinal number of element in $libInfos['selectAttributes']['editableInSubEntity'][$key]
 	 * @param array editableForSubModal
 	 *	array of editableForSubModal info
 	 * @param string key
@@ -294,9 +281,7 @@ class formResponse extends mainForms {
 		return null;
 	}
 	/**	 
-	 * <p><pre>	 
 	 *	compose fields of select for select clause, 
-	 * </pre><p>	 
 	 * @param array selectAttributes
 	 *	selectAttributes is array in extra entity info in extraEntityInfos.php 
 	 * @return string
@@ -310,17 +295,18 @@ class formResponse extends mainForms {
 			if(is_array($val)){
 				foreach($val as $val2){
 					$temp = explode(';;',$val2);
-					//$val2=$temp[0];
-					if(isset($selectAttributes['format'][$temp[0]])){ //หากมี format ของฟิลด์นี้					
-						$selectAttributesStr .= ", ".str_replace("__#@!!@#__",$this->CI->db->dbprefix.$temp[0], $selectAttributes['format'][$temp[0]]);
+					//if format is specified in extraEntityInfo
+					if(isset($selectAttributes['format'][$temp[0]])){ 
+						$selectAttributesStr .= ", ".str_replace(FRPLCEMNT4FMT,$this->CI->db->dbprefix.$temp[0], $selectAttributes['format'][$temp[0]]);
 					}else{
 						$selectAttributesStr .= ", {$this->CI->db->dbprefix}{$temp[0]}";
 					}
 				}
 			}else{				
 				$temp = explode(';;',$val);				
-				if(isset($selectAttributes['format'][$temp[0]])){ //หากมี format ของฟิลด์นี้				
-					$selectAttributesStr .= ", ".str_replace("__#@!!@#__",$this->CI->db->dbprefix.$temp[0], $selectAttributes['format'][$temp[0]]);
+				//if format is specified in extraEntityInfo
+				if(isset($selectAttributes['format'][$temp[0]])){ 
+					$selectAttributesStr .= ", ".str_replace(FRPLCEMNT4FMT,$this->CI->db->dbprefix.$temp[0], $selectAttributes['format'][$temp[0]]);
 				}else{
 					$selectAttributesStr .= ", {$this->CI->db->dbprefix}{$temp[0]}";
 				}
@@ -328,55 +314,37 @@ class formResponse extends mainForms {
 		}
 		return str_replace('dummyColumnNameBpspanuOntherock,','',("select ".$selectAttributesStr));		
 	}
-	/**	
-	* @function getSelectListColumnDescriptions($entityName)
-	* @desc คื่นค่าคำอธิบายในหัวคอลัมน์ เพื่อเอาไปแสดงใน datatable ในรูปของ อาเรย์
-	* @parameters $libraryName ชื่อ entity ของ page นั้น
-	* @return array ของคำอธิบาย array('ชื่อคอลัมน์ใน select list','คำอธิบาย') ตัวอย่าง array('code'=>'รหัสสถานที่')
-	*/
 	/**	 
-	 * <p><pre>	 
-	 *	get column descriptions, header of table for filter row search result or sub-entity search result
-	 * </pre><p>	 
+	 * get column descriptions, header of table for filter row search result or sub-entity search result
 	 * @param string libraryName
 	 *	library name of current library(entity)
 	 * @return array
 	 *	array of column descriptions which will be used as table header.
 	 */
-	protected function getSelectListColumnDescriptions($libraryName) 
-	{
+	protected function getSelectListColumnDescriptions($libraryName){
 		//$selectFields = extraEntityInfos::infos[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
 		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //แก้ bugId 20180808-01
 				
 		$returnArray = [];
-		foreach($selectFields as $key=>$item) //load entity เพื่อจะได้เอา descriptions ของแต่ละ field ออกมา
-		{
-			if(is_array($item)) //ถ้ามีฟิลด์ซ้อนกันใน 1 array item 
-			{
+		foreach($selectFields as $item){ //load entity เพื่อจะได้เอา descriptions ของแต่ละ field ออกมา		
+			if(is_array($item)){ //ถ้ามีฟิลด์ซ้อนกันใน 1 array item 			
 				foreach($item as $key2 => $item2)
 				{
 					$temp = explode(";;",$item2);
-					if(isset($temp[1])) //ถ้ากำหนด descriptions มาเอง(ไม่เอา description ของ column ในฐานข้อมูล
-					{
+					//if description was specified in extraEntityInfo then use the specified.
+					if(isset($temp[1])){
 						array_push($returnArray, $temp[1]);
-					}
-					else //ไปเอา descriptions ของ column ในฐานข้อมูล
-					{
+					}else{ //use column description which specified in database design
 						list($entityName, $columnName) = explode(".",$temp[0]);
 						$obj = $this->_loadLibrary($entityName);
 						array_push($returnArray, $obj->revisedColumnDescriptions[$columnName][0]);
 					}
 				}				
-			}
-			else
-			{
+			}else{
 				$temp = explode(";;",$item);
-				if(isset($temp[1])) //ถ้ากำหนด descriptions มาเอง(ไม่เอา description ของ column ในฐานข้อมูล
-				{
+				if(isset($temp[1])){ //ถ้ากำหนด descriptions มาเอง(ไม่เอา description ของ column ในฐานข้อมูล				
 					array_push($returnArray, $temp[1]);
-				}
-				else //ไปเอา descriptions ของ column ในฐานข้อมูล
-				{
+				}else{ //ไปเอา descriptions ของ column ในฐานข้อมูล				
 					list($entityName, $columnName) = explode(".",$temp[0]);
 					$obj = $this->_loadLibrary($entityName);
 					array_push($returnArray, 
@@ -384,8 +352,7 @@ class formResponse extends mainForms {
 							);
 				}
 			}
-		}
-		//var_dump($returnArray);exit;
+		}		
 		return $returnArray;
 	}
 	/**	 
@@ -547,7 +514,7 @@ class formResponse extends mainForms {
 		$selectColumn="";
 		foreach($columnLists as $kk=>$vv){ //kk=columnName
 			if(isset($allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])){
-				$selectColumn .= "{{".str_replace("__#@!!@#__",$kk,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])."}}";
+				$selectColumn .= "{{".str_replace(FRPLCEMNT4FMT,$kk,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])."}}";
 			}else{
 				$selectColumn .= "{{".$kk."}}";
 			}

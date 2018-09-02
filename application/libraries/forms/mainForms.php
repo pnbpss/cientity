@@ -500,6 +500,10 @@ class mainForms
 			break;
 			case 'char':
 			case 'varchar':
+			case 'text':
+			case 'nchar':
+			case 'nvarchar':
+			case 'ntext':
 				$maxLength = $this->_getColumnLength($obj, $columnName);
 				$inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" maxlength=\"{$maxLength}\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 			break;
@@ -507,7 +511,6 @@ class mainForms
 			case 'date': //หากเป็น input date, หรือ datetime return function _inputDateItem เลย
 				return $this->_inputDateItem($filterOrdinal);
 			break;
-
 				default: $inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 		}
 		$fromToStr = explode('_',$filterOrdinal);

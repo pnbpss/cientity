@@ -90,8 +90,7 @@ class extraEntityInfos {
 														,'devClassStatuses.descriptions;;Status'
 													]
 												,'format'=>[ //รูปแบบที่จะแสดงออกมาหลังจากคลิกปุ่มค้น
-													'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"
-													//'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",108) startDate"
+													'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"													
 													,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
 													,'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
 													,'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
