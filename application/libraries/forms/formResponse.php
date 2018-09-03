@@ -39,22 +39,23 @@ class formResponse extends mainForms {
 		$libInfos = $this->libExtraInfo;
 		$libDisplaySearchAttribute = $libInfos['searchAttributes']['display'];
 		$libHiddenSearchAttribute = isset($libInfos['searchAttributes']['hidden'])?$libInfos['searchAttributes']['hidden']:[];		
-		//$allLibSearchAttribute = array_merge($libDisplaySearchAttribute, $libHiddenSearchAttribute); //เอาเงื่อนไขที่ให้เลือกใน filter row มารวมกับ เงื่อนไขที่ hidden			
-		
+				
 		$request = $this->_REQUEST;
-		unset($request['entityOrdinal']); //เอา ordinal ออก เพราะไม่ได้ใช้ในการสร้าง sql
+		
+		//remove ordinal because it isn't need to create SQL
+		unset($request['entityOrdinal']); 
 		$response = (Object) null;
 		$parameters = (Object) null;
 		
 		//create select clause
 		$sqlSelect = $this->createSelectFields($libInfos['selectAttributes']);
-		if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //เอาไว้ดูเฉยๆใน ajax response
+		//if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //for view at response tab in debuging
 		$parameters->sql['select'] = $sqlSelect;
 		
 		//create from clause and join clause
 		$libInfos['join'] = (isset($libInfos['join']))?$libInfos['join']:[];
 		$sqlJoin = $this->createJoin($libInfos['join'],$this->libName);
-		if(CODING_ENVIROMENT=='develop') $response->sql['join']  = $sqlJoin; //เอาไว้ดูเฉยๆใน ajax response
+		//if(CODING_ENVIROMENT=='develop') $response->sql['join']  = $sqlJoin; //for view at response tab in debuging
 		$parameters->sql['join'] = $sqlJoin;
 		
 		//create where clause		
@@ -74,18 +75,18 @@ class formResponse extends mainForms {
 			$sqlCondition.=$this->libObject->additionalWhereInFilterRow();
 		}
 		
-		if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //เอาไว้ดูเฉยๆใน ajax response
+		//if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //for view at response tab in debuging
 		$parameters->sql['condition'] = $sqlCondition;
 		
 		//create column header row for search result table
-		$headerArray = $this->getSelectListColumnDescriptions($this->libName);
+		$headerArray = $this->getSelectListColumnDescriptions();
 		
 		$response->results = $this->_getResultFromSQL($parameters->sql,$headerArray,$subModalInfo);
 		
 		return $response;
 	}
 	/**	 
-	 *	execute SQL string which composed in this->searchResults and return search result in HTML format to front-end.
+	 * execute SQL string which composed in this->searchResults and return search result in HTML format to front-end.
 	 * @param array sqlObj 
 	 *	consists of SQL string select, join and condition
 	 * @param array headerArray
@@ -202,13 +203,11 @@ class formResponse extends mainForms {
 		}
 	}
 	/**	 
-	 * <p><pre>	 
 	 *	compose td of each search result 
-	 * </pre><p>	 
 	 * @param string key
 	 *	display field name key 
 	 * @return string
-	 *	html of td
+	 *	็HTML of TD
 	 */
 	private function _getTdTableData($key, $val,$subModalInfo){		
 		$libInfos = $this->libExtraInfo;		
@@ -321,9 +320,9 @@ class formResponse extends mainForms {
 	 * @return array
 	 *	array of column descriptions which will be used as table header.
 	 */
-	protected function getSelectListColumnDescriptions($libraryName){
+	protected function getSelectListColumnDescriptions(){
 		//$selectFields = extraEntityInfos::infos[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
-		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //แก้ bugId 20180808-01				
+		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //solved bugId 20180808-01				
 		$returnArray = [];
 		//loop for each field in fields 
 		foreach($selectFields as $item){ 
@@ -386,9 +385,7 @@ class formResponse extends mainForms {
 		return $joinOnSqlStr;
 	}
 	/**	 
-	 * <p><pre>	 
 	 *	create "where" clause for searching 
-	 * </pre><p>	 
 	 * @param array request
 	 *	$_REQUEST
 	 * @param array libDisplaySearchAttribute
@@ -433,7 +430,7 @@ class formResponse extends mainForms {
 			$obj = new mainForms($tableName); 
 			
 			//if datatype characteristic is string
-			if(in_array($obj->libObject->columnDataType($columnName),array('varchar','nvarchar','char','nchar','text','ntext'))){ //ถ้า datatype เป็น char, varchar, nvarchar จะเกิดจาก การเอาฟิลด์ varchar มาต่อกันใน view
+			if(in_array($obj->libObject->columnDataType($columnName),array('varchar','nvarchar','char','nchar','text','ntext'))){ 
 				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} like '%{$condition}%'";						
 			}elseif(in_array($obj->libObject->columnDataType($columnName),array('int','bigint','decimal','float','tinyint','smallint','money'))){
 				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} = '{$condition}'";
@@ -641,8 +638,7 @@ class formResponse extends mainForms {
 	function searchResultsForSubModel($subModalInfo){
 		//precheck
 		//alterview haven declared or not
-		if(!isset($subModalInfo['subModal'][$this->libName]['alterView'])){
-			//return ['results'=>'ยังไม่ได้กำหนด alter view ใน submodal '];
+		if(!isset($subModalInfo['subModal'][$this->libName]['alterView'])){			
 			return ['results'=>'Alterview in submodal have not been declared.'];
 		}
 				

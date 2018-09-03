@@ -77,7 +77,8 @@ class mainForms
 		$rules = $this->libObject->stdValidationRules[$this->libName];
 		
 		foreach($rules as $val){
-			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //ไม่ต้อง validate fied hidden
+			//no need to validate hidden fields
+			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ 
 				if(in_array($val['field'], $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
 					continue;
 				}
@@ -106,7 +107,8 @@ class mainForms
 		$request = [];
 		$index = 0;
 		foreach($columnsWithOrdered as $fieldName=>$colInfos){
-			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ //ไม่ต้อง validate fied hidden
+			//no need to validate hidden fields
+			if((isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden']))){ 
 				if(in_array($fieldName, $allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){
 					$index++;
 					continue;
@@ -119,8 +121,8 @@ class mainForms
 					$this->notify('danger'," {$fieldName} got references in db, but references for {$fieldName} not defined in addEditModal. ");
 				}
 			}
-			$index++;
-			//(bugId 28010804-01) กรณี validate unique ไปใช้ วิธี insert เข้า database ไปเลย แล้วค่อยเอา error message ของ database มาใช้ดีกว่า
+			$index++;			
+			
 		}
 		return $request;
 	}
@@ -255,10 +257,8 @@ class mainForms
 		return $idToEdit;
 	}
 	/**
-	* <p><pre>
 	 *  construct "update.." SQL string for update data of entity and send it to execute at libObject->doDbTransactions. 
 	 * After execution is finished it put the message result into response 
-	* </pre><p>		
 	*/
 	protected function editData(){		
 		
@@ -349,9 +349,7 @@ class mainForms
 		return $str;
 	}
 	/**
-	* <p><pre>
 	* in case of user submit data to insert to table, and duplication error on unique index, this method fetch entity name for display to user
-	* </pre><p>
 	* @param string idxObjectName
 	*	unique index name of duplication error	
 	* @return string
@@ -397,11 +395,8 @@ class mainForms
 		}
 	}
 	/**
-	* <p><pre>
 	*  in case of specified specified [default] value in [addEditModal] in extraEntityInfo, this method apply expression to "value" of "insert" SQL string.
 	*  there are two type of default, "sql" or "function", if default is "sql" then it return key field value of temp[0], otherwise it perform call_user_func and return the value.
-	* 
-	* </pre><p>
 	* @param array defaultExpressions
 	*	array of type of expression, for instance "sql::getdate()", getSession::IDNo
 	* @return string 
@@ -415,9 +410,7 @@ class mainForms
 		}
 	}
 	/**
-	* <p><pre>
 	*  extract field of filter row to perform search by using searchAttributes in extraEntityInfo[entityName][searchAttributes]
-	* </pre><p>
 	* @param array libDisplaySearchAttribute
 	*	array of search attributes which specified in extraEntityInfo[entityName][searchAttributes]
 	* @param string ordinal
@@ -524,9 +517,10 @@ class mainForms
 		{
 			if ($i==$this->maxSelectOptionShow){
 				$cientityClassOptionOverflow="cientitySelectOptionsOverflow";
-				$options="";
-				//$infoForAjaxOptions = $this->_getInfoForAjaxOptions($obj, $entityName, $columnName, $filterOrdinal, $fields); //หาก option มากกว่า $maxSelectOptionShow ให้ใช้ datasource เป็น ajax
-				$infoForAjaxOptions = $this->_getInfoForAjaxOptions($fields); //หาก option มากกว่า $maxSelectOptionShow ให้ใช้ datasource เป็น ajax
+				$options="";				
+				//if selected <option> count is greater than $maxSelectOptionShow then use select2
+				//if not, just create "select" input and not attached to select2
+				$infoForAjaxOptions = $this->_getInfoForAjaxOptions($fields); 
 				break;
 			}
 			$options.="<option value=\"{$row->id}\">{$row->name}</option>";
@@ -549,10 +543,8 @@ class mainForms
 	}	
 	
 	/**
-	* <p><pre>
 	*  create html of each input  in extraEntityInfo[entityName][searchAttributes] in case of its type is date.
 	*  In this case,datetime datatype, the input will be created twice, from and to.
-	* </pre><p>	
 	* @param string filterOrdinal
 	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]	
 	* @return string
@@ -635,7 +627,7 @@ class mainForms
 	*	
 	*/
 	private function _getColumnInfos($obj, $columnName)	{
-		//เอา data type ออกมา
+		//fetch all column datatype and store in $columnInfos array
 		foreach($obj->columnListInfo as $columnInfos){
 			if($columnInfos['ColumnName']==$columnName){
 				return $columnInfos;
@@ -684,10 +676,8 @@ class mainForms
 	}
 	
 	/**
-	* <p><pre>
 	*	loop through this->_AllLibExtraInfo until found the specified libName.
 	 * This method return the ordinal position of library(entity) in array of $this->_AllLibExtraInfo.
-	*  </pre><p>
 	* @param string libName
 	* @return int
 	*	in case of not found return -1
@@ -757,7 +747,7 @@ class mainForms
 	 /**	  
 	  * construct the filter row on first page of each entity at front end
 	  * @return string
-	  *	html string of filter row
+	  *	HTML string of filter row
 	 */
 	public function createFilterRow()	{
 				
@@ -787,13 +777,15 @@ class mainForms
 		$str = ""; $filterOrdinal=0;
 		foreach($searchAttributes['display'] as $key=>$item){
 			$fieldInfo = explode(";;",$item);
-			$fields = explode("::",$fieldInfo[0]); //fieldInfo[0] คือ entity.column อันแรกสุดทีจะเอาไปสร้าง filter
+			//FieldInfo[0] is first entity.column which will be used to create filter in filter row.
+			$fields = explode("::",$fieldInfo[0]); 
 
 			list($entityName, $columnName) = explode(".",$fields[0]);
 
 			//if between is specified
 			if(isset($searchAttributes['between'])){  
-				if(in_array($fields[0], $searchAttributes['between'])){ //ถ้าฟิลด์นั้นอยู่ใน between				
+				// if "between" is specified, the create from and to filter.
+				if(in_array($fields[0], $searchAttributes['between'])){ 
 					$cStr=$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_from',$fields)
 						 .$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_to',$fields);
 				}else{
@@ -940,8 +932,9 @@ class mainForms
 	public function createAddEditModal(){		
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
 		$eachInputItem="";
-		foreach($columnsWithOrdered as $key => $column){
-			if (isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){ //หากเป็น column ที่ hidden ไม่ต้องแสดงออกมา
+		foreach($columnsWithOrdered as $key => $column){			
+			//if it is hidden, specified in $this->libName]['addEditModal'], then by pass
+			if (isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){ 
 				if(array_search($key,$allLibExtraInfo[$this->libName]['addEditModal']['hidden'])!==false){
 					continue;
 				}
@@ -1071,7 +1064,8 @@ class mainForms
 	 *	
 	 */
 	private function _getReferenceNumber($columName, $allLibExtraInfo){	
-		if (isset($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'])){ //หากระบุการเรียงคอลัมน์ในหน้า addEditModal มา
+		//if columnOrdering is specified, then use it, else use table column ordinal which stored in syncedColumnlistInfoWithRefKey
+		if (isset($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'])){ 
 			foreach($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'] as $key=>$val){
 				if($val==$columName)	{
 					return $key;
@@ -1088,9 +1082,7 @@ class mainForms
 	}
 	
 	/**
-	 * <p><pre>
 	 *	construct the string of information for select2 initialization in case of that input fileld use dropdown
-	 * </pre><p>	 
 	 * @param string columnName
 	 *	name for specified column
 	 * @param array libInfo
@@ -1108,9 +1100,7 @@ class mainForms
 	}
 
 	/**
-	 * <p><pre>
-	 *	construct the string of information for select2 initialization in case of that input fileld use dropdown
-	 * </pre><p>	 
+	 * construct the string of information for select2 initialization in case of that input fileld use dropdown
 	 * @param string columnName
 	 *	name for specified column
 	 * @param array libInfo
@@ -1163,10 +1153,8 @@ class mainForms
 	}
 
 	/**
-	 * <p><pre>
 	 * get a table name and column which will be use to construct sql string for retreiving data and sent to select2 in front-end
-	 * , in the oher hand it reverses the _getInfoForAjaxOptionsInAddEditModel method.
-	 * </pre><p>	 
+	 * , on the other hand it reverses the _getInfoForAjaxOptionsInAddEditModel method.
 	 * @param string properties
 	 *	properties is ordinal position information, table and column name, of key that will be fetched to construct sql 
 	 * @param string condition 
@@ -1317,7 +1305,7 @@ class mainForms
 				//which specified in database design.
 				$label = (isset($entityInfos['label'])) 
 				?$entityInfos['label']
-				:(isset($allLibExtraInfo[$entityName]['descriptions'])?$allLibExtraInfo[$entityName]['descriptions']:"?".$entityName); //หากไม่ได้ระบุมาให้ไปเอา descriptions ของ entity นั้น
+				:(isset($allLibExtraInfo[$entityName]['descriptions'])?$allLibExtraInfo[$entityName]['descriptions']:"?".$entityName); 
 
 				$subModalcientityForms = new mainForms($entityName);
 				$suppressedFieldsInAdd = array();
@@ -1412,8 +1400,7 @@ class mainForms
 	protected function notify($notificationsType,$msg)	{
 		if(!(isset($this->response['notifications'][$notificationsType]))){
 			array_push($this->response['notifications']['danger'], "Program error, notification type {$notificationsType} is not defined.");
-		}else{
-			// ควร เช็คว่า หากมี notification เยอะเกินไป ให้เหลือไว้เฉพาะ danger และไม่เกิน 5 notifications/*ค่อยทำ*/
+		}else{			
 			// this should be checked that the danger type message could not more than 5 items, I'll do it later.
 			array_push($this->response['notifications'][$notificationsType], $msg);
 		}
