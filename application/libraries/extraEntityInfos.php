@@ -29,64 +29,104 @@ class ExtraEntityInfos {
 	const infos = [
 		#region devClasses
 		/**
-		 * key=>'devClasses' is library name or you can call entity name. 
+		 * The 'devClasses' key is library name or you can call entity name. 
 		 * if not specified or not presented or is empty array:
 		 * - cannot create addEditModal and the rest components of devClasses.
 		 */
 		'devClasses'=>[
 			
 			/**
-			 * 'descriptions' key is label of each entity, will be use as menu items.
+			 * The 'descriptions' key is label of each entity, will be use as menu items.
 			 * if not specified or not presented or is empty array:
 			 * - CI-Entity will use table name as menu item.
 			 * - Warning on first page of entity will be occurred, but able to add or edit record
-			 * - critical=yes
+			 * - Critical:yes
 			 */
 			'descriptions' => 'Classes or Seminar or Training'
 			
 			/**
-			 * 'addEditModal' key contains information for construct add/edit modal (addEditModal).
+			 * The 'addEditModal' key contains information for construct add/edit modal (addEditModal).
 			 * if not specified or not presented or is empty array:
 			 * - CI-Entity will use default value for construct add/edit modal. Error may be occurred in some case of table structure.
-			 * critical=no
+			 * Critical:yes
+			 * Effected:addEditModal, SQL string for insert and update
 			 */
 			,'addEditModal'=>[
-			
+				
 				/**
-				 * 'columnOrdering' keys tell CI-Entity to ordering input of table columns in add/edit modal.
+				 * The 'columnOrdering' keys tell CI-Entity to ordering input of table columns in add/edit modal. This key also 
+				 * effected to ordering of column in SQL string for update and insert. 
 				 * if not specified or not presented or is empty array: 				 
 				 * - CI-Entity will use ordinal of column in a table to ordering input
-				 * critical=no.
+				 * Critical:no.
+				 * Effected:addEditModal, SQL string for insert and update
 				 */
 				'columnOrdering'=>['id','scId','startDate','locationId','statusId','descriptions','capacity','createdBy','createdDate']
 				
 				/**
-				 * 'columnWidth' keys tell CI-Entity how width in bootstrap-based of input, it will use width=6 if not presented.
-				 * critical=no.
+				 * The 'columnWidth' keys tell CI-Entity how width in bootstrap-based of input, it will use width=6 if not presented.
+				 * Critical:no.
+				 * Effected:addEditModal
+				 * 
 				 * For more informations, field id will disabled because it is auto-increment (identity). 
-				 * Please see "How to design database to suits CI-Entity" in CI-Entity Document.
+				 * Please see "How to design database to suits CI-Entity" in CI-Entity Document.				 * 
 				 */
 				,'columnWidth'=>['descriptions'=>12]
 				
 				/**
-				 * 'hidden' keys contain column name that will not be display as input.
+				 * The 'hidden' keys contain column name that will not be display as input.
 				 * if not specified or not presented or is empty array:
 				 * - it must be specified if the entity got any column that will not let user enter, won't not create input for user. 
 				 *   for example datetime of insert time.	 
+				 * Critical:no.
+				 * Effected:SQL string for insert, addEditModal.
 				 */
 				,'hidden'=>['createdDate','createdBy']
 				
 				/**
-				 * 'default' keys tell CI-Entity how to get default values. There are two types of default value: SQL and user function.
+				 * The 'default' key tell CI-Entity how to get default values and construct SQL string, for insert, of that column.
+				 *  There are  two types of default value: SQL and user function. The keyword 'sql' means use T-SQL function or expression
+				 *  followed by string "::". Otherwise, it will use the method [methodName],_getUserSessionValue is method name. 
+				 * The key word followed by string "::" is parameter of the method.
+				 * The following tells CI-Entity that default value of column createDate is T-SQL function getdate(), and the default
+				 * value of column createdBy must be get from function _getUserSessionValue('userName')
 				 * 
+				 * if not specified or not presented or is empty array:
+				 * - if  values of hidden key is not empty, as described above, the 'default' key must be declared.
+				 * Critical:yes, if 'hidden' key is presented.
+				 * Effected:SQL string for insert.
 				 */
-				,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_getUserSessionValue::userName"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _user_func_getSession คือฟังก์ชั่นใน
-				,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
+				,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_getUserSessionValue::userName"] 
+				
+				/**
+				 * The 'references' key tells CI-Entity where to get options lists for select2 in addEditModal. In some case
+				 *  of creating HTML input tag, we must use HTML select tag for select the existing record from other table.
+				 * Each element of array ...['references'] consists of key and values: key is column name and value is 
+				 * referenced table.column name . For instance, as following, 'statusId'=>'devClassStatuses.descriptions'
+				 * means column statusId of table devClasses will be create select tag. This select tag's option will be get 
+				 * from table the field descriptions of table devClassStatuses.
+				 * Critical:no, but it is not easy for user to enter the id referenced table without selectable.
+				 * Effected:addEditModal.
+				 */
+				,'references'=>[ 
 							'statusId'=>'devClassStatuses.descriptions'
 							,'scId'=>'devSubjectCourseView.courseAndSubject'
 							,'locationId'=>'devLocations.descriptions'
 							]
-				,'fieldLabels'=>['scId'=>'Course Code and Subject\'s Name','capacity'=>'class capacity']
+				
+				/**
+				 * The 'fieldLabels' key is alternative message to use as column label in addEditModal.
+				 * if not specified or not presented or is empty array:
+				 *	CI-Entity will use descriptions of column as column label instead.
+				 * Critical:no
+				 * Effected:addEditModal.
+				 */
+				,'fieldLabels'=>[
+					'scId'=>"Course Code and Subject's Name"
+					,'capacity'=>'class capacity'
+					]
+				
+				
 				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] //format ที่จะใช้ดึงออกมาแสดงในหน้า edit 
 				,'subModal'=>[
 							'devClassEnrollists' =>[
@@ -126,8 +166,7 @@ class ExtraEntityInfos {
 								'display'=>[ //ตัวที่จะแสดงออกมาให้เลือก
 									"devClasses.startDate" //หากเป็น date สร้างสองอัน เพื่อ between 													
 									,"devSubjects.name::devSubjectCourse.subjectId::devClasses.scId" //ต้องระบุ entityName ด้วย										
-									,"devLocations.descriptions::devClasses.locationId;;Select Location"
-									//;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง (จะไม่เอา descriptions ใน column นั้นมาใช้)
+									,"devLocations.descriptions::devClasses.locationId;;Select Location"									
 									,"devClasses.capacity"
 									,"devClasses.descriptions"
 									,"devClassStatuses.descriptions::devClasses.statusId;;Class Status" //;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง
@@ -174,8 +213,7 @@ class ExtraEntityInfos {
 												]//or scope				
 											]
 					]
-			]
-			,'template'=>'projects.html'
+			]			
 			,'header_JS_CSS'=>[
 				'assets/css/bootstrap.min.css','assets/css/dataTables.bootstrap.min.css','assets/css/font-awesome.min.css','assets/css/select2.min.css','assets/css/bootstrap-datetimepicker.min.css','assets/plugins/summernote/dist/summernote.css','assets/css/style.css'
 			]
