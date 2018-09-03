@@ -885,16 +885,15 @@ class mainForms
 	 /**	  
 	  * get ordering of column of entity which should be displayed in add/edit in main page of entity and in sub-entity
 	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.	  
+	  * involved entity's properties
+		*	1. syncedColumnlistInfoWithRefKey list 
+		*	2. revisedColumnDescriptions 
+		*	3. stdValidationRules
 	  * @return array [array columnsWithOrdered, array allLibExtraInfo, array columns]
 	  *	the main purpose of this method is find columnsWithOrdered=column ordering, other return value, such as allLibExtraInfo, columns is junk because we can get these value in everywhere in this object
 	  */
 	protected function getColumnOrdered(){
-		/** 
-		* entity properties ที่เกี่ยวข้อง
-		*	1. syncedColumnlistInfoWithRefKey list ของคอลัมน์ใน table และมีตัวบอก reference key
-		*	2. revisedColumnDescriptions เป็นคำอธิบายของแต่ละคอลัมน์
-		*	3. stdValidationRules
-		*/
+		
 		$tempColumns = $this->libObject->syncedColumnlistInfoWithRefKey;
 		$columns = [];
 		
@@ -906,23 +905,25 @@ class mainForms
 		}
 
 		$allLibExtraInfo = $this->_AllLibExtraInfo();
-		if (isset($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'])){ //หากระบุการเรียงคอลัมน์ในหน้า addEditModal มาใหม่		
+		
+		//if columnOrdering is declared in AddEditModal, then use columnOrdering
+		if (isset($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'])){ 
 			$columnsWithOrdered = [];
 			foreach($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'] as $key=>$val){
 				$columnsWithOrdered[$val] = $columns[$val];
 			}
-		}else{
+		}
+		//if columnOrdering isn't declared in AddEditModal, then use column ordinal of table
+		else{
 			$columnsWithOrdered = $columns;
 		}
 		
 		return [$columnsWithOrdered, $allLibExtraInfo, $columns];
 	}
 	 /**
-	  * <p><pre>
 	  * get ordering of column of entity which should be displayed in add/edit in main page of entity and in sub-entity
 	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.
 	  * the difference between getColumnOrdered() and p_getColumnOrdered() is protected and public respectively.
-	  * </pre><p>	 
 	  * 
 	  * @return array [array columnsWithOrdered, array allLibExtraInfo, array columns]
 	  */
@@ -931,12 +932,10 @@ class mainForms
 		return $this->getColumnOrdered();
 	}
 	 /**
-	  * <p><pre>
 	  * compose the front-end add/edit modal. if also compose html of submodal(this should call sub-entity) is the submodal information is specified.
-	  * </pre><p>	 
 	  * 
 	  * @return string 
-	  *	front-end html for construct add/edit modal.
+	  *	front-end HTML for construct add/edit modal.
 	  */
 	public function createAddEditModal(){		
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
@@ -954,25 +953,25 @@ class mainForms
 		$allModalHtml = str_replace('#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#',$subModalHtml,$modalHtml);
 		return $allModalHtml;
 	}
-	 /**
-	  * <p><pre>
-	  * compose the front-end add/edit sub-entity. this wil displayed in nav bars under edit area of main modal
-	  * </pre><p>	 
+	 /**	  
+	  * compose the front-end add/edit sub-entity. this will displayed in nav bars under edit area of main modal	  
 	  * 
 	  * @return string 
-	  *	front-end html for construct add/edit sub-entity.
+	  *	front-end HTML for construct add/edit sub-entity.
 	  */
-	public function createAddEditSubModal($suppressedFieldsInAdd){
+	private function createAddEditSubModal($suppressedFieldsInAdd){
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
 		$eachInputItem="";
 		foreach($columnsWithOrdered as $key => $column)
 		{
-			if (isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){ //หากเป็น column ที่ hidden ไม่ต้องแสดงออกมา			
+			//if it is hidden column, declared in addEditModal
+			if (isset($allLibExtraInfo[$this->libName]['addEditModal']['hidden'])){ 
 				if(array_search($key,$allLibExtraInfo[$this->libName]['addEditModal']['hidden'])!==false){
 					continue;
 				}
 			}
-			if(in_array($key,$suppressedFieldsInAdd)){ //ถ้าเป็นฟิลด์ที่ระบุมาว่าไม่ต้องแสดงออกมา
+			//$suppressedFieldsInAdd is array of none-display attribute of entity in AddEditSubmodal
+			if(in_array($key,$suppressedFieldsInAdd)){
 				continue;
 			}
 			$eachInputItem.=$this->createEachInputForModal($allLibExtraInfo,$key,$column,$columns);
@@ -982,24 +981,17 @@ class mainForms
 	}
 
 	/**
-	* @function createEachInputForModal
-	* @description สร้าง input แต่ละ column เพื่อใช้ใน addEditModal
-	* @parameters $allLibExtraInfo,$key,$column
-	*/
-	/**
-	 * <p><pre>
 	 * create input for each column for use in addEditModal
-	 * </pre><p>	 
 	 * @param array allLibExtraInfo
 	 *	all extra entity info
 	 * @param int key
 	 *	ordinal position of "columnWidth" which use to specified column
 	 * @param string column
-	 *	name of column that html of input will be constructed 
+	 *	name of column that HTML of input will be constructed 
 	 * @param array columns
 	 *	all column info, such as, datatype, is_primary, maxLength, etc.
 	 * @return string 	 *	
-	 *	front-end html for input of each column
+	 *	front-end HTML for input of each column
 	 */
 	private function createEachInputForModal($allLibExtraInfo,$key,$column,$columns)
 	{
@@ -1009,20 +1001,26 @@ class mainForms
 		$columnWitdth = isset($allLibExtraInfo[$this->libName]['addEditModal']['columnWidth'][$key])?$allLibExtraInfo[$this->libName]['addEditModal']['columnWidth'][$key]:6;
 		$requiredIndicator = "";
 
-		if($column['is_nullable']==0){ //ถ้าไม่อนุญาต null ต้องกรอก		
+		//if column is not null, display asterisk symbol at the end of field label, means must not left blank
+		if($column['is_nullable']==0){ 
 			$requiredIndicator="<span class=\"text-danger\">*</span>";
 		}
 		$disabledString="";
 		if($key=='id'){
 			$disabledString = "disabled";
 		}
-		$inputString="<span class=\"text-danger\">ไม่สามารถดึงชนิด input ได้</span>";
+		$inputString="<span class=\"text-danger\">Unable to retreived input type.</span>";
 		$fieldReferenceNumber = $this->_getReferenceNumber($key,$allLibExtraInfo);
-		if(isset($column['references'])){ //หาก column นั้น มี reference key จาก table อื่น
+		//if the column is references from other table.
+		if(isset($column['references'])){ 
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" tabindex=\"-1\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
 		}
-		//ถึงแม้จะไม่ได้ระบุว่า มี reference ใน syncedColumnlistInfoWithRefKey แต่ระบุ reference มาใน extraEntityInfos[$libName][addEditModal][reference] เช่น 'empIDNo'=>'devEmployees.IDNoAndFullName' ก็ให้สร้าง select2 ด้วย
+		
+		/**
+		 *  if the column isn't references from other table in database design, but it was specified that it have to be referenced 
+		 * from other table in in extraEntityInfos[$libName][addEditModal][reference] then it must create input as select2
+		 */
 		elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$key])){
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
@@ -1033,14 +1031,11 @@ class mainForms
 				case 'int':
 					$inputString = "<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
-				case 'char':
-				case 'varchar':
-
+				case 'char':	case 'varchar': case 'nchar': case 'nvarchar': case 'text': case 'ntext':
 					$maxLength = $columns[$key]['MaxLength'];
 					$inputString = "<input {$disabledString} maxLength='{$maxLength}' class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
-				case 'datetime':
-				case 'date':
+				case 'datetime': case 'date':
 					$inputString = "<input {$disabledString} class=\"form-control datetimepicker cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
 
@@ -1049,7 +1044,7 @@ class mainForms
 			
 		}
 
-		//ถ้ากำหนด fieldLabels มาจาก extraEntityInfos
+		//if field label is declared in extraEntityInfos
 		$fieldLabels = (isset($allLibExtraInfo[$this->libName]['addEditModal']['fieldLabels'][$key]))
 					?$allLibExtraInfo[$this->libName]['addEditModal']['fieldLabels'][$key]
 					:$this->libObject->revisedColumnDescriptions[$key][0]
@@ -1066,15 +1061,8 @@ class mainForms
 	}
 
 	/**
-	* @function _getReferenceNumber
-	* @description คืนค่า index ของ column ใน columnOrdering ใน  addEditModal ใน extraEntityInfos หรือหากยังไม่ก็ำหนดก็จะไปมองหาใน syncedColumnlistInfoWithRefKey เพื่อเอาไปใช้สำหรับอ้างอิงในฟอร์มตอนส่งค่าไปบันทึกหรือแก้ไข
-	* @parameters $columName ชื่อของคอลัมน์, @allLibExtraInfo คือ extraEntityInfos::info
-	*/
-	/**
-	 * <p><pre>
-	 * looking for ordnal position of column in 'columnOrdering' in 'addEditModal' in libraryInfo of current entity. 
+	 * looking for ordinal position of column in 'columnOrdering' in 'addEditModal' in libraryInfo of current entity. 
 	 * In case of 'columnOrdering' in 'addEditModal' in libraryInfo did not specified it will looking for key in syncedColumnlistInfoWithRefKey
-	 * </pre><p>	 
 	 * @param string columnName
 	 *	name for specified column
 	 * @param array allLibExtraInfo
@@ -1098,12 +1086,7 @@ class mainForms
 			}
 		}
 	}
-
-	/**
-	* @function _getSelect2Info
-	* @description คืนค่า infomation เพื่อเอาไว้ให้ select2 ใช้สำหรับ ดึงค่ามาเป็น option ผ่าน ajax
-	* @parameters $columnName ชื่อของคอลัมน์, @libInfos คือ information ของ entity นั้นๆ จาก extraEntityInfos::info
-	*/
+	
 	/**
 	 * <p><pre>
 	 *	construct the string of information for select2 initialization in case of that input fileld use dropdown
@@ -1117,21 +1100,13 @@ class mainForms
 	 */
 	protected function _getSelect2Info($columnName, $libInfos)
 	{
-		if(!(isset($libInfos['addEditModal']['references'][$columnName])))
-		{
+		if(!(isset($libInfos['addEditModal']['references'][$columnName]))){
 			return '';
-		}
-		else
-		{
+		}else{
 			return $this->_getInfoForAjaxOptionsInAddEditModal($columnName);
 		}
 	}
 
-	/**
-	* @function _getInfoForAjaxOptionsInAddEditModel
-	* @description คืนค่า ตำแหน่งของ properties ต่างๆใน extraEntityInfos เพื่อเอาไปใช้ เป็นคุณสมบัติที่ชื่อ infoForAjaxOptions ในแต่ละ input item ในหน้า addEditModal ทั้งนี้เพื่อป้องกันไม่ให้ user เห็นชื่อฟิลด์และtable name ตอนใช้งานจริง
-	* @parameters $columnName ชื่อของคอลัมน์ หรือชื่อฟิลด์นั้นๆ
-	*/
 	/**
 	 * <p><pre>
 	 *	construct the string of information for select2 initialization in case of that input fileld use dropdown
@@ -1188,11 +1163,6 @@ class mainForms
 	}
 
 	/**
-	* @function infoForAjaxAddEditModalOptions
-	* @description คืนค่า ชื่อ table เพื่อเอาไปทำการสร้าง sql สำหรับ select2 ใน input item ในหน้า addEditModal หรือพูดอีกนัยหนึ่งว่า ทำงานย้อนกลับกับ method _getInfoForAjaxOptionsInAddEditModel
-	* @parameters $properties คือตัวอ้างถึง table และชื่อฟิลด์, $conditions คือเงื่อนไขในการค้นหา
-	*/
-	/**
 	 * <p><pre>
 	 * get a table name and column which will be use to construct sql string for retreiving data and sent to select2 in front-end
 	 * , in the oher hand it reverses the _getInfoForAjaxOptionsInAddEditModel method.
@@ -1213,25 +1183,17 @@ class mainForms
 		}
 		$allLibExtraInfo = $this->_AllLibExtraInfo();
 		$i=0;
-		foreach($allLibExtraInfo as $key1=>$val1)
-		{
+		foreach($allLibExtraInfo as $val1){
 			if($i==$loopCompare[0]){
 				$j=0;
-				foreach($val1 as $key2=>$items)
-				{
-					if($j==$loopCompare[1])
-					{
+				foreach($val1 as $items){
+					if($j==$loopCompare[1]){
 						$k=0;
-						foreach($items as $key3=>$itemss)
-						{
-							if($k==$loopCompare[2])
-							{
+						foreach($items as $itemss){
+							if($k==$loopCompare[2]){
 								$l = 0;
-								foreach($itemss as $key4=>$itemssss)
-								{
-
-									if($l==$loopCompare[3])
-									{
+								foreach($itemss as $itemssss){
+									if($l==$loopCompare[3]){
 										$temp1 = explode(".",$itemssss);
 										$tableName = $temp1[0];
 										$columnName = $temp1[1];
@@ -1251,40 +1213,33 @@ class mainForms
 			}
 			$i++;
 		}
-		$sql = "select top ".($this->maxSelectOptionShow)." id, {$columnName} name from {$this->CI->db->dbprefix}{$tableName} where {$columnName} like '{{%".$this->CI->db->escape($conditions)."%}}' order  by id desc";
-		$sql = str_replace("'{{%'","'%",$sql);
-		$sql = str_replace("'%}}'","%'",$sql);
-		//echo $sql; exit;
-		$q = $this->CI->db->query($sql);
-		$i = 0;
+		$sql1 = "select top ".($this->maxSelectOptionShow)." id, {$columnName} name from {$this->CI->db->dbprefix}{$tableName} where {$columnName} like '{{%".$this->CI->db->escape($conditions)."%}}' order  by id desc";
+		$sql2 = str_replace("'{{%'","'%",$sql1);
+		$sqlFinal = str_replace("'%}}'","%'",$sql2);
+		
+		$q = $this->CI->db->query($sqlFinal);		
 		$response['results'] = [];
 		array_push($response['results'], ['id'=>'','text'=>'select..']);
 		foreach($q->result() as $row)		{
-			array_push($response['results'], ['id'=>$row->id,'text'=>$row->name]);
-			$i++;
+			array_push($response['results'], ['id'=>$row->id,'text'=>$row->name]);			
 		}
 		return $response;
 	}
-	/**
-	* @function addEditModalWrapper
-	* @description ส่งคือ wrapper ของ addEditModal หรือพูดง่ายๆว่า ส่งคืน modal addEditModal นั่นเอง
-	* @parameters $entityDescriptions=คำอธิบาย หรือชือภาษาไทยของ entity นั้นๆ
-	*/
-	/**
-	 * <p><pre>	 
-	 * create html string of modal wrapper of each entity.
-	 * the string "___i#n#p#u#t#_#I#t#e#m#s#__" will be replaced by inputs html
-	 * the string "#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#" will be replaced by html of sub-entity 
-	 * </pre><p>	 
+	
+	/**	 
+	 * create HTML string of modal wrapper of each entity.
+	 * the string "___i#n#p#u#t#_#I#t#e#m#s#__" will be replaced by inputs HTML
+	 * the string "#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#" will be replaced by HTML of sub-entity 	 
 	 * @param string entityDescriptions
 	 *	the "descriptions" key of entity in array at file extraEntityInformation.php.
 	 * @return string
-	 *	html string of modal wrapper for front-end of eahc entity
+	 *	HTML string of modal wrapper for front-end of each entity
 	 */
-	private function addEditModalWrapper($entityDescriptions){
-		/** หา cientityEntRefNumber เพื่อเอาไปใช้อ้างอิงในการส่งค่าไป insert หรือ edit*/		
-		$cientityEntRefNumber= $this->entityOrdinal($this->libName);
-		//  style=\"height:2200px;\"
+	private function addEditModalWrapper($entityDescriptions){		
+		//seek for ordinal number in extraEntityInfo by usning method entityOrdinal(). 
+		//The ordinal will be use for reverse back to table name in add, edit operation.
+		$cientityEntRefNumber= $this->entityOrdinal($this->libName);		
+		
 		return "
 				<div class=\"modal-dialog\" style=\"height:2200px;\">
 					<button type=\"button\" class=\"close\" data-dismiss=\"modal\">&times;</button>
@@ -1316,17 +1271,16 @@ class mainForms
 		";
 	}
 	/**
-	 * <p><pre>	 
-	 * create html string of sub-modal(sub-entity) wrapper of each entity.
-	 * the string "___i#n#p#u#t#_#I#t#e#m#s#__" will be replaced by inputs html of sub-entity	 
-	 * </pre><p>	 
+	 * create HTML string of sub-modal(sub-entity) wrapper of each entity.
+	 * the string "___i#n#p#u#t#_#I#t#e#m#s#__" will be replaced by inputs HTML of sub-entity	 	 
 	 * @param string entityDescriptions
 	 *	the "descriptions" key of entity in array at file extraEntityInformation.php.
 	 * @return string
-	 *	html string of modal wrapper for front-end of eahc entity
+	 *	HTML string of modal wrapper for front-end of each entity
 	 */
 	private function addEditSubModalWrapper(){
-		/** หา cientityEntRefNumber เพื่อเอาไปใช้อ้างอิงในการส่งค่าไป insert หรือ edit*/		
+		//seek for ordinal number in extraEntityInfo by usning method entityOrdinal(). 
+		//The ordinal will be use for reverse back to table name in add, edit operation.		
 		$cientityEntRefNumber= $this->entityOrdinal($this->libName);
 		//  style=\"height:2200px;\"
 		return "
@@ -1344,13 +1298,11 @@ class mainForms
 		";
 	}
 	/**
-	 * <p><pre>	 
-	 * create nav bars and sub-entity panels	 
-	 * </pre><p>	 
+	 * create nav-bars and sub-entity panels	 
 	 * @param array allLibExtraInfo
 	 *	all library extra information 
 	 * @return string
-	 *	html string of nav-bars and panels of sub-entity
+	 *	HTML string of nav-bars and panels of sub-entity
 	 */
 	private function getSubEntityModalNavsAndEntityPanel($allLibExtraInfo){
 		$nav = '';
@@ -1360,7 +1312,10 @@ class mainForms
 			$subModals = $allLibExtraInfo[$this->libName]['addEditModal']['subModal'];
 			$firstTime = true;
 			foreach($subModals as $entityName => $entityInfos){
-				$label = (isset($entityInfos['label'])) //หากระบุ label มาแล้ว เอา label ที่ระบุมา
+				
+				//if label was re-declared in extraEntityInfo then use the re-declared, else use column descriptions 
+				//which specified in database design.
+				$label = (isset($entityInfos['label'])) 
 				?$entityInfos['label']
 				:(isset($allLibExtraInfo[$entityName]['descriptions'])?$allLibExtraInfo[$entityName]['descriptions']:"?".$entityName); //หากไม่ได้ระบุมาให้ไปเอา descriptions ของ entity นั้น
 
@@ -1374,7 +1329,7 @@ class mainForms
 				$eachInputForSubModal = str_replace("cientityInputField","cientityInputFieldForSubModal",$eachInputForSubModal);
 				$eachInputForSubModal = str_replace("cientitySelectFromReference","cientitySelectFromReferenceForSubModal",$eachInputForSubModal);
 				$entityOrdinal = $this->entityOrdinal($entityName);
-				// style='height:500px;'
+				
 				$nav.="<li role=\"presentation\" class=\"".($firstTime?"active":"")."\"  cientitySubEntityModalPanelId='{$entityOrdinal}'><a href=\"#\">{$label}</a></li>";
 				$panel.="
 				<div class=\"panel panel-default cientitySubmodelPanel ".($firstTime?"":"hide")."\"  cientitySubEntityModalPanelId='{$entityOrdinal}'>
@@ -1436,13 +1391,10 @@ class mainForms
 				$firstTime=false;
 			}
 		}
-		return $nav==""?"":"<ul class=\"nav nav-tabs cientitySubEntityModalNavBar\">".$nav."</ul>".$panel;
-		/*<table class='table subModalDataTable table-striped' cientitySubEntityModalPanelId='{$entityOrdinal}'></table>*/
+		return $nav==""?"":"<ul class=\"nav nav-tabs cientitySubEntityModalNavBar\">".$nav."</ul>".$panel;		
 	}
 	/**
-	 * <p><pre>	 
-	 *	define the stand dard response for ajax
-	 * </pre><p>	 
+	 * define the standard response for AJAX
 	 * @return array 
 	 *	array of standard response
 	 */
@@ -1451,12 +1403,10 @@ class mainForms
 		return ['converted' => [],'fields'=>[],'notifications' => ['info' => [],'warning'=>[],'danger'=>[],'success'=>[]],'references'=>[]];
 	}
 	/**
-	 * <p><pre>	 
 	 *	put notification message to display for end-users
-	 * </pre><p>	 
 	 * @param string notificationType
 	 *	type of notification, such as success, info, danger, warning.	 
-	 * @param string msg
+	 * @param string $msg
 	 *	message to end-user
 	 */
 	protected function notify($notificationsType,$msg)	{
@@ -1464,23 +1414,16 @@ class mainForms
 			array_push($this->response['notifications']['danger'], "Program error, notification type {$notificationsType} is not defined.");
 		}else{
 			// ควร เช็คว่า หากมี notification เยอะเกินไป ให้เหลือไว้เฉพาะ danger และไม่เกิน 5 notifications/*ค่อยทำ*/
+			// this should be checked that the danger type message could not more than 5 items, I'll do it later.
 			array_push($this->response['notifications'][$notificationsType], $msg);
 		}
 	}
 
 	/**
-	@function recordExists
-	@descriptions  เอาไว้ตรวจสอบว่ามี ข้อมูลตามที่ post ใน table หรือเปล่า, ใช้ตอน validate is_unique[ชื่อตาราง.ฟิลด์]  (ไม่ค่อยดีเท่าไหร่ เพราะจะเป็นการเช็คซ้ำซ้อน) พยายามใช้ callback ของ codeIgniter แล้วแต่ไม่ work
-	@parameter
-	*/
-	/**
 	 * @deprecated since version 1.0.0
-	 * <p><pre>	 
 	 *	to ensure that the data of submitted do doesn't already exists, this will be applied with unique column only
-	 * </pre><p>	 
 	 * @param string rule
-	 *	
-	 * @param string msg
+	 * @param string $request
 	 *	message to end-user
 	 */
 	public function recordExistsInOther($rule,$request)
@@ -1504,9 +1447,7 @@ class mainForms
                 }
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	escaspe for sql server for prevent sql injection
-	 * </pre><p>	 
+	 * Escape for SQL server for prevent sql injection.
 	 * @param string, or array str
 	 *	_REQUEST or something else, especially input from user.
 	 * @return string, or array 
@@ -1518,23 +1459,18 @@ class mainForms
 	private function escapeArray($arr){
 		reset($arr);
 		$newArray = array();
-		//while (list($key, $val) = each($arr)) {
-		foreach($arr as $key=>$val)
-		{
-			//echo $key."===";
+		
+		foreach($arr as $key=>$val)	{			
 			if (is_array($val)){
 				return $this->escapeArray($val);
 			}else{
 				$newArray[$key] = is_string($val)?str_replace("'","''", $val):$val;
 			}
-		}
-		//echo "####";
+		}		
 		return $newArray;
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	converted date from dd/mm/yyyy to yyyy/mm/dd format, and also convert Buddist to Christ. In case of sperator is "-" it also converted to "/"
-	 * </pre><p>	 
+	 * converted date from dd/mm/yyyy to yyyy/mm/dd format, and also convert Buddist to Christ. In case of sperator is "-" it also converted to "/"
 	 * @param string date
 	 *	date in dd/mm/yyyy format
 	 * @param array 
@@ -1562,30 +1498,30 @@ class mainForms
 		return array(null,null,null);
 	}
 	/**	 
-	 * <p><pre>	 
-	 *	convert year from buddist to christ, if the differences of  "year" and current year is greater than 400 then year-543
-	 * </pre><p>	 
+	 *	convert year from buddhist year to christian year, if the differences of  "year" and current year is greater than 400 then year-543
 	 * @param string year
 	 *	year
 	 * @return int
 	 *	converted year
 	 */
-	private function toBCYear($year)	{
-		//ถ้าปี มากว่า ปีปัจจุบันอยู่ 400 แสดงว่าเป็นพศ. ให้ลบออกก่อน(คงไม่มีเงื่อนไขอะไรที่ปีน้อยไปกว่า 400 ปี)
+	private function toBCYear($year)	{		
+		//if year $year is more than current year, that user should be supplied buddist year.
 		if(((int)$year)-((int)date("Y"))>400){
 			$year = ((int) $year) - 543;
 		}
 		return $year;
-	}
+	}	
 	
-	// the following are methods that will be called by call_user_func	
+	/**
+	 * the method will be called by call_user_func 
+	 * @param type $arg
+	 * @return array IDNo stored in session
+	 */
 	private function _user_func_getSession($arg){
 		return $this->session['IDNo'];
 	}		
 	/**	 
-	 * <p><pre>	 
-	 *	get column datatype for compose input tag in datatble of subentity 
-	 * </pre><p>	 
+	 * get column datatype for compose input tag in data-table of sub-entity 
 	 * @param string key
 	 *	column name
 	 * @param array libInfo

@@ -19,7 +19,7 @@ class devClassInstructors extends entity{
 		if(isset($this->infoForAdditionalValidateSubEntity['idValue'])){
 			$idValue=$this->infoForAdditionalValidateSubEntity['idValue'];
 			$addsql =" 
-				declare @classId int; set @classId = (select classId from {$tableName} where id='{$idValue}'); if (select sum(percentLoad) from {$tableName} where 1=1 and classId=@classId) > 100 begin set @errorMessage = 'sum of percent load is exceeded 100'; goto Skipper; end
+				declare @classId int; set @classId = (select classId from {$tableName} where id='{$idValue}'); if (select sum(percentLoad) from {$tableName} where 1=1 and classId=@classId) > 100 begin set @errorMessage = 'Sum of percent load must not exceeded 100.'; goto Skipper; end
 			";
 		}elseif(isset($this->infoForAdditionalValidate['addEditMainEntity'])){
 			list($columnsWithOrdered)=$this->infoForAdditionalValidate;
@@ -31,7 +31,7 @@ class devClassInstructors extends entity{
 				}
 				$index++;
 			}
-			$addsql = "; if (select sum(percentLoad) from {$tableName} where 1=1 and classId='{$thisFieldVal}') > 100 begin set @errorMessage = 'sum of percent load is exceeded 100'; goto Skipper; end";
+			$addsql = "; if (select sum(percentLoad) from {$tableName} where 1=1 and classId='{$thisFieldVal}') > 100 begin set @errorMessage = 'Sum of percent load must not exceeded 100.'; goto Skipper; end";
 		}else{ 
 			//if want to validate other operation such as delete code goes here
 			$addsql = "";
