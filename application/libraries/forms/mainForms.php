@@ -1,22 +1,66 @@
 <?php
 /**
+ * Class mainForm
+ * @author Panu Boonpromsook
+ * 
  * mainForms is Class which use for create HTML components such as input field in filter row, or input component in mainModal. 
  * It also perform form validation.
  */
-class mainForms
-{
-	protected $CI, $obj,$libExtraInfo,$libName;
+class mainForms{
+	
+	/**
+	 * maximum of select2 input 
+	 * @var type 
+	 */
+	private $maxSelectOptionShow = 10;
+	/**
+	 * codeIgniter Instance
+	 * @var object 
+	 */
+	protected $CI;
+
+	/**
+	 * 
+	 */
+	//,$obj
+	/**
+	 * store entity extra info stored in extraEntityInfos.php
+	 * @var array  
+	 */
+	protected $libExtraInfo;
+	/**
+	 * name of library (name of entity)
+	 * @var string
+	 */
+	protected $libName;
+	/**
+	 * HTML for warning user if extraEntityInfo[$libName]
+	 */
 	const notFoundLibExtraInfoKey ="<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Not found ##### key of Entity in infos::extraEntityInfo</label></div></div></div>";
+	/**
+	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
+	 */
 	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in extraEntityInfos.php.</label></div></div></div>";
 	/**
-	*	maxSelectOptionShow is number of row of every select2 component that will be selected
-	*/
-	private $maxSelectOptionShow = 4;
+	 * session data for use in this class and extended.
+	 * @var array 
+	 */
+	public $session;
+	/**
+	 * session data for use in m controller
+	 * @var array 
+	 */
+	public $_REQUESTM;
 
-	public $session, $_REQUESTM;
-
+	/**
+	 * 
+	 * @param string $libName
+	 */
 	public function __construct($libName){
+		//get Code Inger Instance
 		$this->CI =& get_instance();
+		
+		//load codeIgniter database library
 		$this->CI->load->database();
 
 		//libExtraInfo is extra information of each libObject that will be fetch for compose input or form or sub-form
@@ -36,10 +80,21 @@ class mainForms
 			$this->response = $this->stdResponseFormat();
 		}
 	}
+	/**
+	 * store session in to some variable 
+	 * @param type $index
+	 * @param type $val
+	 */
 	public function _setRequestME($index, $val){
+		//_REQUESTM use in m controller
 		$this->_REQUESTM[$index] = $val;
+		//libObject->_REQUESTE use in libObject, especially for additional validation. See example in APPPATH/libraries/custom/devClassEnrollists.php
 		$this->libObject->_REQUESTE[$index] = $val;
 	}
+	/**
+	 * return Library Extra entity info
+	 * @return array
+	 */
 	public function _getLibExtraInfo(){
 		return $this->libExtraInfo;
 	}
@@ -406,7 +461,9 @@ class mainForms
 		if($temp[0]=='sql'){
 			return $temp[1];
 		}else{
-			return "'".call_user_func('self::'.$temp[0],$temp[1])."'";
+			//return "'".call_user_func('self::'.$temp[0],$temp[1])."'";
+			//temp[0] is function name, temp[1] is parameter.
+			return "'".call_user_func([$this->libObject,$temp[0]],$temp[1])."'";
 		}
 	}
 	/**
@@ -1500,11 +1557,12 @@ class mainForms
 	}	
 	
 	/**
+	 * @deprecated since version 1.0.0
 	 * the method will be called by call_user_func 
 	 * @param type $arg
 	 * @return array IDNo stored in session
 	 */
-	private function _user_func_getSession($arg){
+	private function _user_function($arg){
 		return $this->session['IDNo'];
 	}		
 	/**	 

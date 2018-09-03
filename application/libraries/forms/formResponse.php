@@ -1,7 +1,22 @@
 <?php
 require_once(APPPATH.'libraries/forms/mainForms.php');
+/**
+ * Class formResponse
+ * 
+ * @author Panu Boonpromsook
+ * 
+ * formResponse works between m controller and class MainForms Class.
+ */
 class formResponse extends mainForms {
+	/**
+	 * ordinal of entity in extraEntityInfo
+	 * @var int
+	 */
 	private $entityOrdinal;
+	/**
+	 * filtered $_REQUEST
+	 * @var array 
+	 */
 	public $_REQUEST;
 	function __construct($request)
 	{				
@@ -126,9 +141,10 @@ class formResponse extends mainForms {
 						</div>
 					</td>";
 			
-			$actionTdForSubModal="<td class=\"text-center\" name='cientitydataTablesActionSubModule' style='whitespace:nowrap'>													
-													<input type='checkbox' class='form-control input-group-addon cientitySelectToActionSubentity' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'>												
-											</td>";
+			$actionTdForSubModal="
+				<td class=\"text-center\" name='cientitydataTablesActionSubModule' style='whitespace:nowrap'>													
+					<input type='checkbox' class='form-control input-group-addon cientitySelectToActionSubentity' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'>												
+				</td>";
 			
 			
 			if(isset($subModalInfo['subModal'])) {				

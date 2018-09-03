@@ -48,10 +48,23 @@ class entity extends entities{
 	/** 
 	* CI store &get_instance for referencing to CodeIgniter resources.
 	*/	
-	private $CI,$sessionData=[]; 	
+	private $CI;
+		
+	private $sessionData=[]; 	
 	
-	public $infoForAdditionalValidate = []; //for use in additional entity validation for example see devClassExtInstructors.php
-	public $infoForAdditionalValidateSubEntity = []; //for use in additional entity validation for example see devClassExtInstructors.php
+	/**
+	 * for use in additional entity validation for example see devClassExtInstructors.php
+	 */
+	public $infoForAdditionalValidate = []; 
+	
+	/**
+	 * for use in additional entity validation for example see devClassExtInstructors.php
+	 */
+	public $infoForAdditionalValidateSubEntity = []; 
+	
+	/**
+	 * store session data 
+	 */
 	public $_REQUESTE = [];
 	
 	public function __construct(){		
