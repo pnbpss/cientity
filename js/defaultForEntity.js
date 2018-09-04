@@ -26,9 +26,9 @@ $(document).ready(function() {
 	 * init select2 after loaded sub-entity interface
 	 * @param string cientitySubEntityModalPanelId 
 	 */
-	function cientity_InitSelect2InputInSubmodal(cientitySubEntityModalPanelId){
+	function cientity_InitSelect2InputInSubEntity(cientitySubEntityModalPanelId){
 		$(".cientitySubmodelPanel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
-		.find(".cientitySelectFromReferenceForSubModal")
+		.find(".cientitySelectFromReferenceForSubEntity")
 		.each( //sub entity
 			function(){
 			
@@ -45,15 +45,15 @@ $(document).ready(function() {
 			});
 	}
 	
-	//init select2 input in submodal
+	//init select2 input in SubEntity
 	$(".cientitySubmodelPanel").each(function(){ 
 		var cientitySubEntityModalPanelId = $(this).attr('cientitySubEntityModalPanelId');
-		cientity_InitSelect2InputInSubmodal(cientitySubEntityModalPanelId);
+		cientity_InitSelect2InputInSubEntity(cientitySubEntityModalPanelId);
 	});
 	
 	//confirm add button in sub-entity is clicked 
 	$(".cientitySubEntityConfirmAddButton").click(function(){
-		var subModalEntityId = $(this).attr('entityOrdinal');
+		var subEntityEntityId = $(this).attr('entityOrdinal');
 		var dataToPost = new Object();
 		dataToPost['mainEntityInfo'] = new Object();
 		$(".cientityInputField").each(function(){
@@ -64,13 +64,13 @@ $(document).ready(function() {
 		dataToPost['mainEntityInfo']['operation'] = 0; //dummy
 		
 		dataToPost['subEntityInfo'] = new Object();
-		$(".cientitySubmodelPanel[cientitySubEntityModalPanelId='"+subModalEntityId+"']")
-		.find(".cientityInputFieldForSubModal")
+		$(".cientitySubmodelPanel[cientitySubEntityModalPanelId='"+subEntityEntityId+"']")
+		.find(".cientityInputFieldForSubEntity")
 		.each(function(){
 			var cientityfieldReferenceNumber = $(this).attr('cientityfieldReferenceNumber');
 			dataToPost['subEntityInfo'][cientityfieldReferenceNumber] = $(this).val();			
 		});
-		dataToPost['subEntityInfo']['entityOrdinal'] = subModalEntityId;
+		dataToPost['subEntityInfo']['entityOrdinal'] = subEntityEntityId;
 		dataToPost['subEntityInfo']['operation'] = 1;
 		
 		var notifications = cientitypopupNotification('info','Adding',':::loading',0);
@@ -154,7 +154,7 @@ $(document).ready(function() {
 			});
 		});
 		
-			$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] select.cientitySubModalSelectTd").each(function(){
+			$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] select.cientitySubEntitySelectTd").each(function(){
 					var myUrl = $(this).attr('infoForAjaxOptions');
 				$(this).select2({ajax:{url:myUrl,dataType:'json',type:"POST",delay:250},width: '100%',language: "th"});
 			});
@@ -302,7 +302,7 @@ $(document).ready(function() {
 			}
 		});
 		$('.cientityOperationForAddEditModal').val('1');
-		//en:hide submodal, th:ซ่อน submodal		
+		//en:hide SubEntity, th:ซ่อน SubEntity		
 		$(".cientitySubEntityRow").addClass('hide'); 
 	});
 	
@@ -340,6 +340,11 @@ $(document).ready(function() {
 	* th:ดึงข้อมูลจากฐานข้อมูลมาแสดงใน AddEditModal เพื่อแก้ไข
 	* en:fetch data from back-end and put in AddEditModal for edit.
 	*/
+                /**
+                 * 
+                 * @param {type} el
+                 * @returns {undefined}
+                 */
 	function cientityPutDataIntoAddEditModalForm(el){
 		$(".cientityInputField").each(function(){			
 			$(this).find('option').remove();
@@ -355,13 +360,13 @@ $(document).ready(function() {
 			,success:function(data){				
 				if(data.results.fields){
 						cientityPutDataIntoAddEditForm(data.results.fields);
-						cientityLoadDataToSubModalTable();
+						cientityLoadDataToSubEntityTable();
 				}
 				if(data.results.references) cientityPutRefDataIntoAddEditForm(data.results.references);
 
 				//เอาไว้จัดการกับ error message บางกรณีเช่น session หลุดไปแล้ว และแจ้งเตือนให้เข้าสู่ระบบใหม่
 				if((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'');
-				$(".cientitySubEntityRow").removeClass('hide'); //โชว์ submodal
+				$(".cientitySubEntityRow").removeClass('hide'); //โชว์ SubEntity
 			}
 		});
 	}
@@ -501,24 +506,24 @@ $(document).ready(function() {
 	}
 	
 	$(".cientitySubEntityModalNavBar li").click(function(){
-		cientityLoadSubModalContents(this);
+		cientityLoadSubEntityContents(this);
 		
 	});
 	
-	function cientityLoadSubModalContents(el)
+	function cientityLoadSubEntityContents(el)
 	{
 		var cientitySubEntityModalPanelId = $(el).attr('cientitySubEntityModalPanelId');		
 		$(".cientitySubEntityModalNavBar li").removeClass('active');
 		$(el).addClass('active');
 		$(".cientitySubmodelPanel").addClass('hide');
 		$(".cientitySubmodelPanel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").removeClass('hide');
-		cientityLoadDataToSubModalTable();
+		cientityLoadDataToSubEntityTable();
 	}
 	
 	/*
 	* en:load data of sub-entity and put into table of sub-entity
 	*/
-	function cientityLoadDataToSubModalTable(){
+	function cientityLoadDataToSubEntityTable(){
 		//th:วนหาอันที่ active ก่อน
 		//en:loop to find active navbar
 		var cientitySubEntityModalPanelId = -1;
@@ -540,27 +545,27 @@ $(document).ready(function() {
 		dataToPost['mainEntityInfo']['entityOrdinal'] = $('.addEditModalSubmitButton').attr('entityOrdinal');
 		dataToPost['subEntityInfo']['entityOrdinal'] = cientitySubEntityModalPanelId;                                
 		$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").html('');
-		$(".searchProgressBarRowSubModel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").removeClass('hide');	
+		$(".searchProgressBarRowSubEntity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").removeClass('hide');	
 		//ส่งข้อมูลไปยัง backend
 		$.ajax({
-			url: cientity_base_url+'m/loadDataToSubModalTable'
+			url: cientity_base_url+'m/loadDataToSubEntityTable'
 			,data:dataToPost
 			,type:"POST"
 			,dataType:'json'
 			,success:function(data){
-				$(".searchProgressBarRowSubModel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").addClass('hide');	
+				$(".searchProgressBarRowSubEntity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").addClass('hide');	
 				$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").empty();
-				if(data.subModalResults){
+				if(data.subEntityResults){
 					$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
-					.html(data.subModalResults.results);
+					.html(data.subEntityResults.results);
 				}
-				cientityInitDataTableAndOtherControl("cientitysubModalDatatable", cientitySubEntityModalPanelId);
+				cientityInitDataTableAndOtherControl("cientitysubEntityDatatable", cientitySubEntityModalPanelId);
                                                         
 			}
 		});
 	}
 
-	$(".cientityShowAddEditSubmodalPanel").click(function(){
+	$(".cientityShowAddEditSubEntityPanel").click(function(){
 		var cientitySubEntityModalPanelId = $(this).attr('cientitySubEntityModalPanelId');
 		$(".cientitySubPanel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").removeClass('hide');
 	});

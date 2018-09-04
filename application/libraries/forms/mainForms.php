@@ -981,7 +981,7 @@ class mainForms{
 		return $this->getColumnOrdered();
 	}
 	 /**
-	  * compose the front-end add/edit modal. if also compose html of submodal(this should call sub-entity) is the submodal information is specified.
+	  * compose the front-end add/edit modal. if also compose html of sub-entity(this should call sub-entity) is the sub-entity information is specified.
 	  * 
 	  * @return string 
 	  *	front-end HTML for construct add/edit modal.
@@ -999,8 +999,8 @@ class mainForms{
 			$eachInputItem.=$this->createEachInputForModal($allLibExtraInfo,$key,$column,$columns);
 		}
 		$modalHtml = str_replace("___i#n#p#u#t#_#I#t#e#m#s#__",$eachInputItem,$this->addEditModalWrapper((isset($allLibExtraInfo[$this->libName]['descriptions'])?$allLibExtraInfo[$this->libName]['descriptions']:"_".$this->libName)));
-		$subModalHtml = $this->getSubEntityModalNavsAndEntityPanel($allLibExtraInfo);
-		$allModalHtml = str_replace('#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#',$subModalHtml,$modalHtml);
+		$subEntityHtml = $this->getSubEntityModalNavsAndEntityPanel($allLibExtraInfo);
+		$allModalHtml = str_replace('#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#',$subEntityHtml,$modalHtml);
 		return $allModalHtml;
 	}
 	 /**	  
@@ -1009,7 +1009,7 @@ class mainForms{
 	  * @return string 
 	  *	front-end HTML for construct add/edit sub-entity.
 	  */
-	private function createAddEditSubModal($suppressedFieldsInAdd){
+	private function createAddEditSubEntity($suppressedFieldsInAdd){
 		list($columnsWithOrdered, $allLibExtraInfo, $columns)=$this->getColumnOrdered();
 		$eachInputItem="";
 		foreach($columnsWithOrdered as $key => $column)
@@ -1020,13 +1020,13 @@ class mainForms{
 					continue;
 				}
 			}
-			//$suppressedFieldsInAdd is array of none-display attribute of entity in AddEditSubmodal
+			//$suppressedFieldsInAdd is array of none-display attribute of entity in AddEditSubEntity
 			if(in_array($key,$suppressedFieldsInAdd)){
 				continue;
 			}
 			$eachInputItem.=$this->createEachInputForModal($allLibExtraInfo,$key,$column,$columns);
 		}
-		$modalHtml = str_replace("___i#n#p#u#t#_#I#t#e#m#s#__",$eachInputItem,$this->addEditSubModalWrapper());
+		$modalHtml = str_replace("___i#n#p#u#t#_#I#t#e#m#s#__",$eachInputItem,$this->addEditSubEntityWrapper());
 		return $modalHtml;
 	}
 
@@ -1211,7 +1211,7 @@ class mainForms{
 
 	/**
 	 * get a table name and column which will be use to construct sql string for retreiving data and sent to select2 in front-end
-	 * , on the other hand it reverses the _getInfoForAjaxOptionsInAddEditModel method.
+	 * , on the other hand it reverses the _getInfoForAjaxOptionsInAddEditModal method.
 	 * @param string properties
 	 *	properties is ordinal position information, table and column name, of key that will be fetched to construct sql 
 	 * @param string condition 
@@ -1323,7 +1323,7 @@ class mainForms{
 	 * @return string
 	 *	HTML string of modal wrapper for front-end of each entity
 	 */
-	private function addEditSubModalWrapper(){
+	private function addEditSubEntityWrapper(){
 		//seek for ordinal number in extraEntityInfo by usning method entityOrdinal(). 
 		//The ordinal will be use for reverse back to table name in add, edit operation.		
 		$cientityEntRefNumber= $this->entityOrdinal($this->libName);
@@ -1335,7 +1335,7 @@ class mainForms{
 								</div>
 								<div class=\"row\">
 									<div class=\"m-t-20 text-center\">
-										<input type='hidden' class='cientityOperationForAddEditModalInsubModal' value='1' />
+										<input type='hidden' class='cientityOperationForAddEditModalInsubEntity' value='1' />
 										<button entityOrdinal='{$cientityEntRefNumber}' class=\"btn btn-primary cientitySubEntityConfirmAddButton\">Add</button>
 									</div>
 								</div>
@@ -1352,11 +1352,11 @@ class mainForms{
 	private function getSubEntityModalNavsAndEntityPanel($allLibExtraInfo){
 		$nav = '';
 		$panel = '';
-		if(isset($allLibExtraInfo[$this->libName]['addEditModal']['subModal']))
+		if(isset($allLibExtraInfo[$this->libName]['addEditModal']['subEntity']))
 		{
-			$subModals = $allLibExtraInfo[$this->libName]['addEditModal']['subModal'];
+			$subEntitys = $allLibExtraInfo[$this->libName]['addEditModal']['subEntity'];
 			$firstTime = true;
-			foreach($subModals as $entityName => $entityInfos){
+			foreach($subEntitys as $entityName => $entityInfos){
 				
 				//if label was re-declared in extraEntityInfo then use the re-declared, else use column descriptions 
 				//which specified in database design.
@@ -1364,15 +1364,15 @@ class mainForms{
 				?$entityInfos['label']
 				:(isset($allLibExtraInfo[$entityName]['descriptions'])?$allLibExtraInfo[$entityName]['descriptions']:"?".$entityName); 
 
-				$subModalcientityForms = new mainForms($entityName);
+				$subEntitycientityForms = new mainForms($entityName);
 				$suppressedFieldsInAdd = array();
 				if(isset($entityInfos['suppressedFieldsInAdd']))	{
 					$suppressedFieldsInAdd = $entityInfos['suppressedFieldsInAdd'];
 				}
-				$eachInputForSubModal = $subModalcientityForms->createAddEditSubModal($suppressedFieldsInAdd);
+				$eachInputForSubEntity = $subEntitycientityForms->createAddEditSubEntity($suppressedFieldsInAdd);
 
-				$eachInputForSubModal = str_replace("cientityInputField","cientityInputFieldForSubModal",$eachInputForSubModal);
-				$eachInputForSubModal = str_replace("cientitySelectFromReference","cientitySelectFromReferenceForSubModal",$eachInputForSubModal);
+				$eachInputForSubEntity = str_replace("cientityInputField","cientityInputFieldForSubEntity",$eachInputForSubEntity);
+				$eachInputForSubEntity = str_replace("cientitySelectFromReference","cientitySelectFromReferenceForSubEntity",$eachInputForSubEntity);
 				$entityOrdinal = $this->entityOrdinal($entityName);
 				
 				$nav.="<li role=\"presentation\" class=\"".($firstTime?"active":"")."\"  cientitySubEntityModalPanelId='{$entityOrdinal}'><a href=\"#\">{$label}</a></li>";
@@ -1383,7 +1383,7 @@ class mainForms{
 							<div class='col-xs-3'><strong>{$label}</strong></div>
 							<div class='col-xs-8'>
 								<span class='pull-right'>
-									<button type=\"button\" class=\"btn btn-sm btn-secondary cientityShowAddEditSubmodalPanel\" cientitySubEntityModalPanelId='{$entityOrdinal}' role='button'>
+									<button type=\"button\" class=\"btn btn-sm btn-secondary cientityShowAddEditSubEntityPanel\" cientitySubEntityModalPanelId='{$entityOrdinal}' role='button'>
 										<i class=\"fa fa-plus\"></i> add {$label}
 									</button>
 								</span>
@@ -1408,12 +1408,12 @@ class mainForms{
 							<div class='panel-body'>
 								<div class='row'>
 									<div class='col-md-12'>
-										{$eachInputForSubModal}
+										{$eachInputForSubEntity}
 									</div>
 								</div>
 							</div>
 						 </div>
-						 <div class=\"row searchProgressBarRowSubModel hide\" cientitySubEntityModalPanelId='{$entityOrdinal}'>
+						 <div class=\"row searchProgressBarRowSubEntity hide\" cientitySubEntityModalPanelId='{$entityOrdinal}'>
 							<div class=\"col-md-12\">&nbsp;</div>
 							<div class=\"col-md-12\">
 									<div class=\"progress\">

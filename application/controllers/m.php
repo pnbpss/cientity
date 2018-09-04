@@ -171,7 +171,7 @@ class M extends CI_Controller {
 		$response['results'] = $formResponse->loadDataToEditInModal();
 		echo json_encode($response);
 	}
-	public function loadDataToSubModalTable(){
+	public function loadDataToSubEntityTable(){
 		//$mainFormRequest = $_REQUEST['mainEntityInfo'];		
 		$mainFormRequest = $this->input->post('mainEntityInfo',true);	
 		$mainForm = new formResponse($mainFormRequest);
@@ -180,13 +180,13 @@ class M extends CI_Controller {
 		$mainFormLibExtraInfo = $mainForm->_getLibExtraInfo();
 		
 		//if $mainform Contains subForm
-		if(isset($mainFormLibExtraInfo['addEditModal']['subModal'])){
-			$subModalInfo = $mainForm->getIdFieldValueAndSubModalInfo();
+		if(isset($mainFormLibExtraInfo['addEditModal']['subEntity'])){
+			$subEntityInfo = $mainForm->getIdFieldValueAndSubEntityInfo();
 			//$subFormRequest = $_REQUEST['subEntityInfo'];
 			$subFormRequest = $this->input->post('subEntityInfo',true);	
 			$subForm = new formResponse($subFormRequest);
 			$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
-			$response['subModalResults'] = $subForm->searchResultsForSubModel($subModalInfo);
+			$response['subEntityResults'] = $subForm->searchResultsForSubEntity($subEntityInfo);
 		}				
 		
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 

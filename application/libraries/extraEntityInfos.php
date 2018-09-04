@@ -45,11 +45,12 @@ class ExtraEntityInfos {
 			'descriptions' => 'Classes or Seminar or Training'
 			
 			/**
-			 * The 'addEditModal' key contains information for construct add/edit modal (addEditModal).
+			 * The 'addEditModal' key contains information for construct add/edit modal (addEditModal). This is addEditModal of 
+			 * main-entity, I will described sub-entity in 'subEntity' section key below.
 			 * if not specified or not presented or is empty array:
 			 * - CI-Entity will use default value for construct add/edit modal. Error may be occurred in some case of table structure.
 			 * Critical:yes
-			 * Effected:addEditModal, SQL string for insert and update
+			 * Effected:addEditModal, SQL string for insert and update.
 			 */
 			,'addEditModal'=>[
 				
@@ -126,28 +127,45 @@ class ExtraEntityInfos {
 					,'capacity'=>'class capacity'
 					]
 				
+				/**
+				 * The 'format' key will be specified when you have to change the format of display field in addEditModal,
+				 * especially for date or datetime field. The date or datetime column type have to convert to string before
+				 * send to end-user.				
+				 * if not specified or not presented or is empty array:
+				 *	CI-Entity user interface of some entity may act in weird way.
+				 * Critical:no
+				 * Effected:addEditModal.				 
+				 */
+				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] 
 				
-				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] //format ที่จะใช้ดึงออกมาแสดงในหน้า edit 
-				,'subModal'=>[
+				/**
+				 * The 'subEntity' key tells CI-Entity to put sub-entity add/edit section under main-entity add/edit form in addEditModal. 
+				 * For instance, in class add/edit section in main-entity, you want to put class enrollment and class instructor list as sub-entity,
+				 * then 'subEntity' key will help you to make it happened.
+				 * 
+				 * The keys of 'subEntity' key is entity name that will be constructed as sub-entity. 
+				 * 
+				 */
+				,'subEntity'=>[
 							'devClassEnrollists' =>[
 									'label'=>'Enrollments' //หากระบุ label จะเอา label นี้ไปใช้ หากไม่ระบุ จะไป เอา descriptions ของ entity
 									,'alterView'=>'devClassEnrollistsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 									,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
-									,'editable'=>True// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
+									,'editable'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 									,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 							]
 							,'devClassInstructors' =>[
 									'label'=>'Internal Instructors'
 									,'alterView'=>'devClassInstructors.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 									,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
-									,'editable'=>True// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
+									,'editable'=>True// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 									,'suppressedFieldsInAdd'=>['id','classId']  //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 								]
 							,'devClassExtInstructors' =>[
 									'label'=>'External Instructors' 
 									,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
 									,'alterView'=>'devClassExtInstructorsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
-									,'editable'=>true// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
+									,'editable'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 									,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 								]
 							,'devClassBudgets' =>[
@@ -157,7 +175,7 @@ class ExtraEntityInfos {
 										ดังนั้นชื่อฟิลด์ ใน suppressedFields จะต้องเป็น subset ของฟิลด์ใน selectAttributes
 									*/
 									,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
-									,'editable'=>true// มีปุ่ม แก้ไข/เพิ่ม/ลบ ข้อมูลได้หรือไม่
+									,'editable'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 									,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 							]												
 						]
@@ -188,6 +206,11 @@ class ExtraEntityInfos {
 										,'devClasses.capacity;;capacity'
 										,'devClassStatuses.descriptions;;Status'
 									]
+				
+								/**
+								 * It also uses for prevent duplicate colum name from difference table, for examples, table Course contain 
+								* field named name and table Subject contains field named name.
+								 */
 								,'format'=>[ //รูปแบบที่จะแสดงออกมาหลังจากคลิกปุ่มค้น
 									'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"													
 									,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"

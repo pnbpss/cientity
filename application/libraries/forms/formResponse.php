@@ -41,8 +41,8 @@ class formResponse extends mainForms {
 	}
 	/**
 	 * Compose SQL string for search and send back to front end. there are two search case, first, search from filter row, second search from sub-entity
-	 * @param subModalInfo array
-	 *	incase of search from subModal(sub-entity) this variable will be contains an information of subModal(sub-entity)
+	 * @param subEntityInfo array
+	 *	incase of search from subEntity(sub-entity) this variable will be contains an information of subEntity(sub-entity)
 	 * @return object 
 	 *	object of search result from executed composed SQL string
 	 */
@@ -50,7 +50,7 @@ class formResponse extends mainForms {
 		$this->session = $sessionData;
 		$this->libObject->_saveSessionData($this->session);
 	}
-	function searchResults($subModalInfo=[]){		
+	function searchResults($subEntityInfo=[]){		
 		$libInfos = $this->libExtraInfo;
 		$libDisplaySearchAttribute = $libInfos['searchAttributes']['display'];
 		$libHiddenSearchAttribute = isset($libInfos['searchAttributes']['hidden'])?$libInfos['searchAttributes']['hidden']:[];		
@@ -74,11 +74,11 @@ class formResponse extends mainForms {
 		$parameters->sql['join'] = $sqlJoin;
 		
 		//create where clause		
-		//if search conditions submited from subModal
-		if(isset($subModalInfo['subModal'][$this->libName])){
-			//return ['idValue'=>$valueToReturn, 'subModal'=>$this->libExtraInfo['addEditModal']['subModal']];
-			$idValue = $this->escapeSQL($subModalInfo['idValue']);
-			$temp = explode(".", $subModalInfo['subModal'][$this->libName]['alterView']);
+		//if search conditions submited from subEntity
+		if(isset($subEntityInfo['subEntity'][$this->libName])){
+			//return ['idValue'=>$valueToReturn, 'subEntity'=>$this->libExtraInfo['addEditModal']['subEntity']];
+			$idValue = $this->escapeSQL($subEntityInfo['idValue']);
+			$temp = explode(".", $subEntityInfo['subEntity'][$this->libName]['alterView']);
 			$fieldName=$temp[1];
 			$sqlCondition = " where 1=1 and {$this->CI->db->dbprefix}{$this->libName}.{$fieldName}='{$idValue}' ";			
 			
@@ -96,7 +96,7 @@ class formResponse extends mainForms {
 		//create column header row for search result table
 		$headerArray = $this->getSelectListColumnDescriptions();
 		
-		$response->results = $this->_getResultFromSQL($parameters->sql,$headerArray,$subModalInfo);
+		$response->results = $this->_getResultFromSQL($parameters->sql,$headerArray,$subEntityInfo);
 		
 		return $response;
 	}
@@ -106,12 +106,12 @@ class formResponse extends mainForms {
 	 *	consists of SQL string select, join and condition
 	 * @param array headerArray
 	 *	array of header informations which constructed in this->getSelectListColumnDescriptions
-	 * @param array subModalInfo
-	 *	incase of search from subModal(sub-entity) this variable will be contains an information of subModal(sub-entity)
+	 * @param array subEntityInfo
+	 *	incase of search from subEntity(sub-entity) this variable will be contains an information of subEntity(sub-entity)
 	 * @return string 
 	 *	HTML string of table, which will be use as dataTable
 	 */
-	private function _getResultFromSQL($sqlObj,$headerArray,$subModalInfo=[]){
+	private function _getResultFromSQL($sqlObj,$headerArray,$subEntityInfo=[]){
 		$sqlStr = $sqlObj['select'].$sqlObj['join'].$sqlObj['condition'];		
 		$q = $this->CI->db->query($sqlStr);
 		$tableRow="";
@@ -128,7 +128,7 @@ class formResponse extends mainForms {
 				}else{
 					$textAlign='';
 				}
-				$display = $this->_getTdTableData($key, $val,$subModalInfo);					
+				$display = $this->_getTdTableData($key, $val,$subEntityInfo);					
 				$tableData .= "<td class='{$textAlign}'>{$display}</td>";
 			}
 			$actionTd="<td class=\"text-right\">
@@ -141,22 +141,22 @@ class formResponse extends mainForms {
 						</div>
 					</td>";
 			
-			$actionTdForSubModal="
+			$actionTdForSubEntity="
 				<td class=\"text-center\" name='cientitydataTablesActionSubModule' style='whitespace:nowrap'>													
 					<input type='checkbox' class='form-control input-group-addon cientitySelectToActionSubentity' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'>												
 				</td>";
 			
 			
-			if(isset($subModalInfo['subModal'])) {				
-				if(isset($subModalInfo['subModal'][$this->libName]['editable'])){
-					if($subModalInfo['subModal'][$this->libName]['editable']){
-						$tableData.=$actionTdForSubModal;
+			if(isset($subEntityInfo['subEntity'])) {				
+				if(isset($subEntityInfo['subEntity'][$this->libName]['editable'])){
+					if($subEntityInfo['subEntity'][$this->libName]['editable']){
+						$tableData.=$actionTdForSubEntity;
 					}else{
 						$tableData.="";
 					}
 				}else{
 					$tableData.="";
-					$subModalInfo['subModal'][$this->libName]['editable'] = false;
+					$subEntityInfo['subEntity'][$this->libName]['editable'] = false;
 				}
 			}
 			else{
@@ -182,13 +182,13 @@ class formResponse extends mainForms {
 			$tableHead .= "<th>{$headerArray[$colIndex]}</th>";
 			$colIndex++;
 		}
-		if(isset($subModalInfo['subModal'][$this->libName]['editable'])) {
-			if($subModalInfo['subModal'][$this->libName]['editable']){
+		if(isset($subEntityInfo['subEntity'][$this->libName]['editable'])) {
+			if($subEntityInfo['subEntity'][$this->libName]['editable']){
 				$tableHead .= "<th>All <input type='checkbox' class='cientityAction cientitySelectToggleAll' cientityEntityReference='{$this->entityOrdinal}'></th>";
 			}else{
 				$tableHead .= "";
 			}
-			$datableClass='cientitysubModalDatatable';			
+			$datableClass='cientitysubEntityDatatable';			
 			$subEntityOrdinalInfo = "cientitySubEntityModalPanelId='{$this->_REQUEST['entityOrdinal']}'";
 		}else{
 			$tableHead .= "<th>action</th>";
@@ -225,10 +225,10 @@ class formResponse extends mainForms {
 	 * @return string
 	 *	็HTML of TD
 	 */
-	private function _getTdTableData($key, $val,$subModalInfo){		
+	private function _getTdTableData($key, $val,$subEntityInfo){		
 		$libInfos = $this->libExtraInfo;		
-		if((isset($libInfos['selectAttributes']['editableInSubEntity'][$key])) && (isset($subModalInfo['subModal']))){ //if editable data in td, and called from display in submodal
-			$cientityKeyReference = $this->_referenceKeyForSubModalEditTable($libInfos['selectAttributes']['editableInSubEntity'], $key);
+		if((isset($libInfos['selectAttributes']['editableInSubEntity'][$key])) && (isset($subEntityInfo['subEntity']))){ //if editable data in td, and called from display in sub-entity
+			$cientityKeyReference = $this->_referenceKeyForSubEntityEditTable($libInfos['selectAttributes']['editableInSubEntity'], $key);
 			 //if it is input text
 			if($key==$libInfos['selectAttributes']['editableInSubEntity'][$key]){
 				//dont forget date or datetime input				
@@ -238,7 +238,7 @@ class formResponse extends mainForms {
 				}else{					
 					$datetimeInputInfo = ['',''];
 				}
-				return "<input  type='text' class='form-control input-sm cientitySubModalEditTd {$datetimeInputInfo[0]}' {$datetimeInputInfo[1]}  cientityKeyReference='{$cientityKeyReference}' value='{$val}' cientityRollbackValue=\"{$val}\" />";
+				return "<input  type='text' class='form-control input-sm cientitySubEntityEditTd {$datetimeInputInfo[0]}' {$datetimeInputInfo[1]}  cientityKeyReference='{$cientityKeyReference}' value='{$val}' cientityRollbackValue=\"{$val}\" />";
 			//if not input text then create select2	
 			}else{		
 				return $this->_inputSelectForSubEntity($key,$val,$cientityKeyReference);
@@ -272,22 +272,22 @@ class formResponse extends mainForms {
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
 		
-		$html = "<select class='form-control input-sm cientitySubModalSelectTd' cientityKeyReference='{$cientityKeyReference}' {$ajaxInputOption}><option value='{$row->id}'>{$text}</select>";
+		$html = "<select class='form-control input-sm cientitySubEntitySelectTd' cientityKeyReference='{$cientityKeyReference}' {$ajaxInputOption}><option value='{$row->id}'>{$text}</select>";
 		
 		return $html;
 	}
 	/**	 
 	 * looking for ordinal number of element in $libInfos['selectAttributes']['editableInSubEntity'][$key]
-	 * @param array editableForSubModal
-	 *	array of editableForSubModal info
+	 * @param array editableForSubEntity
+	 *	array of editableForSubEntity info
 	 * @param string key
 	 *	key of $libInfos['selectAttributes']['editableInSubEntity'][$key]
 	 * @return string
 	 *	html of td
 	 */
-	private function _referenceKeyForSubModalEditTable($editableForSubModal, $key){		
+	private function _referenceKeyForSubEntityEditTable($editableForSubEntity, $key){		
 		$loop_1 = 0;
-		foreach($editableForSubModal as $key1 =>$val1){
+		foreach($editableForSubEntity as $key1 =>$val1){
 			if($key1==$key){
 				return $loop_1;
 			}
@@ -627,7 +627,7 @@ class formResponse extends mainForms {
 	 * get field value,id of record, of data in main-entity for use in insert SQL of sub-entity	 
 	 * @return int	 
 	 */ 
-	function getIdFieldValueAndSubModalInfo(){		
+	function getIdFieldValueAndSubEntityInfo(){		
 		//use $request instead of $this->_REQUEST to prevent accidentally modify its contents.
 		$request = $this->_REQUEST;			
 		unset($request['entityOrdinal']);
@@ -642,26 +642,26 @@ class formResponse extends mainForms {
 			unset($request[$key]);
 			$index++;
 		}		
-		return ['idValue'=>$valueToReturn, 'subModal'=>$this->libExtraInfo['addEditModal']['subModal']];
+		return ['idValue'=>$valueToReturn, 'subEntity'=>$this->libExtraInfo['addEditModal']['subEntity']];
 	}
 	/**	 
-	 * verify that alterView of subModal is exists or not, if not then return warning message, in the other nand,
-	 * remove suppressed field that have been specified in subModalInfo and 
-	 * perform call searchResult() to search for submodal for send back to put in datatable of sub-modal(sub-entity)	 
+	 * verify that alterView of subEntity is exists or not, if not then return warning message, in the other nand,
+	 * remove suppressed field that have been specified in subEntityInfo and 
+	 * perform call searchResult() to search for sub-entity for send back to put in datatable of sub-modal(sub-entity)	 
 	 * @return string
 	 *	HTML of data-table 
 	 */
-	function searchResultsForSubModel($subModalInfo){
+	function searchResultsForSubEntity($subEntityInfo){
 		//precheck
 		//alterview haven declared or not
-		if(!isset($subModalInfo['subModal'][$this->libName]['alterView'])){			
-			return ['results'=>'Alterview in submodal have not been declared.'];
+		if(!isset($subEntityInfo['subEntity'][$this->libName]['alterView'])){			
+			return ['results'=>'Alterview in sub-entity have not been declared.'];
 		}
 				
 		//remove selectAttributeFields['suppressedFields']
-		if(isset($subModalInfo['subModal'][$this->libName]['suppressedFields'])){
+		if(isset($subEntityInfo['subEntity'][$this->libName]['suppressedFields'])){
 			
-			$suppressFields = $subModalInfo['subModal'][$this->libName]['suppressedFields'];		
+			$suppressFields = $subEntityInfo['subEntity'][$this->libName]['suppressedFields'];		
 			
 			$selectAttributeFields = $this->libExtraInfo['selectAttributes']['fields'];
 			foreach($selectAttributeFields as $key=>$val)
@@ -674,7 +674,7 @@ class formResponse extends mainForms {
 			}
 			$this->libExtraInfo['selectAttributes']['fields'] = $selectAttributeFields;
 		}
-		return $this->searchResults($subModalInfo);
+		return $this->searchResults($subEntityInfo);
 	}
 	/**
 	 * compose SQL string and do update record specified from sub-entity
@@ -688,7 +688,7 @@ class formResponse extends mainForms {
 		}elseif($this->formValidateForSubEntity($columnName, $fieldValue)){
 			//in case of additional validation, for example see devClassExtInstructors.php. 		
 			$this->libObject->infoForAdditionalValidateSubEntity = ['idValue'=>$request[0], 'tableName'=>$tableName, 'columnToUpate'=>$columnName];
-			$fieldValue = $this->_getFieldValueForSubModal($request,$columnName,$fieldValue);
+			$fieldValue = $this->_getFieldValueForSubEntity($request,$columnName,$fieldValue);
 						
 			$updateSql = "update {$tableName} set {$columnName} = {$fieldValue} where id='{$request[0]}' ";
 			//if(CODING_ENVIROMENT=='develop'){ $this->response['converted']['updateSql'] = $updateSql;}
@@ -724,7 +724,7 @@ class formResponse extends mainForms {
 	 * @return string
 	 *	string in form of SQL update value
 	 */
-	private function _getFieldValueForSubModal($request,$columnName,$fieldValue){
+	private function _getFieldValueForSubEntity($request,$columnName,$fieldValue){
 		if(in_array($this->_getColumnDataType($this->libObject, $columnName),['date','datetime'])){
 			if($request[2]!==""){
 				$convertedDate = $this->splitAndConvertDate($request[2]);
