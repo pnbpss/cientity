@@ -424,7 +424,7 @@ class mainForms{
 				}
 			}
 		}
-		$rtcolumnNameList = str_replace("}}","",str_replace ("{{","",str_replace("}}{{"," และ ",$columnNameList)));
+		$rtcolumnNameList = str_replace("}}","",str_replace ("{{","",str_replace("}}{{"," and ",$columnNameList)));
 		return $rtcolumnNameList;
 	}
 	/**

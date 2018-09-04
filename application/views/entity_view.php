@@ -155,7 +155,7 @@ require_once APPPATH."views/incPage.php";
 							if($customizedEntity===false){
 						?>
 							<div id='cientityAddNewEntityRecord' class="col-sm-8 col-xs-9 text-right m-b-20">
-								<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i>Add <?php incPage::display($entityThDescription);?></a>
+								<a href="#" class="btn btn-primary rounded pull-right" data-toggle="modal" data-target="#cientityAddEditModal" data-backdrop="static" data-keyboard="false"><i class="fa fa-plus"></i> Add <small><?php incPage::display($entityThDescription);?></small></a>
 								<!--div class="view-icons">
 									<a href="clients.html" class="grid-view btn btn-link"><i class="fa fa-th"></i></a>
 									<a href="clients-list.html" class="list-view btn btn-link active"><i class="fa fa-bars"></i></a>
@@ -169,7 +169,7 @@ require_once APPPATH."views/incPage.php";
 					<!-- filter row end!-->
 					<div class="row searchProgressBarRow" style="display:none;">
 						<div class="col-md-12">
-								<div class="progress">
+								<div class="progress" style="margin-top:10px;">
 								  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
 									<span class="sr-only">100% Complete</span>
 								  </div>
@@ -180,13 +180,10 @@ require_once APPPATH."views/incPage.php";
 					<!--data table start!-->					
 					<div class="row searchResultsDataTableRow">
 						<div class="col-md-12">
-							<div class="table-responsive cientityDisplaySearchResult">
-								
-							</div>
+							<div class="table-responsive cientityDisplaySearchResult"  style="margin-top:10px;"></div>
 						</div>
 					</div>
-					<!--data table end!-->
-					
+					<!--data table end!-->					
 				</div> 
 				<!-- content end!-->
 				
