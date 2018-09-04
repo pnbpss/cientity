@@ -5,6 +5,8 @@
  * 
  * ExtraEntityInfos declares and supplies an information each entity for class formResponses and mainForm.
  * Information in this file will be varied on table in database, or table design. 
+ * 
+ * You can ignore Thai comment in this file. It given for easier Thai developer to understand the code. 
  */
 class ExtraEntityInfos {
 	/**
@@ -225,10 +227,7 @@ class ExtraEntityInfos {
 						]
 					,'devClassBudgets' =>[
 						'label'=>'Expenses' 
-						,'suppressedFields'=>['classId','startDate','classDescription'] 
-						/**suppressedFields คือ ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก ใน selectAttributes 
-							ดังนั้นชื่อฟิลด์ ใน suppressedFields จะต้องเป็น subset ของฟิลด์ใน selectAttributes
-						*/
+						,'suppressedFields'=>['classId','startDate','classDescription'] 						
 						,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 						,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
@@ -359,24 +358,68 @@ class ExtraEntityInfos {
 			]
 			
 			/**
-			 * The 'join' key values are information that CI-Entity use construct join clause for select query, the query after user perform search in filter row.
-			 * 
+			 * The 'join' key values are information that CI-Entity applies to construct join clause for select query, the query after user perform search in filter row.
+			 * The each value represented joining between main table (main-entity) and other table.
+			 * The meaning of first key of 'join':
+			 *  - 'left' is type of joining
+			 *  - 'devSubjectCourse' is name of table which will be joined with
+			 *  - 'on' is joining conditions. It categorized in to and-scope and or-scope.
+			 * Critical:yes, if select data from multiple table.
+			 * The given 'join' key values as following will be leaded to construct join clause as:
+			 * Suppose the comment(#) is removed, and third, fourth, fifth join table is not given.
+			 * "
+			 * from devClasses 
+			 * left join devSubjectCourse on 
+			 *					(
+			 *						(devClasses.scId = devSubjectCourse.id) 
+			 *						and 
+			 *						(tableA.column1=tableB.column1)
+			 *					)
+			 *					or
+			 *					(
+			 *						(tableB.column1=tableC.column1) 
+			 *						and
+			 *						(tableD.column1>tableE.column1) 
+			 *					)
+			 * left join devCourses on 
+			 *					(
+			 *						(devSubjectCourse.subjectId=devSubjects.id)
+			 *					)
+			 * "
 			 */
-			,'join'=>[
-					['left','devSubjectCourse','on'=>[
-												[
-													['devClasses.scId','=','devSubjectCourse.id'] //and scope
-												]//or scope
-											]
-					]
-					,['left','devCourses','on'=>[[['devSubjectCourse.courseId','=','devCourses.id']]]]
-					,['left','devSubjects','on'=>[[['devSubjectCourse.subjectId','=','devSubjects.id']]]]
-					,['left','devLocations','on'=>[[['devClasses.locationId','=','devLocations.id']]]]
-					,['left','devClassStatuses','on'=>[[ ['devClasses.statusId','=','devClassStatuses.id']]]]
-			]			
+			,'join'=>[					
+					[
+						'left' //type of join such as left, inner, right, full.
+						,'devSubjectCourse' //table name that main-entity will join with.
+						,'on'=> //contains of joining conditions
+							[ 
+								[
+									['devClasses.scId','=','devSubjectCourse.id'] //and scope
+							#		,['tableA.column1','=','tableB.column1'] // and scope
+								]//or scope
+							#	,[
+							#		,['tableB.column1','=','tableC.column1'] // and scope
+							#		,['tableD.column1','>','tableE.column1'] // and scope
+							#	]// or scope
+							]
+					] // first table to join	
+					
+					,['left','devCourses','on'=>[[['devSubjectCourse.courseId','=','devCourses.id']]]] //second table to join with 'devClasses'
+					,['left','devSubjects','on'=>[[['devSubjectCourse.subjectId','=','devSubjects.id']]]] //third table to join with 'devClasses'
+					,['left','devLocations','on'=>[[['devClasses.locationId','=','devLocations.id']]]] //fourth table to join with 'devClasses'
+					,['left','devClassStatuses','on'=>[[['devClasses.statusId','=','devClassStatuses.id']]]] //fifth table to join with 'devClasses'
+			]
+			
+			/**
+			 * 'header_JS_CSS' is header JS file or CSS file that have to be linked in main_view.php or entity_view.php. This informations will be placed in header tag of html
+			 */
 			,'header_JS_CSS'=>[
 				'assets/css/bootstrap.min.css','assets/css/dataTables.bootstrap.min.css','assets/css/font-awesome.min.css','assets/css/select2.min.css','assets/css/bootstrap-datetimepicker.min.css','assets/plugins/summernote/dist/summernote.css','assets/css/style.css'
 			]
+			
+			/**
+			 * 'footer_JS_CSS' is link information of JS file or CSS file that have to be linked in main_view.php or entity_view.php. This informations will placed in bottom of body tag.
+			 */
 			,'footer_JS_CSS'=>[
 				'assets/js/jquery-3.2.1.min.js','assets/js/bootstrap.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap.min.js','assets/js/jquery.slimscroll.js','assets/plugins/morris/morris.min.js','assets/js/select2.min.js','assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/app.js','assets/plugins/summernote/dist/summernote.min.js','js/defaultForEntity.js'
 			]

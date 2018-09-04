@@ -26,21 +26,20 @@
 
 require_once(APPPATH.'libraries/entity/entities.php');
 require_once(APPPATH."libraries/additionalValidationRules.php");
-
 	
-	
-	/**
-	 *
-	 * @package entity
-	 * @copyright CI_Entity LLC (c) 2018
-	 * @author Panu Boonpromsook <pnbpss@gmail.com>
-	 */
+/**
+ *
+ * @package entity
+ * @copyright CI_Entity LLC (c) 2018
+ * @author Panu Boonpromsook <pnbpss@gmail.com>
+ */
 
-	 /*
-	limitations:
-	1. does not support manay-to-many relations, you have to normalized all entity relations to one-to-one or one-to-many
-	2. does not support datatype binary,varbinary,image,bit,timestamp,sql_variant,uniqueidentifier,xml,cursor,table
-	*/
+ /*
+limitations:
+1. does not support manay-to-many relations, you have to normalized all entity relations to one-to-one or one-to-many
+2. does not support datatype binary,varbinary,image,bit,timestamp,sql_variant,uniqueidentifier,xml,cursor,table
+*/
+
 /**
  * Entity class is representation of table from database
  */
@@ -121,6 +120,7 @@ class entity extends entities{
 		}	
 		
 	}
+	
 	/**
 	 * 
 	 * @param array $sessionData
@@ -129,6 +129,7 @@ class entity extends entities{
 	public function _saveSessionData($sessionData){ 	
 		$this->sessionData = $sessionData;
 	}
+	
 	/**
 	 * 
 	 * @return array 
@@ -137,6 +138,7 @@ class entity extends entities{
 	public function _retSessionData(){
 		return $this->sessionData;
 	}
+	
 	/**
 	 * 
 	 * @return string
@@ -145,6 +147,7 @@ class entity extends entities{
 	public function _returnDbPrefix(){
 		return $this->CI->db->dbprefix;
 	}
+	
 	/**
 	* @return object type of current entity 
 	* 
@@ -156,10 +159,10 @@ class entity extends entities{
 		$row = $q->row();
 		return $row->type;
 	}
+	
 	/**
-	* 
-	* <p>
-	* <pre>example of array format of each column is as following
+	* Build array of column information of and given entity(@param $entityName)
+	* The following is example array structure and content built by this method:
 	* array (size=2)
 	*	0 => 
 	*	array (size=12)
@@ -188,9 +191,8 @@ class entity extends entities{
 	*	  'PrimaryKey' => int 0
 	*	  'is_unique' => null
 	*	  'is_unique_constraint' => null
-	*	  'index_name' => null
-	* </pre></p>
-	* @param string entityName 
+	*	  'index_name' => null	
+	* @param string $entityName 
 	*	name of entity
 	* @return array
 	*	the informations of each column of specified entity in array format.
@@ -212,10 +214,10 @@ class entity extends entities{
 		";
 		return  $this->resultToArray($this->CI->db->query($sql));
 	}
+	
 	/**	
-	* <p><pre>
-	* construct description of each entity's column
-	* example of array format of each column is as following
+	* Construct description of each entity's column.
+	* The following is example array structure and content built by this method:
 	* array (size=8)
 	*	0 => 
 	*	array (size=4)
@@ -229,9 +231,8 @@ class entity extends entities{
 	*	  'columnName' => string 'scId' (length=4)
 	*	  'descriptions' => string 'วิชาในหลักสูตร||scId' (length=48)
 	*	  'a' => int 1
-	* </pre>
-	* * 'a' is just a dummy, no matter to using.
-	* </p>
+	*
+	 * 	* * 'a' is just a dummy, no matter to using.
 	* @param string entityName
 	*	name of specified entity 
 	* @return array
@@ -254,10 +255,10 @@ class entity extends entities{
 		
 		return $this->resultToArray($this->CI->db->query($sql));
 	}
+	
 	/**	
-	* <p>
 	* construct list of table.column which this entity is use as foreign key
-	* <pre>for example
+	* for example
 	* array (size=2)
 	*	0 => 
 	*	array (size=6)
@@ -275,7 +276,6 @@ class entity extends entities{
 	*	  'column' => string 'locationId' (length=10)
 	*	  'referenced_table' => string 'hds_devLocations' (length=16)
 	*	  'referenced_column' => string 'id' (length=2)
-	*	</pre></p>
 	* @param string entityName
 	*	name of entity
 	* @return array 
@@ -283,7 +283,8 @@ class entity extends entities{
 	*/
 	public function getColumnRefKeyFrom($entityName){ //$entityName is string 	
 		$fullEntityName = $this->CI->db->database.'.dbo.'.$entityName;
-		$sql = "SELECT  obj.name AS FK_NAME,sch.name AS [schema_name],tab1.name AS [table],col1.name AS [column],tab2.name AS [referenced_table],col2.name AS [referenced_column]
+		$sql = "SELECT  obj.name AS FK_NAME,sch.name AS [schema_name],tab1.name AS [table]
+			,col1.name AS [column],tab2.name AS [referenced_table],col2.name AS [referenced_column]
 			FROM sys.foreign_key_columns fkc
 			INNER JOIN sys.objects obj
 				ON obj.object_id = fkc.constraint_object_id
@@ -302,9 +303,10 @@ class entity extends entities{
 		
 		return $this->resultToArray($this->CI->db->query($sql));		
 	}
+	
 	/**	
 	*
-	* <p><pre>for example
+	* for example
 	* array (size=2)
 	*	0 => 
 	*	array (size=7)
@@ -324,7 +326,6 @@ class entity extends entities{
 	*	  'referenced_to_table' => string 'hds_devClassExtInstructors' (length=26)
 	*	  'referenced_to_libName' => string 'devClassExtInstructors' (length=22)
 	*	  'referenced_to_column' => string 'classId' (length=7)
-	* </pre></p>
 	* @param string entityName
 	*      name of specified entity
 	* @return array 
@@ -353,9 +354,9 @@ class entity extends entities{
 		
 		return $this->resultToArray($this->CI->db->query($sql));		
 	}
+	
 	/**         
-	* <p><pre>
-	*Convert query result from SQL to array of result for easy to iterate in using
+	* Convert query result from SQL to array of result for easy to iterate in using
 	* for example 
 	* $q = {
 		{row1.id=1}{row1.name='John'}
@@ -366,7 +367,6 @@ class entity extends entities{
 	*	0=>[id=>1,'name'=>'John']
 	*	,1=>[id=>2,'name'=>'Jack']
 	* ]
-	* </pre></p>
 	* @param object q
 	*	query result from db 
 	* @return array 
@@ -385,11 +385,11 @@ class entity extends entities{
 			$i++;
 		}		
 		return $arrayResult;		
-	}	
+	}
+	
 	/** 	
-	* <p><pre>	
 	* iterate $this->columnRefKeyFrom, as external loop, and iterate columnListInfo as internal loop. if both key is match then add referenced key. 
-	* <i>(เอา array ของ reference key มา iterate เพื่อดูว่า ใน columnListInfo มี column ไหนบ้างที่มี reference key หากมีจะเพิ่ม reference เข้าไปใน array นั้น )</i>
+	* (เอา array ของ reference key มา iterate เพื่อดูว่า ใน columnListInfo มี column ไหนบ้างที่มี reference key หากมีจะเพิ่ม reference เข้าไปใน array นั้น )
 	* for example
 	* array (size=9)
 	*  'ColumnName' => string 'locationId' (length=10)
@@ -401,8 +401,7 @@ class entity extends entities{
 	*  'is_identity' => int 0
 	*  'default_object_id' => int 0
 	*  'PrimaryKey' => int 0
-	*  <b>'references' => array('referencedTable'=>'hds_devLocations','referencedColumn'=>'id') <i>key 'references' is added after use this method </i></b>
-	* </pre></p>
+	*  'references' => array('referencedTable'=>'hds_devLocations','referencedColumn'=>'id') key 'references' is added after use this method 
 	* @param array columnListInfo
 	*	array of information of this entity columns 
 	* @param array columnRefKeyFrom
@@ -430,17 +429,18 @@ class entity extends entities{
 		}		
 		return $syncedColumnlistInfoWithRefKey;
 	}
-                /**
-                 * set name of entity by get name of class
-                 * @param string name
-                 *      full table name 
-                 */
+	
+	/**
+	 * set name of entity by get name of class
+	 * @param string name
+	 *      full table name 
+	 */
 	public function setName($name){ //set name of entity, and $name is string
 		$this->name = $name;
 		$this->shortName = get_class($this);
 	}
+	
 	/**	
-	* <p><pre>
 	* create array by looping through columnListInfo for select columns which have default, not identity and put column description in array
 	* for examle 
 	*	array (size=2)
@@ -458,7 +458,6 @@ class entity extends entities{
 	*			  'dataType' => string 'date' (length=4)
 	*			  'width' => int 3
 	*			  'isNullable' => int 0
-	* </pre></p>
 	* @return array 
 	*	array of column for create insert sql, or compose user interface for insert
 	*/
@@ -484,9 +483,9 @@ class entity extends entities{
 		}
 		return $entityInterfaces;
 	}
+	
 	/**	
 	* in some situation, using simplified column description array is better. this funciton return simplified column description as following:
-	* <p><pre>
 	* array (size=2)
 	*	'id' => 
 	*	array (size=2)
@@ -496,7 +495,6 @@ class entity extends entities{
 	*	array (size=2)
 	*	  0 => string 'วิชาในหลักสูตร' (length=42)
 	*	  1 => string 
-	* </pre><p>
 	* @param array cds
 	*	$this->columListInfo
 	* @return array
@@ -522,10 +520,9 @@ class entity extends entities{
 		}		
 		return [$newCds, $revisedColumnDescriptions];
 	}
+	
 	/**	
-	* <p><pre>
 	* @example "insert into HDS.dbo.hds_devClasses(scId,startDate,locationId,statusId,createdBy,createdDate,descriptions) "
-	* </pre><p>
 	* @return string
 	*	insert sql string of entity
 	*/
@@ -539,9 +536,9 @@ class entity extends entities{
 		}
 		return $sql.str_replace('{{','(',str_replace('}}',')',str_replace('}}{{',',',$keyList)));
 	}
+	
 	/**	
-	* <p><pre>
-	* gater informations from columnListInfo and use property of each column to create valiation rules
+	* Collects informations from columnListInfo and use property of each column to create valiation rules
 	* for example
 	* array (size=1)
 	*   'devClasses' => array (size=3)
@@ -560,8 +557,7 @@ class entity extends entities{
 	*		  'field' => string 'locationId' (length=10)
 	*		  'label' => string 'สถานที่' (length=21)
 	*		  'rules' => string 'integer' (length=7)
-	* <i>this funciton also merge the additionalValidationRules in APPPATH.'libraries\additionalValidationRules.php' </i>		  
-	* </pre><p>
+	* This funciton also merge the additionalValidationRules in APPPATH.'libraries\additionalValidationRules.php'.
         * @return array 
         *        validtion rules which used in formvalidation of codeigniter 
 	*/
@@ -571,46 +567,21 @@ class entity extends entities{
 		$refInfo = $this->columnRefKeyFrom;
 		foreach($cds as $val)
 		{
-			//ถ้าเป็นฟิลด์ auto increment ไม่ต้องสร้าง rules
-			if($val['is_identity']==1) 
-			{
+			//if the column is identity then skip
+			if($val['is_identity']==1){
 				continue; 
-			}
-			
-			/*
-			//ถ้าเป็นฟิลด์ ที่มี default ไม่ต้องสร้าง rules
-			if($val['default_object_id']!=0) 
-			{
-				continue; 
-			}
-			*/
-			
-			/*
-			//ถ้าเป็นฟิลดที่ reference มาจาก table อื่น ไม่ต้องสร้าง rule			
-			$isRef = false;
-			foreach($refInfo as $a=>$b){
-				if ($b['column']==$val['ColumnName'])
-				{
-					$isRef = true;
-				}
-			}
-			
-			if ($isRef) 
-			{
-				continue;
-			}
-			*/			
+			}			
+						
 			reset($refInfo);			
 			$rules = $this->getColumnStdValidationRules($val);
-			//ถ้าไม่มี rules เกิดขึ้น ไม่ต้องสร้าง rule
-			if($rules=='')
-			{
+			//if no rules occured then skip
+			if($rules==''){
 				continue;
 			}
 			
 			$colInfos = [
 				'field'=>$val['ColumnName']
-				,'label'=> $this->revisedColumnDescriptions[$val['ColumnName']][0]  //$val ['descriptions']
+				,'label'=> $this->revisedColumnDescriptions[$val['ColumnName']][0]  
 				,'rules'=>$rules
 				];
 			
@@ -618,10 +589,9 @@ class entity extends entities{
 		}
 		return $stdValidationRules;
 	}
+
 	/**
-	* <p><pre>
 	* return validation rule of each field. For instance, called from makeStdValidationRules. The merging with additionalValidationRules done in this method
-	* </pre><p>
 	* @param array columnInfo
 	*	information of each column, such as, data_type, maxLength, etc.
 	* @return string 
@@ -629,8 +599,7 @@ class entity extends entities{
 	*/
 	private function getColumnStdValidationRules($columnInfo){
 		$rules = "";
-		if ($columnInfo['is_nullable']==0)
-		{
+		if ($columnInfo['is_nullable']==0){
 			$rules.="{{required}}";
 		}
 		
@@ -641,78 +610,65 @@ class entity extends entities{
 		}elseif(in_array($columnInfo['Datatype'],['decimal','numeric','smallmoney','money','float','real'])){
 			$rules.="{{decimal}}";
 		}
-		/*
-		//(bugId 28010804-01) กรณี validate unique ไปใช้ วิธี insert เข้า database ไปเลย แล้วค่อยเอา error message ของ database มาใช้ดีกว่า
 		
-		//ยกเลิกการ validate set rule unique แต่ให้ insert ไปเลย แล้วค่อยเอา 2601 หรือ 2627 มาใช้แทน(เหนื่อยละ) จากนั้นค่อย map เอาจาก key ที่ sql server ตอบกลับมาว่า ซ้ำกันใน field ไหน
-		if($columnInfo['is_unique']==1)
-		{	
-			//$clInfo = $this->columnListInfo;
-			
-			//if column shares index_name with other field, which means  it use multiple column for unique, the the validation have to use call_back function
-			if($this->shareIndexNameWithOther($columnInfo['ColumnName'], $columnInfo['index_name'])){
-				//$rules.= "{{multiple_unique_callback_".get_class($this)."_".$columnInfo['index_name']."()}}";
-			}else{
-				//$rules.= '{{is_unique['.get_class($this).".".$columnInfo['ColumnName']."]}}";
-			}
-		}		
-		*/
 		$re_rules = str_replace('}}','',str_replace('{{','', str_replace('}}{{','|',$rules)));
 		
 		$this->mergeWithAdditionalRules($re_rules,$columnInfo);
 		
 		return $re_rules;
 	}
+	
 	/**
 	* @deprecated 
-	*
-	* <p><pre>
-	* </pre><p>
 	*/
 	private function shareIndexNameWithOther($columnName, $index_name){	
 		$entityColumnInfos = $this->columnListInfo;
 		//var_dump($entityColumnInfos);exit;
-		foreach($entityColumnInfos as $columnInfos)
-		{
+		foreach($entityColumnInfos as $columnInfos){
                                                 if($columnInfos['ColumnName']==$columnName){ continue;}
                                                 if($columnInfos['index_name']==$index_name){ return true;}
 		}
 		return false;
 	}
+	
 	/**
-	* <p><pre>merge rule of each field which merged with additional validationRules
+	* Merge rule of each field which merged with additional validationRules and fetch additional validation rules 
+	* from additionalValidationRules.php and merge it with standard rules created with stdValidationRules
 	* 
-	* fetch additional validation rules from additionalValidationRules.php and merge it with standard rules created with stdValidationRules
-	* </pre><p>
 	* @param string &re_rules
-	 *	validation rule which constructed from standard column info
-	 * @param array columnInfo
-	 *	 information of column 
+	*	validation rule which constructed from standard column info
+	* @param array columnInfo
+	*	 information of column 
 	*/
 	private function mergeWithAdditionalRules(&$re_rules,$columnInfo){
 		$entityName = get_class($this);		
 		$re_rules .= '|'.AdditionalValidation::getRules($entityName,$columnInfo['ColumnName']);
 		$re_rules = trim(str_replace('||','|',$re_rules),'|');
 	}
+	
 	/**
-	* <p><pre>
-	* </pre><p>
+	 * return datatype of given column (@param $columnName)
 	* @param string columnName
 	*	name of specified column
 	* @return string 
 	*	type of specified column
 	*/
-	public function columnDataType($columName){
+	public function columnDataType($columnName){
 		$cli = $this->columnListInfo;
-		foreach( $cli as $val)
-		{
-			if($val['ColumnName']==$columName)
-			{
+		foreach( $cli as $val){
+			if($val['ColumnName']==$columnName){
 				return $val['Datatype'];
 			}
 		}
 		return null;
 	}
+	
+	/**
+	 * Verify that user is allow to update, delete, insert or not
+	 * @param int $userId
+	 * @return boolean
+	 *	true if allowed
+	 */
 	public function insertUpdateAllowed($userId){		
 		$entityName = get_class($this);
 		$sql = "SELECT p.[id],[userGroupId],[taskId],[allowSave],u.userName FROM [hds_gntPrivileges] p left join hds_gntTasks t on p.taskId=t.id left join hds_sysUserGroups ug on p.userGroupId=ug.id left join hds_sysUsers u on ug.id=u.groupId where u.id='{$userId}' and t.taskName='{$entityName}' and allowSave='Y' ";
@@ -729,12 +685,10 @@ class entity extends entities{
 		}
 		return false;
 	}
+	
 	/**	
-	*
-	* <p><pre>
 	* do the transaction processing which specified in $sql and return result of processing. 
 	* there two type of transaction result, ok and error. if error accured it also return error message
-	* </pre><p>
 	* @param string sql
 	*	SQL string which required to run.
 	* @return array
@@ -777,19 +731,17 @@ class entity extends entities{
 			return ['error',"{$row->msg}(errorCode:{$row->id})",'errorCode'=>$row->id, 'errorMessage'=>$row->msg];
 		}
 	}
+	
 	/**
 	*
-	* <p><pre>
-	* </pre><p>
 	* @return string 
 	*	file name of this file
 	*/
 	public static function fileInfo(){
 		return __FILE__;
 	}
+	
 	/**
-	* <p><pre>
-	* </pre><p>
 	* @return string 
 	*	directory informations of this file
 	*/
