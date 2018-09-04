@@ -171,7 +171,7 @@ class LibView extends CI_Controller {
 	}
 	public function dumpSession()
 	{
-		$ses = $this->session->userdata('cientity_logged_in');
+		$ses = $this->session->userdata(USER_INFO_SESSION_KEY);
 		var_dump($ses);
 		/*
 		if(isset($ses)){

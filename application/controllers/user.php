@@ -8,7 +8,7 @@ class User extends CI_controller{
 	}	
 	public function loginform()
 	{
-		$session = $this->session->userdata('cientity_logged_in');
+		$session = $this->session->userdata(USER_INFO_SESSION_KEY);
 		if(isset($session))
 		{
 			redirect(base_url());
@@ -70,7 +70,7 @@ class User extends CI_controller{
 			$rowArray = (array) $row[0];
 			foreach($rowArray as $key => $val){ $sess_array[$key] = $val; }
 			$this->session->sess_expiration = '1';
-			$this->session->set_userdata('cientity_logged_in', $sess_array);					
+			$this->session->set_userdata(USER_INFO_SESSION_KEY, $sess_array);					
 		}else{
 			$arr['status'] = 'F';
 			$arr['msg'] = 'ล้มเหลว ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';					
@@ -79,7 +79,7 @@ class User extends CI_controller{
 		return $arr;
 	}
 	public function logout(){
-		$this->session->set_userdata('cientity_logged_in',null);
+		$this->session->set_userdata(USER_INFO_SESSION_KEY,null);
 		redirect(base_url().'user/loginform/');
 	}
 }

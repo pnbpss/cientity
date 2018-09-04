@@ -47,6 +47,13 @@ class ExtraEntityInfos {
 			'descriptions' => 'Classes or Seminar or Training'
 			
 			/**
+			 * The 'customized' key value is true this means this entity will be customized by developer, please see 
+			 * 'repExpenseReports' below as example. If the entity is customized this mean you have to write a code 
+			 *  of filter-row and search mechanism by yourself. The default value of of this key is false (not defined = false).
+			 */
+			,'customized'=>false
+			
+			/**
 			 * The 'addEditModal' key contains information for construct add/edit modal (addEditModal). This is addEditModal of 
 			 * main-entity, I will described sub-entity in 'subEntity' section key below.
 			 * if not specified or not presented or is empty array:
@@ -940,8 +947,7 @@ class ExtraEntityInfos {
 											'fields'=>[
 													'devCourses.name'
 													,'devSubjects.code'
-													,'devSubjects.name'											
-																										
+													,'devSubjects.name'																										
 												]
 											,'format'=>[
 												'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"

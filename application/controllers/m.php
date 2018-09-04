@@ -24,9 +24,8 @@ class M extends CI_Controller {
 	 public function __construct()
 	 {
 		parent::__construct();
-		$this->session = $this->session->userdata('cientity_logged_in');
-		if(!(isset($this->session))) 
-		{
+		$this->session = $this->session->userdata(USER_INFO_SESSION_KEY);
+		if(!(isset($this->session))){
 			if(in_array($this->uri->segment(2), array('m','e',''))){
 				redirect(base_url().'user/loginform');
 				exit;
@@ -36,7 +35,7 @@ class M extends CI_Controller {
 			}
 		}
 	 }
-	public function index()	{
+	public function index(){
 		$viewData = self::getViewData();
 		$this->load->view('main_view',$viewData);
 	}
@@ -47,7 +46,7 @@ class M extends CI_Controller {
 		
 		if($entityName=='404'){
 			
-		}else{	
+		}else{
 			$viewData = self::getViewData();
 			$viewData['activeMenuItem'] = $taskId;
 			
@@ -62,11 +61,11 @@ class M extends CI_Controller {
 			$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
 			$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
 			if((isset($formExtraInfo['customized'])) && ($formExtraInfo['customized']===true)){
-				$viewData['filterRow'] = $forms->libObject->createFilterRow();			
+				$viewData['filterRow'] = $forms->libObject->createFilterRow();	
 				$viewData['addEditModal'] = $forms->libObject->createSearchResultZone();
 				$viewData['customizedEntity'] = true;
 			}else{
-				$viewData['filterRow'] = $forms->createFilterRow();			
+				$viewData['filterRow'] = $forms->createFilterRow();	
 				$viewData['addEditModal'] = $forms->createAddEditModal();
 				$viewData['customizedEntity'] = false;
 			}
@@ -129,8 +128,7 @@ class M extends CI_Controller {
 		$response = $forms->infoForAjaxAddEditModalOptions($this->uri->segment(3), $searchOption);
 		echo json_encode($response);
 	}
-	public function getRowListByConditionsInFilterRow()
-	{
+	public function getRowListByConditionsInFilterRow()	{
 		$formResponse = new formResponse($this->input->post(null,true));
 		$formResponse->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
 		
@@ -138,9 +136,7 @@ class M extends CI_Controller {
 		//$response['_request'] = $_REQUEST; //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);		
 	}
-	private function getViewData()
-	{
-		//$this->load->library('extraEntityInfos');
+	private function getViewData(){		
 		$extraEntityInfoDesc = extraEntityInfos::getAllDescriptions();		
 		$this->load->library('users/UsersOfcientity');
 		$user = new UsersOfcientity;
@@ -172,7 +168,7 @@ class M extends CI_Controller {
 		echo json_encode($response);
 	}
 	public function loadDataToSubEntityTable(){
-		//$mainFormRequest = $_REQUEST['mainEntityInfo'];		
+		
 		$mainFormRequest = $this->input->post('mainEntityInfo',true);	
 		$mainForm = new formResponse($mainFormRequest);
 		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		

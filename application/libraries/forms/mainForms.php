@@ -57,29 +57,43 @@ class mainForms{
 	 * @param string $libName
 	 */
 	public function __construct($libName){
-		//get Code Inger Instance
+		/**
+		 * get CodeIniter Instance
+		 */
 		$this->CI =& get_instance();
 		
-		//load codeIgniter database library
+		/**
+		 *  load codeIgniter database library
+		 */
 		$this->CI->load->database();
 
-		//libExtraInfo is extra information of each libObject that will be fetch for compose input or form or sub-form
+		/**
+		 * libExtraInfo is extra information of each libObject that will be fetch for compose input or form or sub-form
+		 */
 		$this->libExtraInfo = $this->_libExtraInfo($libName);
 		
-		//libObject is class entity in entity.php that will be loaded for use.
+		/*
+		 * libObject is class entity in entity.php that will be loaded for use.
+		 */
 		$this->libObject = $this->_loadLibrary($libName);		
 		
-		//name of the library or entity
+		/*
+		 * name of the library or entity
+		 */
 		$this->libName = $libName;
 		
 		if((isset($this->libExtraInfo['customized'])) && ($this->libExtraInfo['customized']===true)){
-			//do something else...
-		}else{					
-
-			//standard response format, will be used to response to front-end
+			/*
+			 * do something else...
+			 */
+		}else{
+			/*
+			 * standard response format, will be used to response to front-end
+			 */
 			$this->response = $this->stdResponseFormat();
 		}
 	}
+	
 	/**
 	 * store session in to some variable 
 	 * @param type $index
@@ -91,6 +105,7 @@ class mainForms{
 		//libObject->_REQUESTE use in libObject, especially for additional validation. See example in APPPATH/libraries/custom/devClassEnrollists.php
 		$this->libObject->_REQUESTE[$index] = $val;
 	}
+	
 	/**
 	 * return Library Extra entity info
 	 * @return array
@@ -114,6 +129,7 @@ class mainForms{
 	public function libName(){
 		return $this->libName;
 	}
+	
 	/**
 	* validate the submit $_REQUEST for update or insert by using stdValidationRules.
 	* Looping through columnListInfo and validate one by one of column. if valdation error occured then put error message into response.
@@ -217,10 +233,12 @@ class mainForms{
 			return true;
 		}
 	}
-	/**	
+	
+	/**
 	 * construct an SQL string and perform insert data to table by sending SQL string to this->libObject->doDbTransactions.
-	 * .it will put message into response in case of error, or no error.	
-	*/
+	 * It will put message into response in case of error, or no error
+	 * @return string
+	 */
 	protected function insertData(){		
 		
 		//preparing field and data
@@ -289,6 +307,7 @@ class mainForms{
 			$this->notify('danger',"Unable To add {$allLibExtraInfo[$this->libName]['descriptions']}, because {$insertResult[1]} ");
 		}
 	}
+	
 	/**	
 	 * get id value of related main-entity for use in insert sql of sub-entity. $_REQUEST contain the value id of main-entity
 	* @return string 
@@ -311,10 +330,12 @@ class mainForms{
 		}
 		return $idToEdit;
 	}
+	
 	/**
 	 *  construct "update.." SQL string for update data of entity and send it to execute at libObject->doDbTransactions. 
 	 * After execution is finished it put the message result into response 
-	*/
+	 * @return null
+	 */	 
 	protected function editData(){		
 		
 		//preparing fields for update sql
@@ -377,6 +398,7 @@ class mainForms{
 			$this->notify('danger',"Unable to update {$allLibExtraInfo[$this->libName]['descriptions']}, because {$editResult[1]} ");
 		}
 	}
+	
 	/**	
 	 * convert DBErrorMessageToUser, 	
 	* @param int errorCode
@@ -403,6 +425,7 @@ class mainForms{
 		}
 		return $str;
 	}
+	
 	/**
 	* in case of user submit data to insert to table, and duplication error on unique index, this method fetch entity name for display to user
 	* @param string idxObjectName
@@ -427,8 +450,9 @@ class mainForms{
 		$rtcolumnNameList = str_replace("}}","",str_replace ("{{","",str_replace("}}{{"," and ",$columnNameList)));
 		return $rtcolumnNameList;
 	}
+	
 	/**
-	 *  construct "delete from.." SQL string for delete data of entity and send it to execute at libObject->doDbTransactions. 
+	 * construct "delete from.." SQL string for delete data of entity and send it to execute at libObject->doDbTransactions. 
 	 * After execution is finished it put the message result into response 
 	*/
 	protected function deleteData()
@@ -449,9 +473,10 @@ class mainForms{
 			$this->notify('danger',"Unable to delete {$allLibExtraInfo[$this->libName]['descriptions']}, because {$deleteResult[1]} ");
 		}
 	}
+	
 	/**
-	*  in case of specified specified [default] value in [addEditModal] in extraEntityInfo, this method apply expression to "value" of "insert" SQL string.
-	*  there are two type of default, "sql" or "function", if default is "sql" then it return key field value of temp[0], otherwise it perform call_user_func and return the value.
+	*  In case of specified specified [default] value in [addEditModal] in extraEntityInfo, this method apply expression to "value" of "insert" SQL string.
+	*  There are two type of default, "SQL" or "function", if default is "sql" then it return key field value of temp[0], otherwise it perform call_user_func and return the value.
 	* @param array defaultExpressions
 	*	array of type of expression, for instance "sql::getdate()", getSession::IDNo
 	* @return string 
@@ -460,12 +485,11 @@ class mainForms{
 		$temp = explode("::",$defaultExpressions);
 		if($temp[0]=='sql'){
 			return $temp[1];
-		}else{
-			//return "'".call_user_func('self::'.$temp[0],$temp[1])."'";
-			//temp[0] is function name, temp[1] is parameter.
+		}else{			
 			return "'".call_user_func([$this->libObject,$temp[0]],$temp[1])."'";
 		}
 	}
+	
 	/**
 	*  extract field of filter row to perform search by using searchAttributes in extraEntityInfo[entityName][searchAttributes]
 	* @param array libDisplaySearchAttribute
@@ -478,8 +502,8 @@ class mainForms{
 	protected function _getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $ordinal){
 		
 		/**
-		 *  get the first element of array split by "::". The first element is table and column name of selected.
-		 * for example devClassStatuses.descriptions::devClasses.statusId
+		 * Get the first element of array split by "::". The first element is table and column name of selected.
+		 * For example devClassStatuses.descriptions::devClasses.statusId
 		 */
 		$temp1 = explode(";;",$libDisplaySearchAttribute[(int)$ordinal]);
 		$temp2 = explode("::",$temp1[0]);
