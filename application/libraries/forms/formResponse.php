@@ -148,15 +148,15 @@ class formResponse extends mainForms {
 			
 			
 			if(isset($subEntityInfo['subEntity'])) {				
-				if(isset($subEntityInfo['subEntity'][$this->libName]['editable'])){
-					if($subEntityInfo['subEntity'][$this->libName]['editable']){
+				if(isset($subEntityInfo['subEntity'][$this->libName]['allowDelete'])){
+					if($subEntityInfo['subEntity'][$this->libName]['allowDelete']){
 						$tableData.=$actionTdForSubEntity;
 					}else{
 						$tableData.="";
 					}
 				}else{
 					$tableData.="";
-					$subEntityInfo['subEntity'][$this->libName]['editable'] = false;
+					$subEntityInfo['subEntity'][$this->libName]['allowDelete'] = false;
 				}
 			}
 			else{
@@ -182,8 +182,8 @@ class formResponse extends mainForms {
 			$tableHead .= "<th>{$headerArray[$colIndex]}</th>";
 			$colIndex++;
 		}
-		if(isset($subEntityInfo['subEntity'][$this->libName]['editable'])) {
-			if($subEntityInfo['subEntity'][$this->libName]['editable']){
+		if(isset($subEntityInfo['subEntity'][$this->libName]['allowDelete'])) {
+			if($subEntityInfo['subEntity'][$this->libName]['allowDelete']){
 				$tableHead .= "<th>All <input type='checkbox' class='cientityAction cientitySelectToggleAll' cientityEntityReference='{$this->entityOrdinal}'></th>";
 			}else{
 				$tableHead .= "";
