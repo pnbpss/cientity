@@ -1,8 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 require_once(APPPATH.'libraries/extraEntityInfos.php');
 require_once(APPPATH.'libraries/forms/mainForms.php');
 require_once(APPPATH.'libraries/forms/formResponse.php');
+
 /**
  * M class is main controller of entire CI-Entity. It is interface of all connection from front-end.
  */
@@ -36,17 +38,27 @@ class M extends CI_Controller {
 	 */
 	public function e(){
 		$entityOrdinal = $this->uri->segment(3);	
+		
 		$entityName = extraEntityInfos::getEntityName($entityOrdinal);
 		
-		$viewData = self::getViewData();
-		$viewData['activeMenuItem'] = $entityOrdinal;
-
 		$forms = new mainForms($entityName);
+		
 		$formExtraInfo = $forms->_getLibExtraInfo();
+		
+		$viewData = $this->_getEntityViewData($entityOrdinal, $entityName, $forms, $formExtraInfo);
+		
+		$this->load->view('entity_view',$viewData);
+	}
+	
+	private function _getEntityViewData($entityOrdinal, $entityName, $forms, $formExtraInfo){
+		
+		$viewData = self::getViewData();			
 
 		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
 		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
 		$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
+		
+		 $viewData['activeMenuItem'] = $entityOrdinal;
 		
 		/**
 		 * If the entity is not 'customized', normal entity that create under rules of CI-Entity
@@ -64,21 +76,17 @@ class M extends CI_Controller {
 			$viewData['addEditModal'] = $forms->libObject->createSearchResultZone();
 			$viewData['customizedEntity'] = true;
 		}			
-		$this->load->view('entity_view',$viewData);
-
+		return $viewData;
 	}
+	
 	/**
 	 * Perform received search keyword from select2 in filter row and response back the query result
 	 */
 	public function infoForAjaxOptions(){
 		/**
-		 * Get entity name from ordinal number of entity.
-		 */
-		$entityInfoKey = extraEntityInfos::infokeysArray();		
-		$property = explode("_", $this->uri->segment(3));
-		$entityOrdinal = (int) $property[0];
-		$entityName=$entityInfoKey[$entityOrdinal];
-	
+		 * Get entity name by ordinal number of entity(uri->segment(3)).
+		 */		
+		$entityName = extraEntityInfos::entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -104,12 +112,9 @@ class M extends CI_Controller {
 	public function infoForAjaxAddEditModalOptions(){
 		
 		/**
-		 * Get entity name from ordinal number of entity.
-		 */
-		$entityInfoKey = extraEntityInfos::infokeysArray();		
-		$property = explode("_", $this->uri->segment(3));
-		$entityOrdinal = (int) $property[0];
-		$entityName=$entityInfoKey[$entityOrdinal];
+		 * Get entity name by ordinal number of entity(uri->segment(3)).
+		 */		
+		$entityName = extraEntityInfos::entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -263,39 +268,62 @@ class M extends CI_Controller {
 		
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);
-	}
-	private function responseNotLoggedIn(){
-		$response = [];
-		$response['results']['notifications']['danger']=["Unable to determine user information, please login again =&gt;<a href='".base_url()."user/loginform'>Login</a>"];
-		echo json_encode($response);
-	}
+	}	
 	public function insertFromSubEntity(){
+		
+		$response = [];
+		
 		$hereRequest = $this->input->post(null,true);
+		
+		list ($mainEntityIdForSubEntity, $mainRefTo) = $this->_getMainEntityInfo($hereRequest);		
+		
+		$_REQUESTS = $hereRequest['subEntityInfo'];
+		$subForm = new formResponse($_REQUESTS);
+		$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์	
+		
+		$subFormLibName = $subForm->libName();		
+		
+		$linkField = $this->_getLinkField($mainRefTo, $subFormLibName);		
+		
+		$this->_prepareSubForForInsert($subForm, $linkField, $mainEntityIdForSubEntity);
+		
+		$response['results'] = $subForm->saveAddEditData();
+		//$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
+		echo json_encode($response);		
+	}
+	private function _getMainEntityInfo($hereRequest){
+		
 		$_REQUESTM = $hereRequest['mainEntityInfo'];	
 		$mainForm = new formResponse($_REQUESTM);
 		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
 		//$mainEntityIdForSubEntity คือ ค่าฟิลด์ id ของ mainEntity ที่ POST มา ใน  $_REQUEST['mainEntity'] เช่น หาก mainEntity เป็น devClasses นี่คือฟิลด์ id ของ devClasses
-		$mainEntityIdForSubEntity = $mainForm->getIdToInsertForSubEntity();
-		
+		$mainEntityIdForSubEntity = $mainForm->getIdToInsertForSubEntity();		
 		$mainRefTo = $mainForm->libObjectInfo()->columnRefKeyTo;
 		
-		$_REQUESTS = $hereRequest['subEntityInfo'];
-		$subForm = new formResponse($_REQUESTS);
-		$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์	
-		$subFormLibName = $subForm->libName();		
+		return [$mainEntityIdForSubEntity,$mainRefTo];
+	}
+	
+	private function _getLinkField($mainRefTo, $subFormLibName){
 		foreach($mainRefTo as $column){
 			if($column['referenced_to_libName']==$subFormLibName){
 				//หาก ชื่อ sub entity เท่ากับ ตัวใดตัวหนึ่งของ reference key นั่นคือ table รองลิ้งค์กับ table หลักด้วยฟิลด์นั้น 
-				$linkField = $column['referenced_to_column'];break;
+				$linkField = $column['referenced_to_column'];
+				break;
 			}
 		}
-
-		$response = [];
+		
 		if(!(isset($linkField))){ //หากไม่มี link field ต้องหยุดโปรแกรมพร้อมแจ้งเตือน
-			$response['results']['notifications']['danger']=["ไม่พบ link field ระหว่าง mainForm กับ subForm , linkField not found in columnRefKeyTo "];
-			echo json_encode($response);exit;
+			$response=[];
+			$response['results']['notifications']['danger']=["Error Link field between main-entity and sub-entity is not found , linkField not found in columnRefKeyTo "];
+			echo json_encode($response);
+			exit;
 		}
+		
+		return $linkField;
+	}
+	
+	private function _prepareSubForForInsert(&$subForm, $linkField, $mainEntityIdForSubEntity){
 		//ไปหาว่า $linkFieldนั้น เป็น key ไอดีที่เท่าไหร่
 		list($columnsWithOrdered)=$subForm->p_getColumnOrdered();
 		//var_dump($columnsWithOrdered);
@@ -312,11 +340,8 @@ class M extends CI_Controller {
 			}
 			$index++;
 		}
-		
-		$response['results'] = $subForm->saveAddEditData();
-		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
-		echo json_encode($response);		
 	}
+	
 	public function updateSubEntityRecord(){
 		//var_dump($_REQUEST);
 		//$form = new formResponse($_REQUEST);
@@ -325,6 +350,12 @@ class M extends CI_Controller {
 		
 		$response['results'] = $form->updateSubEntityRecord();
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
+		echo json_encode($response);
+	}
+	
+	private function responseNotLoggedIn(){
+		$response = [];
+		$response['results']['notifications']['danger']=["Unable to determine user information, please login again =&gt;<a href='".base_url()."user/loginform'>Login</a>"];
 		echo json_encode($response);
 	}
 }

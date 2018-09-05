@@ -986,19 +986,19 @@ class ExtraEntityInfos {
 		]
 	];
 	
-	public static function infos(){
+	static function infos(){
 		$allInfo = self::infos;
 		$allInfo['footer_JS_CSS'] = self::default_footer_JS_CSS;
 		$allInfo['header_JS_CSS'] = self::default_header_JS_CSS;
 		return $allInfo;
 	}
-	public static function getDescriptions($entityName){		
+	static function getDescriptions($entityName){		
 		return self::infos[$entityName];		
 	}
-	public static function getAllDescriptions(){
+	static function getAllDescriptions(){
 		return self::infos;
 	}
-	public static function getEntityName($taskId){
+	static function getEntityName($taskId){
 		$CI =& get_instance();
 		$CI->load->database();
 		$q = $CI->db->query("select taskName from {$CI->db->dbprefix}gntTasks where id=".$CI->db->escape($taskId).";");
@@ -1009,12 +1009,18 @@ class ExtraEntityInfos {
 			return '404';
 		}
 	}
-	public static function infokeysArray(){
+	static function infokeysArray(){
 		$info = self::infos;
 		$newArray = [];
 		foreach(array_keys($info) as $key){
 			array_push($newArray,$key);
 		}
 		return $newArray;
+	}
+	static function entityNameByURISegment($uriSegment3){
+		$entityInfoKey = self::infokeysArray();		
+		$property = explode("_", $uriSegment3);
+		$entityOrdinal = (int) $property[0];
+		return $entityInfoKey[$entityOrdinal];
 	}
 } //end of class ExtraEntityInfos
