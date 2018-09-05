@@ -1009,4 +1009,12 @@ class ExtraEntityInfos {
 			return '404';
 		}
 	}
+	public static function infokeysArray(){
+		$info = self::infos;
+		$newArray = [];
+		foreach(array_keys($info) as $key){
+			array_push($newArray,$key);
+		}
+		return $newArray;
+	}
 } //end of class ExtraEntityInfos

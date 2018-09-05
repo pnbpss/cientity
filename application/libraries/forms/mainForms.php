@@ -1597,15 +1597,6 @@ class mainForms{
 		return $year;
 	}	
 	
-	/**
-	 * @deprecated since version 1.0.0
-	 * the method will be called by call_user_func 
-	 * @param type $arg
-	 * @return array IDNo stored in session
-	 */
-	private function _user_function($arg){
-		return $this->session['IDNo'];
-	}		
 	/**	 
 	 * get column datatype for compose input tag in data-table of sub-entity 
 	 * @param string key
