@@ -6,6 +6,7 @@ require_once(APPPATH.'libraries/forms/mainForms.php');
  * @author Panu Boonpromsook
  * 
  * formResponse works between m controller and class MainForms Class.
+ * 
  */
 class formResponse extends mainForms {
 	/**
@@ -770,4 +771,4 @@ class formResponse extends mainForms {
 			}
 		}
 	}
-}
+} //end of class formResponse

@@ -1,12 +1,12 @@
 <?php
 /**
  * Class extraEntityInfos 
- * @author Panu Boonpromsook
+ * @author Panu Boonpromsook <pnbpss@gmail.com>
  * 
  * ExtraEntityInfos declares and supplies an information each entity for class formResponses and mainForm.
  * Information in this file will be varied on table in database, or table design. 
  * 
- * You can ignore Thai comment in this file. It given for easier Thai developer to understand the code. 
+ * For none Thai reader, you can ignore Thai comment in this file. It provided for easier Thai reader to understand the code. The contexts are same as English. 
  */
 class ExtraEntityInfos {
 	/**
@@ -84,7 +84,7 @@ class ExtraEntityInfos {
 				,'columnWidth'=>['descriptions'=>12]
 				
 				/**
-				 * The 'hidden' keys contain column name that will not be display as input.
+				 * The 'hidden' keys contain column name that will not be display as input in addEditModal.
 				 * if not specified or not presented or is empty array:
 				 * - it must be specified if the entity got any column that will not let user enter, won't not create input for user. 
 				 *   for example datetime of insert time.	 
@@ -94,12 +94,12 @@ class ExtraEntityInfos {
 				,'hidden'=>['createdDate','createdBy']
 				
 				/**
-				 * The 'default' key tell CI-Entity how to get default values and construct SQL string, for insert, of that column.
+				 * The 'default' key tells CI-Entity how to get default values and how to construct SQL string of that column, for insert only.
 				 *  There are  two types of default value: SQL and user function. The keyword 'sql' means use T-SQL function or expression
-				 *  followed by string "::". Otherwise, it will use the method [methodName],_getUserSessionValue is method name. 
+				 *  followed by notation "::". Otherwise, it will use the method [methodName], for example _getUserSessionValue is method name. 
 				 * The key word followed by string "::" is parameter of the method.
 				 * The following tells CI-Entity that default value of column createDate is T-SQL function getdate(), and the default
-				 * value of column createdBy must be get from function _getUserSessionValue('userName')
+				 * value of column createdBy must be gotten from function _getUserSessionValue('userName')
 				 * 
 				 * if not specified or not presented or is empty array:
 				 * - if  values of hidden key is not empty, as described above, the 'default' key must be declared.
@@ -230,14 +230,14 @@ class ExtraEntityInfos {
 						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
 						,'alterView'=>'devClassExtInstructorsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
-						,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
+						,'suppressedFieldsInAdd'=>['id','classId'] //ฟิลด์ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 						]
 					,'devClassBudgets' =>[
 						'label'=>'Expenses' 
 						,'suppressedFields'=>['classId','startDate','classDescription'] 						
 						,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
-						,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
+						,'suppressedFieldsInAdd'=>['id','classId'] //ฟิลด์ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 					]
 				]
 			]
@@ -362,6 +362,15 @@ class ExtraEntityInfos {
 					,'devLocations.descriptions'=>"".FRPLCEMNT4FMT." locationDescription"
 					,'devClassStatuses.descriptions'=>"".FRPLCEMNT4FMT." statusDescription"
 					]
+				
+				/**
+				 * The 'editableInSubEntity' key values will be used when this entity acts  as sub-entity of other entity.
+				 * The 'editableInSubEntity' value is empty, as shown below, because 'devClasses' is not sub-entity to any other entity.
+				 * 
+				 * The complete explanation about 'editableInSubEntity' key is described in 'devClassEnrollist' section.
+				 * (press control+f to search word "### complete explanation about 'editableInSubEntity' key ###" ).
+				 */
+				,'editableInSubEntity'=>[]
 			]
 			
 			/**
@@ -437,8 +446,9 @@ class ExtraEntityInfos {
 			'descriptions' => 'Class Enrollments'							
 			,'addEditModal'=>[
 				'dummy'=>[]
-				,'columnOrdering'=>['id','classId','employeeId','acknowledgedId','refusedId','testTime']
-				//,'hidden'=>['createdDate','createdBy']
+				,'columnOrdering'=>['id','classId','employeeId','acknowledgedId','refusedId'	,'testTime'
+					]
+				,'hidden'=>['testTime'],'default'=>['testTime'=>'sql::NULL']
 				,'references'=>[ //references คือ table ที่จะเอาไว้ select2 ในฟิลเตอร์ rows
 							'classId'=>'devClasses.descriptions'
 							,'employeeId'=>'devEmployeesView.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
@@ -458,40 +468,51 @@ class ExtraEntityInfos {
 							,'between'=>[]
 			]
 			,'selectAttributes'=>[ //ฟิลด์ที่จะแสดงออกมาในผลการ search
-									'fields'=>[ //ไม่ต้องใส่ว่าฟิลด์เชื่อมกันยังไง เพราะอยู่ใน join อยู่แล้ว
-											'devClassEnrollistsView.employeeFullName;;Employee Name'
-											,'devClassEnrollistsView.positionName;;Position'
-											,'devClassEnrollistsView.classDescriptions;;Course Descriptions'
-											,"devClassEnrollistsView.locationCode;;Class Location" //ต้องระบุ entityName ด้วย
-											,'devClassEnrollistsView.classStartDate;;Start Date'
-											,'devClassEnrollistsView.refused;;Refused'
-											,'devClassEnrollistsView.acknowledged;;Acknowledged'
-											,'devClassEnrollistsView.comments;;Comment'
-											//,'devClassEnrollistsView.testDate;;ทดสอบวัน'
-											//,'devClassEnrollistsView.testDateTime;;ทดสอบวัน.เวลา'
-											//,'devClassEnrollistsView.testTime;;ทดสอบเวลา'
-										]
-									,'format'=>[
-										//'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
-										'devClassEnrollistsView.testDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') testDate"
-										,'devClassEnrollistsView.testDateTime'=>"CONVERT(varchar(10),".FRPLCEMNT4FMT.",103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(".FRPLCEMNT4FMT." as time), 0), 7), 6, 0, ' ') testDateTime"
-										,'devClassEnrollistsView.testTime'=>"STUFF(RIGHT(' ' + CONVERT(VarChar(7),".FRPLCEMNT4FMT.", 0), 7), 6, 0, ' ') testTime"
-									]													
-									,'editableInSubEntity'=>[ //editable is information that tell formResponse to create input in datatable
-											'refused'=>'l::refusedId' //for create select2 and link to sysRefuses, l:refusedId measn link and use field refusedId in addEditModal=>references
-											,'acknowledged'=>'l::acknowledgedId'
-											,'comments'=>'comments' //edit by input text
-											,'testDate'=>'testDate'
-											,'testDateTime'=>'testDateTime'
-											,'testTime'=>'testTime'
-											,'_validationInfo_'=>[ 
-													//tell backend which field to be validate with main entity,if not specfitied means use that key
-													'refused'=>'refusedId' 
-													,'acknowledged'=>'acknowledgedId' //for create select2 and link to sysAcknowledges
-													//,'comments'=>'comments' //edit by input text
-												]
-										]
-							]
+					'fields'=>[ //ไม่ต้องใส่ว่าฟิลด์เชื่อมกันยังไง เพราะอยู่ใน join อยู่แล้ว
+						'devClassEnrollistsView.employeeFullName;;Employee Name'
+						,'devClassEnrollistsView.positionName;;Position'
+						,'devClassEnrollistsView.classDescriptions;;Course Descriptions'
+						,"devClassEnrollistsView.locationCode;;Class Location" //ต้องระบุ entityName ด้วย
+						,'devClassEnrollistsView.classStartDate;;Start Date'
+						,'devClassEnrollistsView.refused;;Refused'
+						,'devClassEnrollistsView.acknowledged;;Acknowledged'
+						,'devClassEnrollistsView.comments;;Comment'											
+						]
+					,'format'=>[										
+						'devClassEnrollistsView.testDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') testDate"
+						,'devClassEnrollistsView.testDateTime'=>"CONVERT(varchar(10),".FRPLCEMNT4FMT.",103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(".FRPLCEMNT4FMT." as time), 0), 7), 6, 0, ' ') testDateTime"
+						,'devClassEnrollistsView.testTime'=>"STUFF(RIGHT(' ' + CONVERT(VarChar(7),".FRPLCEMNT4FMT.", 0), 7), 6, 0, ' ') testTime"
+					]
+				
+					/**
+					 * ### complete explanation about 'editableInSubEntity' key ###
+					 * The key 'editableInSubEntity' values are informations that tell CI-Entity,in formResponse, to create input tag in
+					 * data-table of sub-entity.
+					 * Critical:yes, if this entity is a sub-entity to other entity.
+					 * Each key, except '_validationInfo_', of 'editableInSubEntity' is a representation of the way how to create input tag.
+					 *
+					 *  For example 'refused', exactly is not column of devClassEnrollists, is column in devClassEnrollistsView (use as alterView 
+					 * in main-entity). The 'refused' must be linked to other table to create select2, but it does not have information for create.
+					 * You must tell CI-Entity which field in devClassEnrollists is mapped to it. The element 'refused'=>'l::refusedId' means
+					 * devClassEnrollistsView.refused is mapped to devClassEnrollists.refusedId. The alphabet 'l' in front of '::' mean link-to.
+					 * 
+					 * if the key 'editableInSubEntity' not declared, the sub-entity will display data only.
+					 */
+					,'editableInSubEntity'=>[
+						'refused'=>'l::refusedId' //for create select2 and link to sysRefuses, l:refusedId means link and use field refusedId in addEditModal=>references
+						,'acknowledged'=>'l::acknowledgedId' // same logic as key 'refused'
+						,'comments'=>'comments' //create input text 
+						,'testTime'=>'testTime' //This won't effect if 'addEditModal' specified 'hidden'
+						
+						/**
+						 * The key _validationInfo_ values tell backend the field that will be used to get validation rules.						 
+						 */
+						,'_validationInfo_'=>[ 							
+							'refused'=>'refusedId' //use validation rules of devClassEnrollists.refusedId
+							,'acknowledged'=>'acknowledgedId' //use validation rules of devClassEnrollists.acknowledgedId
+						]
+					]
+			]
 			,'join'=>[ //การ join กัน ของ table ต่างๆ ใน 'selectAttributes'=>'field'
 						['left','devClassEnrollistsView','on'=>[[['devClassEnrollists.id','=','devClassEnrollistsView.id']]]]
 					]
@@ -508,10 +529,7 @@ class ExtraEntityInfos {
 		,'devExtInstructors'=>[
 							'descriptions' => 'External Instructors'							
 							,'addEditModal'=>[
-								'dummy'=>[]
-								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
-								//,'columnWidth'=>['id'=>2,'code'=>2,'name'=>8,'preSubjectId'=>6,'preCourseId'=>6,'shopDuration'=>3,'classDuration'=>3]
-								//,'hidden'=>['createdDate','createdBy']
+								'dummy'=>[]								
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
 											'subDistrictId'=>'devSubDistrictsView.fullEnName'											
 											]
@@ -611,9 +629,7 @@ class ExtraEntityInfos {
 							,'searchAttributes'=>[
 												'display'=>[
 													'devExpenseTypes.name::devClassBudgets.expenseId'
-													,'devClasses.descriptions::devClassBudgets.classId;;Class Descriptions'
-													//,'devClasses.startDate::devClassBudgets.classId;;วดป.ที่เรียน'
-													//,'devClassBudgets.amount'
+													,'devClasses.descriptions::devClassBudgets.classId;;Class Descriptions'													
 												]
 											,'hidden'=>[]
 											]
@@ -670,11 +686,9 @@ class ExtraEntityInfos {
 											]
 							]
 							,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
-											'display'=>[ 													
-													//"devClassEnrollistsView.locationDescriptions;;สถานที่อบรม" 
+											'display'=>[
 													"devClassInstructorsView.locationCode;;Class Location Code" 
-													//,'devSubjects.name::devSubjectCourse.subjectId::devClasses.scId::classId;;ชื่อวิชา'
-													//,'devClasses.startDate::classId'
+													//,'devSubjects.name::devSubjectCourse.subjectId::devClasses.scId::classId;;ชื่อวิชา'													
 													,'devClassInstructorsView.employeeFullName;;Staff Full Name'
 													,'devClassInstructorsView.classDescriptions;;Class Descriptions'
 													//,'devEmployees.officeName;;ฝ่ายของพนักงาน'													
@@ -724,13 +738,13 @@ class ExtraEntityInfos {
 											,'extInstructorId'=>'devExtInstructors.firstName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
 											]
 								,'fieldLabels'=>[ //ฟิลด์ label ในหน้า Addedit Modal (หากไม่ระบุ จะไปเอา ใน description จากฐานข้อมูลแทน)
-											'classId'=>'คำอธิบายเพิ่มเติมของการอบรม/สัมนา'							
-											,'extInstructorId'=>'ชื่อ ผู้สอนจากภายนอก'
+											'classId'=>'Class Descriptions'							
+											,'extInstructorId'=>'External Instructor\'s name'
 											]
 							]
 							,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
-											'display'=>[ 													
-													//"devClassEnrollistsView.locationDescriptions;;สถานที่อบรม" 
+											'display'=>[													
+													
 													"devClassExtInstructorsView.locationCode;;Class Location Code" 													
 													,'devClassExtInstructorsView.subjectName;;Subject '
 													,'devClassExtInstructorsView.fullName;;Full Name'
@@ -832,7 +846,7 @@ class ExtraEntityInfos {
 								//'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
 								//,'columnWidth'=>['id'=>2,'code'=>2,'name'=>8,'preSubjectId'=>6,'preCourseId'=>6,'shopDuration'=>3,'classDuration'=>3]
 								,'hidden'=>['createdDate','createdBy']
-								,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_user_func_getSession::IDNo"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _user_func_getSession คือฟังก์ชั่นใน mainForms, sql คือ function ใน sql
+								,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_getUserSessionValue::userName"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _getUserSessionValue คือฟังก์ชั่นใน mainForms, sql คือ function ใน sql
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
 											'closedId'=>'sysClosed.descriptions'
 											//,'preSubjectId'=>'devSubjectsView.codeAndName'
@@ -842,8 +856,7 @@ class ExtraEntityInfos {
 							,'searchAttributes'=>[
 											'display'=>[
 													"devCourses.code" 
-													,"devCourses.name" 
-													//,"devCourses.objectives" //ต้องระบุ entityName ด้วย													
+													,"devCourses.name" 																									
 													,"sysClosed.descriptions::closedId;;status of course"	//;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง (จะไม่เอา descriptions ใน column นั้นมาใช้)
 													]
 											,'between'=>[]
@@ -882,11 +895,15 @@ class ExtraEntityInfos {
 							//,'columnOrdering'=>['id','code','name','classDuration','shopDuration','preCourseId','preSubjectId','closedId','createdDate','createdBy']
 							,'columnWidth'=>['id'=>2,'code'=>3,'name'=>7,'preSubjectId'=>6,'preCourseId'=>6,'shopDuration'=>3,'classDuration'=>3]
 							,'hidden'=>['createdDate','createdBy']
-							,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_user_func_getSession::IDNo"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _user_func_getSession คือฟังก์ชั่นใน mainForms, sql คือ function ใน sql
+							,'default'=>['createdDate'=>'sql::getdate()','createdBy'=>"_getUserSessionValue::userName"] //default คือค่าที่จะ insert หากไม่ระบุไป จะเอา default ใน ฐานข้อมูล _getUserSessionValue คือฟังก์ชั่นใน mainForms, sql คือ function ใน sql
 							,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
 										'closedId'=>'sysClosed.descriptions'
 										,'preSubjectId'=>'devSubjectsView.codeAndName'
 										,'preCourseId'=>'devCourses.name'
+										]
+							,'fieldLabels'=>[
+										'code'=>"Subject Code"
+										,'name'=>'Subject Name'
 										]
 						]
 						,'searchAttributes'=>[
@@ -992,4 +1009,4 @@ class ExtraEntityInfos {
 			return '404';
 		}
 	}
-}
+} //end of class ExtraEntityInfos

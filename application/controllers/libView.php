@@ -55,9 +55,7 @@ class LibView extends CI_Controller {
 		echo 'columnRefKeyTo'; var_dump($obj->columnRefKeyTo);		
 		echo 'columnDescriptions'; var_dump($obj->columnDescriptions);
 		echo 'columnDescriptionsColumnIndexed'; var_dump($obj->columnDescriptionsColumnIndexed);
-		echo 'revisedColumnDescriptions'; var_dump($obj->revisedColumnDescriptions);		
-		echo "entityInterfaces['forFrontEnd']"; var_dump($obj->entityInterfaces['forFrontEnd']);
-		echo "entityInterfaces['forInsert']"; var_dump($obj->entityInterfaces['forInsert']);		
+		echo 'revisedColumnDescriptions'; var_dump($obj->revisedColumnDescriptions);				
 		echo 'stdValidationRules'; var_dump($obj->stdValidationRules);		
 		echo 'insertSqlString'; echo $obj->insertSqlString();
 		

@@ -4,25 +4,8 @@ require_once(APPPATH.'libraries/extraEntityInfos.php');
 require_once(APPPATH.'libraries/forms/mainForms.php');
 require_once(APPPATH.'libraries/forms/formResponse.php');
 
-class M extends CI_Controller {
-	//data-toggle=\"modal\" data-target=\"#cientityPageLoaderModal\"
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/user_guide/general/urls.html
-	 */
-	 public function __construct()
-	 {
+class M extends CI_Controller {	
+	 public function __construct(){
 		parent::__construct();
 		$this->session = $this->session->userdata(USER_INFO_SESSION_KEY);
 		if(!(isset($this->session))){
@@ -49,11 +32,7 @@ class M extends CI_Controller {
 		}else{
 			$viewData = self::getViewData();
 			$viewData['activeMenuItem'] = $taskId;
-			
-			//$viewData['header_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['header_JS_CSS']))?extraEntityInfos::infos[$entityName]['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
-			//$viewData['footer_JS_CSS'] = (isset(extraEntityInfos::infos[$entityName]['footer_JS_CSS']))?extraEntityInfos::infos[$entityName]['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
-			//$viewData['entityThDescription']= (isset(extraEntityInfos::infos[$entityName]['descriptions']))?extraEntityInfos::infos[$entityName]['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
-			
+
 			$forms = new mainForms($entityName);
 			$formExtraInfo = $forms->_getLibExtraInfo();
 			
@@ -68,8 +47,7 @@ class M extends CI_Controller {
 				$viewData['filterRow'] = $forms->createFilterRow();	
 				$viewData['addEditModal'] = $forms->createAddEditModal();
 				$viewData['customizedEntity'] = false;
-			}
-			
+			}			
 			$this->load->view('entity_view',$viewData);
 		}
 	}
@@ -91,9 +69,13 @@ class M extends CI_Controller {
 		$_request = $this->input->post(null,true);
 		if(isset($_request['q'])){
 			$searchOption = $_request['q'];
-			setcookie($cookieName,$_request['q'] ,time()+3600);
+			$cookie = ['name'=>$cookieName, 'value'=>$_request['q'],'expire'=>'86500'];
+			$this->input->set_cookie($cookie);
+			//setcookie($cookieName,$_request['q'] ,time()+3600);
+			
 		}else{
-			$searchOption = isset($_COOKIE[$cookieName])?$_COOKIE[$cookieName]:'';
+			//$searchOption = isset($_COOKIE[$cookieName])?$_COOKIE[$cookieName]:'';
+			$searchOption = $this->input->cookie($cookieName, TRUE)?$this->input->cookie($cookieName, TRUE):'';
 		}
 		
 		$response = $forms->infoForAjaxOptions($this->uri->segment(3), $searchOption);
@@ -120,9 +102,11 @@ class M extends CI_Controller {
 		
 		if(isset($_request['q'])){
 			$searchOption = $_request['q'];
-			setcookie($cookieName,$_request['q'] ,time()+3600);
-		}else{
-			$searchOption = isset($_COOKIE[$cookieName])?$_COOKIE[$cookieName]:'';
+			$cookie = ['name'=>$cookieName, 'value'=>$_request['q'],'expire'=>'86500'];
+			$this->input->set_cookie($cookie);
+			//setcookie($cookieName,$_request['q'] ,time()+3600);
+		}else{			
+			$searchOption = $this->input->cookie($cookieName, TRUE)?$this->input->cookie($cookieName, TRUE):'';
 		}
 		
 		$response = $forms->infoForAjaxAddEditModalOptions($this->uri->segment(3), $searchOption);
@@ -190,7 +174,7 @@ class M extends CI_Controller {
 	}
 	private function responseNotLoggedIn(){
 		$response = [];
-		$response['results']['notifications']['danger']=["ไม่สามารถระบุผู้ใช้งานได้, กรุณาเข้าสู่ระบบอีกครั้งที่นี่ =&gt;<a href='".base_url()."user/loginform'>เข้าสู่ระบบ</a>"];
+		$response['results']['notifications']['danger']=["Unable to determine user information, please login again =&gt;<a href='".base_url()."user/loginform'>Login</a>"];
 		echo json_encode($response);
 	}
 	public function insertFromSubEntity(){

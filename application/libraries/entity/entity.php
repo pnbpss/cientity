@@ -1,38 +1,40 @@
 <?php
-	/*
-	
-	  CI_Entity version 1.0          
-	 
-	  Copyright CI_Entity LLC (c) 2018 
-	 
-	 This file is a part of CI_Entity.                                    
-	                                                                     
-	 CI_Entity is free software; you can copy, modify, and distribute it  
-	 under the terms of the GNU Affero General Public License           
-	 Version 1.00, 01 September 2018 and the CI_Entity Licensing Exception.   
-	                                                                     
-	  CI_Entity is distributed in the hope that it will be useful, but     
-	  WITHOUT ANY WARRANTY; without even the implied warranty of         
-	  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               
-	  See the GNU Affero General Public License for more details.        
-	                                                                     
-	  You should have received a copy of the GNU Affero General Public   
-	  License and the CI_Entity Licensing Exception along               
-	  with this program; if not, contact CI_Entity LLC                     
-	  at pnbpss[AT]gmail[DOT]com. If you have questions about the    
-	  GNU Affero General Public License or the licensing of CI_Entity,     
-	  see the CI_Entity license FAQ at http://www.cientity.com/licensing        	 
-	 */
+/*
+
+  CI_Entity version 1.0          
+
+  Copyright CI_Entity LLC (c) 2018 
+
+ This file is a part of CI_Entity.                                    
+
+ CI_Entity is free software; you can copy, modify, and distribute it  
+ under the terms of the GNU Affero General Public License           
+ Version 1.00, 01 September 2018 and the CI_Entity Licensing Exception.   
+
+  CI_Entity is distributed in the hope that it will be useful, but     
+  WITHOUT ANY WARRANTY; without even the implied warranty of         
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               
+  See the GNU Affero General Public License for more details.        
+
+  You should have received a copy of the GNU Affero General Public   
+  License and the CI_Entity Licensing Exception along               
+  with this program; if not, contact CI_Entity LLC                     
+  at pnbpss[AT]gmail[DOT]com. If you have questions about the    
+  GNU Affero General Public License or the licensing of CI_Entity,     
+  see the CI_Entity license FAQ at http://www.cientity.com/licensing        	 
+ */
 
 require_once(APPPATH.'libraries/entity/entities.php');
 require_once(APPPATH."libraries/additionalValidationRules.php");
 	
 /**
- *
- * @package entity
- * @copyright CI_Entity LLC (c) 2018
- * @author Panu Boonpromsook <pnbpss@gmail.com>
- */
+*
+* @package entity
+* @copyright CI_Entity LLC (c) 2018
+* @author Panu Boonpromsook <pnbpss@gmail.com>
+*
+* For none Thai reader, you can ignore Thai comment in this file. It provided for easier Thai reader to understand the code. The contexts are same as English. 
+*/
 
  /*
 limitations:
@@ -48,21 +50,28 @@ class entity extends entities{
 	* CI store &get_instance for referencing to CodeIgniter resources.
 	*/	
 	private $CI;
-		
+	
+	/**
+	 * Store session data
+	 * @var type array
+	 */	
 	private $sessionData=[]; 	
 	
 	/**
-	 * for use in additional entity validation for example see devClassExtInstructors.php
+	 * For use in additional entity validation for example see devClassExtInstructors.php
+	 * @var type array
 	 */
 	public $infoForAdditionalValidate = []; 
 	
 	/**
 	 * for use in additional entity validation for example see devClassExtInstructors.php
+	 * @var array 
 	 */
 	public $infoForAdditionalValidateSubEntity = []; 
 	
 	/**
-	 * store session data 
+	 * Store cleaned server $_REQUEST
+	 * @var array 
 	 */
 	public $_REQUESTE = [];
 	
@@ -72,12 +81,12 @@ class entity extends entities{
 		$this->setName($this->CI->db->dbprefix(get_class($this))); 
 		
 		/**
-		 * type Of Object object (view or table)
+		 * get type Of Object object (view or table)
 		 */
 		$this->ObjectType = $this->getDbObjectType($this->name); 
 		
 		/**
-		* columnListInfo stores  list of columns in a table, and column information such as, is_index, is_primary, is_null, etc
+		* $this->columnListInfo stores  list of columns in a table, and column information such as, is_index, is_primary, is_null, etc.
 		*/
 		$this->columnListInfo = $this->getColumnlist($this->name); 
 		
@@ -87,33 +96,36 @@ class entity extends entities{
 		$this->columnDescriptions = $this->getColumnDescription($this->name); 
 		
 		/**
-		 * columnRefKeyFrom stores informations of referenced-from of columns
-		 * for instance, if current entity is employeeSalaries then column employeeId is foreign key in table employeeSalaries which referenced from column id in table employees		 
+		 * columnRefKeyFrom stores informations of referenced-from of columns. For instance, if current entity is employeeSalaries
+		 * then column employeeId is foreign key in table employeeSalaries which referenced from column id in table employees.		 
 		 */
 		$this->columnRefKeyFrom = $this->getColumnRefKeyFrom($this->name); 
 		
 		/**
-		 * columnRefKeyTo stores informations of referenced-to of columns
-		 * for instance, if current entity is employees then column id in table employees is use as foreign key of column employeeSalaries.employeeId 
+		 * The columnRefKeyTo stores informations of referenced-to of columns.
+		 * For instance, if current entity is employees then column id in table employees is use as foreign key of column employeeSalaries.employeeId.
 		 */
 		$this->columnRefKeyTo = $this->getColumnRefKeyTo($this->name); 
 		
-		// เอา list ของคอลัมน์ (getColumnlist) มา เชื่อมกับ list ของ reference (getColumnRefKey)
+		
 		/**
-		 * 
+		 * Merged column informations (syncedColumnlistInfoWithRefKey = getColumnlist merged with getColumnRefKey).		 
 		 */
 		$this->syncedColumnlistInfoWithRefKey = $this->syncColumnListAndRef($this->columnListInfo, $this->columnRefKeyFrom); 
 		
-		//ทำ entity เพื่อเอาไว้ใช้สำหรับ สร้าง insert string และ  front end (ทำหน้าสำหรับ user interface)
-		$this->entityInterfaces = $this->makeEntityInterface(); 
-
-		//จัดรูปแบบ array column description ให้อ่านง่ายขึ้น
+		
+		/**
+		 * Reformat $this->columnDescriptions in easier to read format.
+		 */
 		list($this->columnDescriptionsColumnIndexed,$this->revisedColumnDescriptions) = $this->reviseColumnDescriptions($this->columnDescriptions); 
 				
-		//หากเป็น view ไม่ต้องสร้าง validation rules (U=table)
+		/**
+		 * If object type is view, don't need to create form validation rules. 
+		 */
 		if($this->ObjectType=='U'){
-			/* เอา definition ของคอลัมน์ เช่น ความกว้าง ชนิดข้อมูล มาสร้าง validation rules, stdValidationRules จะถูกรวมกับ AdditionalValidation ที่กำหนดไว้ในไฟล์ additionalValidationRules.php ด้วยแล้ว ด้วย method mergeWithAdditionalRules()
-			*/
+			/**
+			 * make validation rules for this entity
+			 */
 			$this->stdValidationRules = $this->makeStdValidationRules(); 
 		}elseif($this->ObjectType=='V'){
 			$this->stdValidationRules = [];
@@ -375,11 +387,9 @@ class entity extends entities{
 	public function resultToArray($q){
 		$arrayResult = [];
 		$i=0;
-		foreach($q->result() as $row)
-		{
+		foreach($q->result() as $row){
 			$rowArray = (array) $row;
-			foreach($rowArray as $key => $val)
-			{
+			foreach($rowArray as $key => $val){
 				$arrayResult[$i][$key] = $val;
 			}
 			$i++;
@@ -441,59 +451,15 @@ class entity extends entities{
 	}
 	
 	/**	
-	* create array by looping through columnListInfo for select columns which have default, not identity and put column description in array
-	* for examle 
-	*	array (size=2)
-	*	  0 => 
-	*		array (size=1)
-	*		  'scId' => 
-	*			array (size=3)
-	*			  'dataType' => string 'int' (length=3)
-	*			  'width' => int 4
-	*			  'isNullable' => int 0 
-	*	  1 => 
-	*		array (size=1)
-	*		  'startDate' => 
-	*			array (size=3)
-	*			  'dataType' => string 'date' (length=4)
-	*			  'width' => int 3
-	*			  'isNullable' => int 0
-	* @return array 
-	*	array of column for create insert sql, or compose user interface for insert
-	*/
-	public function makeEntityInterface(){ 
-		$entityInterfaces['forInsert'] = [];
-		$entityInterfaces['forFrontEnd'] = [];		
-		foreach($this->columnListInfo as $val){
-			if (!(($val['is_identity']==1) || ($val['default_object_id']!=0)))
-			{
-				array_push($entityInterfaces['forInsert'],$val['ColumnName']);
-				array_push($entityInterfaces['forFrontEnd'],
-						[
-							$val['ColumnName']=>
-								[
-									'dataType'=>$val['Datatype']
-									,'width'=>$val['MaxLength']
-									,'isNullable'=>$val['is_nullable']
-								]
-						]
-					);
-			}
-			
-		}
-		return $entityInterfaces;
-	}
-	
-	/**	
-	* in some situation, using simplified column description array is better. this funciton return simplified column description as following:
+	* In some situation, using simplified column description array is better. The method return simplified column description as following:
 	* array (size=2)
 	*	'id' => 
 	*	array (size=2)
-	*	  0 => string 'ไอดี' (length=12)
+	*	  0 => string 'Id' (length=12)
 	*	  1 => string 'id' (length=2)
 	*	'scId' => 
 	*	array (size=2)
-	*	  0 => string 'วิชาในหลักสูตร' (length=42)
+	*	  0 => string 'Course\'s Subject' (length=42)
 	*	  1 => string 
 	* @param array cds
 	*	$this->columListInfo
@@ -748,4 +714,4 @@ class entity extends entities{
 	public static function dirInfo(){
 		return __DIR__;
 	}
-}
+} //end of class entity

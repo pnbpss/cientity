@@ -13,16 +13,13 @@ class mainForms{
 	 * @var type 
 	 */
 	private $maxSelectOptionShow = 10;
+	
 	/**
 	 * codeIgniter Instance
 	 * @var object 
 	 */
 	protected $CI;
 
-	/**
-	 * 
-	 */
-	//,$obj
 	/**
 	 * store entity extra info stored in extraEntityInfos.php
 	 * @var array  
@@ -33,21 +30,25 @@ class mainForms{
 	 * @var string
 	 */
 	protected $libName;
+	
 	/**
 	 * HTML for warning user if extraEntityInfo[$libName]
 	 */
 	const notFoundLibExtraInfoKey ="<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Not found ##### key of Entity in infos::extraEntityInfo</label></div></div></div>";
+	
 	/**
 	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
 	 */
 	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in extraEntityInfos.php.</label></div></div></div>";
+	
 	/**
 	 * session data for use in this class and extended.
 	 * @var array 
 	 */
 	public $session;
+	
 	/**
-	 * session data for use in m controller
+	 * Store cleaned server $_REQUEST
 	 * @var array 
 	 */
 	public $_REQUESTM;
@@ -167,6 +168,7 @@ class mainForms{
 			return true;
 		}
 	}
+	
 	/**
 	 * call from formValidate to maintain 20 lines per method
 	 * @param array $_request
@@ -197,6 +199,7 @@ class mainForms{
 		}
 		return $request;
 	}
+	
 	/**
 	 * validate $_REQUEST sent from front-end in case of updating sub-entity
 	 * @param type $columnName
@@ -421,7 +424,7 @@ class mainForms{
 			$idxObjectName = substr($errorMessage, $strposFrom, $objectNameLength);
 			//var_dump($idxObjectName);
 			$fieldInvolves = $this->getFieldNameInvolveToUniqueObject($idxObjectName);			
-			$str = "{$allLibExtraInfo[$this->libName]['descriptions']}  which used with {$fieldInvolves} is exists, unable to save.";
+			$str = "{$allLibExtraInfo[$this->libName]['descriptions']}  which used given {$fieldInvolves} is already exists, unable to save.";
 		}
 		return $str;
 	}
@@ -455,8 +458,7 @@ class mainForms{
 	 * construct "delete from.." SQL string for delete data of entity and send it to execute at libObject->doDbTransactions. 
 	 * After execution is finished it put the message result into response 
 	*/
-	protected function deleteData()
-	{
+	protected function deleteData(){
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
 			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
 			return;
@@ -485,8 +487,14 @@ class mainForms{
 		$temp = explode("::",$defaultExpressions);
 		if($temp[0]=='sql'){
 			return $temp[1];
-		}else{			
-			return "'".call_user_func([$this->libObject,$temp[0]],$temp[1])."'";
+		}else{
+			if(method_exists($this->libObject, $temp[0])){
+				return "'".call_user_func([$this->libObject,$temp[0]],$temp[1])."'";
+			}else{
+				$this->notify('danger',"Operation Failed: There's no method for generated default value field.");				
+				echo json_encode(['results'=>$this->response]);
+				exit;
+			}
 		}
 	}
 	
@@ -585,6 +593,7 @@ class mainForms{
 	* @return string
 	*	html of input of filter row
 	*/	
+	
 	private function _createSelectOptionFilter($filterOrdinal, $fields){
 		$options = "";
 		//$maxSelectOptionShow = 5;
@@ -631,8 +640,7 @@ class mainForms{
 	* @return string
 	*	html of input of filter row
 	*/	
-	private function _inputDateItem($filterOrdinal)
-	{
+	private function _inputDateItem($filterOrdinal){
 		$inputItem = "
 						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
@@ -697,7 +705,8 @@ class mainForms{
 		}
 		$baseUrl=base_url();
 		return "infoForAjaxOptions=\"{$baseUrl}m/infoForAjaxOptions/{$properties}\" ";
-	}	
+	}
+	
 	/**
 	* fetch specified column informations
 	* @param object obj
@@ -705,7 +714,6 @@ class mainForms{
 	* @param string columnName
 	*	name of column you want to all info.
 	* @return array
-	*	
 	*/
 	private function _getColumnInfos($obj, $columnName)	{
 		//fetch all column datatype and store in $columnInfos array
@@ -716,6 +724,7 @@ class mainForms{
 		}
 		return [];
 	}
+	
 	/**
 	* return datatype of column such as varchar, char, int
 	* @param object obj
@@ -729,6 +738,7 @@ class mainForms{
 		$columnInfo = $this->_getColumnInfos($obj, $columnName);
 		return $columnInfo['Datatype'];
 	}
+	
 	/**
 	* return max-length of column 
 	* @param object obj
@@ -741,7 +751,8 @@ class mainForms{
 	private function _getColumnLength($obj, $columnName){
 		$columnInfo = $this->_getColumnInfos($obj, $columnName);
 		return $columnInfo['MaxLength'];
-	}	
+	}
+	
 	/**
 	*	construct html code of search button in filter row
 	* @return string
@@ -789,7 +800,8 @@ class mainForms{
 		$this->CI->load->library('custom/'.$libName);
 		$obj = new $libName;
 		return $obj;
-	}	
+	}
+	
 	/**
 	*	load extra information of specified entity of APPPATH/libraries/extraEntityInfos.php, this is important part of using cientity
 	* @param string libName
@@ -810,6 +822,7 @@ class mainForms{
 		$this->CI->load->library('extraEntityInfos');
 		return extraEntityInfos::infos;
 	}
+	
 	 /**
 	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
 	  * @param object obj
@@ -890,6 +903,7 @@ class mainForms{
 		return "<div class=\"row filter-row\">".$str."</div>";
 
 	}
+	
 	 /**	  
 	  * get option list for select2 which will be used at filter row or add/edit interface
 	  * create SQL string and of involved to "properties"-the information which tell this
@@ -955,6 +969,7 @@ class mainForms{
 		}
 		return $response;
 	}
+	
 	 /**	  
 	  * get ordering of column of entity which should be displayed in add/edit in main page of entity and in sub-entity
 	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.	  
@@ -993,6 +1008,7 @@ class mainForms{
 		
 		return [$columnsWithOrdered, $allLibExtraInfo, $columns];
 	}
+	
 	 /**
 	  * get ordering of column of entity which should be displayed in add/edit in main page of entity and in sub-entity
 	  * if the key "columnOrdering" did not specified, this method will return table column ordinal.
@@ -1000,10 +1016,10 @@ class mainForms{
 	  * 
 	  * @return array [array columnsWithOrdered, array allLibExtraInfo, array columns]
 	  */
-	public function p_getColumnOrdered()
-	{
+	public function p_getColumnOrdered(){
 		return $this->getColumnOrdered();
 	}
+	
 	 /**
 	  * compose the front-end add/edit modal. if also compose html of sub-entity(this should call sub-entity) is the sub-entity information is specified.
 	  * 
@@ -1027,6 +1043,7 @@ class mainForms{
 		$allModalHtml = str_replace('#h#r#d#s##s#u#b#e#n#t#i#t#y#m#o#d#a#l#',$subEntityHtml,$modalHtml);
 		return $allModalHtml;
 	}
+	
 	 /**	  
 	  * compose the front-end add/edit sub-entity. this will displayed in nav bars under edit area of main modal	  
 	  * 
@@ -1243,11 +1260,9 @@ class mainForms{
 	 * @return array
 	 *	result of selected from constructed sql string 
 	 */
-	public function infoForAjaxAddEditModalOptions($properties, $conditions)
-	{
+	public function infoForAjaxAddEditModalOptions($properties, $conditions){
 		$property = explode("_", $properties);
-		foreach($property as $key => $val)
-		{
+		foreach($property as $key => $val){
 			$loopCompare[$key] = (int) $val;
 		}
 		$allLibExtraInfo = $this->_AllLibExtraInfo();
@@ -1462,13 +1477,13 @@ class mainForms{
 		}
 		return $nav==""?"":"<ul class=\"nav nav-tabs cientitySubEntityModalNavBar\">".$nav."</ul>".$panel;		
 	}
+	
 	/**
 	 * define the standard response for AJAX
 	 * @return array 
 	 *	array of standard response
 	 */
-	protected function stdResponseFormat()
-	{
+	protected function stdResponseFormat(){
 		return ['converted' => [],'fields'=>[],'notifications' => ['info' => [],'warning'=>[],'danger'=>[],'success'=>[]],'references'=>[]];
 	}
 	/**
@@ -1494,8 +1509,7 @@ class mainForms{
 	 * @param string $request
 	 *	message to end-user
 	 */
-	public function recordExistsInOther($rule,$request)
-	{
+	public function recordExistsInOther($rule,$request){
 		$item = str_replace("]","",(str_replace("is_unique[","",$rule)));
 		list($tableName, $fieldName) = explode(".",$item);
 
@@ -1514,6 +1528,7 @@ class mainForms{
                         return FALSE;
                 }
 	}
+	
 	/**	 
 	 * Escape for SQL server for prevent sql injection.
 	 * @param string, or array str
@@ -1537,6 +1552,7 @@ class mainForms{
 		}		
 		return $newArray;
 	}
+	
 	/**	 
 	 * converted date from dd/mm/yyyy to yyyy/mm/dd format, and also convert Buddist to Christ. In case of sperator is "-" it also converted to "/"
 	 * @param string date
@@ -1544,7 +1560,7 @@ class mainForms{
 	 * @param array 
 	 *	array of string ['yyyy','mm','dd]
 	 */
-	protected function splitAndConvertDate($datetime)	{
+	protected function splitAndConvertDate($datetime){
 		$splitBySpaceDate = explode(" ", $datetime);
 		if(isset($splitBySpaceDate[1])){
 			$time=' '.$splitBySpaceDate[1].(isset($splitBySpaceDate[2])?' '.$splitBySpaceDate[2]:'');
@@ -1565,6 +1581,7 @@ class mainForms{
 		}
 		return array(null,null,null);
 	}
+	
 	/**	 
 	 *	convert year from buddhist year to christian year, if the differences of  "year" and current year is greater than 400 then year-543
 	 * @param string year
@@ -1572,7 +1589,7 @@ class mainForms{
 	 * @return int
 	 *	converted year
 	 */
-	private function toBCYear($year)	{		
+	private function toBCYear($year){		
 		//if year $year is more than current year, that user should be supplied buddist year.
 		if(((int)$year)-((int)date("Y"))>400){
 			$year = ((int) $year) - 543;
@@ -1619,4 +1636,4 @@ class mainForms{
 			return '';
 		}
 	}
-}
+} //end of class mainForm

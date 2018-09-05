@@ -22,8 +22,7 @@ abstract class entities{
 	abstract public function getColumnRefKeyTo($entityName); //get which field column reference To $entityName is string 
 	abstract public function setName($name); //set name of entity, and $name is string
 	abstract public function resultToArray($q); //convert result of query to array
-	abstract public function getDbObjectType($entityName); //get object type , view or table
-	abstract public function makeEntityInterface(); //make interface for insert keylist, and for front end
+	abstract public function getDbObjectType($entityName); //get object type , view or table	
 	abstract public function syncColumnListAndRef($columnListInfo, $columnRefKeyFrom); // seek columnlist and add reference key info 
 	abstract public function makeStdValidationRules(); // make standard validation rules for CodeIgniter form_validation helper
 	abstract public function _saveSessionData($sessionData); // save session for use in prviledges checking

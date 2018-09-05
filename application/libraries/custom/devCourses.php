@@ -10,4 +10,8 @@ class devCourses extends entity{
 	{ 
 		return $this->getTableName(); 
 	} 
+	public function _getUserSessionValue($key){
+		$session = $this->_retSessionData();
+		return $session[$key];
+	}
 } 

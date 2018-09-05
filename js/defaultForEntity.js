@@ -82,7 +82,7 @@ $(document).ready(function() {
 			,success:function(data){
 				$("#cientityAlertDivId_"+notifications.idNum).remove();
 				$(".notification-popup").addClass('hide');
-				if(data.results.notifications) cientity_displayAllNotifications(data.results.notifications,'Adding');
+				if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Adding');
 			}
 		});		
 	});
@@ -110,21 +110,21 @@ $(document).ready(function() {
 		dataToPost['2'] = $(el).val(); 
 		var rollbackuValue = $(el).attr('cientityRollbackValue');
 		var notifications = cientitypopupNotification('info','Updating..',':::loading',0);
-			$.ajax({
-				url: cientity_base_url+'m/UpdateSubEntityRecord'
-				,data:dataToPost
-				,type:"POST"
-				,dataType:'json'
-				,success:function(data){
-						$("#cientityAlertDivId_"+notifications.idNum).remove();
-						if(data.results.notifications) cientity_displayAllNotifications(data.results.notifications,'updating result'); 
-						//incase of error refetch data 
-						if(data.results.notifications.danger.length>0){
-								$(el).val(rollbackuValue);
-						}else{
-								$(el).attr('cientityRollbackValue',dataToPost['2']);
-						}
-				}
+                                    $.ajax({
+                                        url: cientity_base_url+'m/UpdateSubEntityRecord'
+                                        ,data:dataToPost
+                                        ,type:"POST"
+                                        ,dataType:'json'
+                                        ,success:function(data){
+                                                $("#cientityAlertDivId_"+notifications.idNum).remove();
+                                                if(data.results.notifications) cientity_displayAllNotifications(data.results.notifications,'updating result'); 
+                                                //incase of error refetch data 
+                                                if(data.results.notifications.danger.length>0){
+                                                                $(el).val(rollbackuValue);
+                                                }else{
+                                                                $(el).attr('cientityRollbackValue',dataToPost['2']);
+                                                }
+                                        }
 		});
 	}
 	
@@ -156,7 +156,10 @@ $(document).ready(function() {
 		
 			$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] select.cientitySubEntitySelectTd").each(function(){
 					var myUrl = $(this).attr('infoForAjaxOptions');
-				$(this).select2({ajax:{url:myUrl,dataType:'json',type:"POST",delay:250},width: '100%',language: "th"});
+			$(this).select2({ajax:{url:myUrl,dataType:'json',type:"POST",delay:250},width: '100%'
+                                                                ,language: "th"
+                                                                ,dropdownParent: $("table.cientitysubEntityDatatable[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']") 
+                                                            });
 			});
 			
 			$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] input, ."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] select")
@@ -331,7 +334,7 @@ $(document).ready(function() {
 			,success:function(data){
 				$("#cientityAlertDivId_"+notifications.idNum).remove();
 				$(".notification-popup").addClass('hide');
-				if(data.results.notifications) cientity_displayAllNotifications(data.results.notifications,'Saving result');				
+				if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Saving result');				
 			}
 		});
 	}
@@ -553,14 +556,14 @@ $(document).ready(function() {
 			,type:"POST"
 			,dataType:'json'
 			,success:function(data){
-				$(".searchProgressBarRowSubEntity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").addClass('hide');	
-				$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").empty();
-				if(data.subEntityResults){
-					$(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
-					.html(data.subEntityResults.results);
-				}
-				cientityInitDataTableAndOtherControl("cientitysubEntityDatatable", cientitySubEntityModalPanelId);
-                                                        
+                                                        $(".searchProgressBarRowSubEntity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").addClass('hide');	
+                                                        $(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").empty();
+                                                        if(data.subEntityResults){
+                                                                $(".cientityDisplaySearchResultSubEnitity[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
+                                                                .html(data.subEntityResults.results);
+                                                        }
+                                                        cientityInitDataTableAndOtherControl("cientitysubEntityDatatable", cientitySubEntityModalPanelId);
+                                                        if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Notification');                                                    
 			}
 		});
 	}
