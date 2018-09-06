@@ -1,4 +1,5 @@
 <?php
+require_once(APPPATH.'libraries/extraEntityInfos.php');
 /**
  * Class mainForm
  * @author Panu Boonpromsook
@@ -814,7 +815,7 @@ class mainForms {
 	*	In case of undefined extra entity info in extraEntityInfos.php it will return blank array.
 	*/
 	private function _libExtraInfo($libName){
-		$this->CI->load->library('extraEntityInfos');
+		//$this->CI->load->library('extraEntityInfos');
 		return isset(extraEntityInfos::infos[$libName])?extraEntityInfos::infos[$libName]:[];
 	}
 
@@ -823,10 +824,23 @@ class mainForms {
 	* @return array	
 	*/
 	private function _AllLibExtraInfo(){
-		$this->CI->load->library('extraEntityInfos');
+		//$this->CI->load->library('extraEntityInfos');
 		return extraEntityInfos::infos;
 	}
 	
+	function ret_AllLibExtraInfo(){
+		return $this->_AllLibExtraInfo();
+	}
+	
+	function extraEntityInfos_default_header_JS_CSS(){
+		//$this->CI->load->library('extraEntityInfos');
+		return extraEntityInfos::default_header_JS_CSS;
+	}
+	
+	function extraEntityInfos_default_footer_JS_CSS(){
+		//$this->CI->load->library('extraEntityInfos');
+		return extraEntityInfos::default_footer_JS_CSS;
+	}
 	 /**
 	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
 	  * @param object obj

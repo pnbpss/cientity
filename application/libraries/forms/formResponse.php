@@ -11,7 +11,7 @@ require_once(APPPATH.'libraries/forms/mainForms.php');
  */
 class formResponse extends mainForms {
 	/**
-	 * ordinal of entity in extraEntityInfo
+	 * Ordinal of entity in extraEntityInfo 
 	 * @var int
 	 */
 	private $entityOrdinal;
@@ -19,27 +19,48 @@ class formResponse extends mainForms {
 	 * filtered $_REQUEST
 	 * @var array 
 	 */
-	public $_REQUEST;
-	function __construct($request)
-	{				
-		$_allLibInfo = extraEntityInfos::infos;		
+	public $_request;
+	
+	/**
+	 * name of the library (entity name);
+	 * @var string
+	 */
+	public $_libName;
+	
+	
+	function __construct($request){		
+		
 		$this->entityOrdinal=(int) $request['entityOrdinal'];
 		
-		$this->_REQUEST=$this->escapeSQL($request);		
+		/**
+		 * cleaned $_REQUEST for use in whole class.
+		 */
+		$this->_request=$this->escapeSQL($request);	
+		
+		/**
+		 * _REQUESTM is request that use in mainForm for:
+		 * fake request for insert from sub-entity interface
+		 */
 		$this->_REQUESTM = $this->escapeSQL($request);
 		
+		/**
+		 * seek in extraEntityInfos to find library name (entity name)
+		 */
 		$index=0;
-		foreach(array_keys($_allLibInfo) as $key)
-		{
-			if($index==$this->entityOrdinal){
-				$_libName = $key;
+		foreach(array_keys(extraEntityInfos::infos) as $key){
+			if($index==$this->entityOrdinal){				
+				$this->_libName = $key;
 				break;
 			}
 			$index++;
-		}				
-		parent::__construct($_libName);
+		}
 		
-		$this->libObject->_REQUESTE = $this->_REQUEST;
+		parent::__construct($this->_libName);
+		
+		/**
+		 * store $_REQUEST value in for additional validation or permission check
+		 */
+		$this->libObject->_REQUESTE = $this->_request;
 	}
 	/**
 	 * Compose SQL string for search and send back to front end. there are two search case, first, search from filter row, second search from sub-entity
@@ -57,7 +78,7 @@ class formResponse extends mainForms {
 		$libDisplaySearchAttribute = $libInfos['searchAttributes']['display'];
 		$libHiddenSearchAttribute = isset($libInfos['searchAttributes']['hidden'])?$libInfos['searchAttributes']['hidden']:[];		
 				
-		$request = $this->_REQUEST;
+		$request = $this->_request;
 		
 		//remove ordinal because it isn't need to create SQL
 		unset($request['entityOrdinal']); 
@@ -191,7 +212,7 @@ class formResponse extends mainForms {
 				$tableHead .= "";
 			}
 			$datableClass='cientitysubEntityDatatable';			
-			$subEntityOrdinalInfo = "cientitySubEntityModalPanelId='{$this->_REQUEST['entityOrdinal']}'";
+			$subEntityOrdinalInfo = "cientitySubEntityModalPanelId='{$this->_request['entityOrdinal']}'";
 		}else{
 			$tableHead .= "<th>action</th>";
 			$datableClass='';
@@ -501,9 +522,9 @@ class formResponse extends mainForms {
 	function saveAddEditData(){		
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
 			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
-		}elseif($this->formValidate($this->_REQUEST)){
-			if($this->_REQUEST['operation']==='1'){ parent::insertData(); }
-			if($this->_REQUEST['operation']==='0'){ parent::editData(); }
+		}elseif($this->formValidate($this->_request)){
+			if($this->_request['operation']==='1'){ parent::insertData(); }
+			if($this->_request['operation']==='0'){ parent::editData(); }
 		}else{
 			return $this->response;
 		}		
@@ -532,7 +553,7 @@ class formResponse extends mainForms {
 	 */ 
 	function loadDataToEditInModal(){			
 		list($columnsWithOrdered, $allLibExtraInfo)=$this->getColumnOrdered();			
-		$request = $this->_REQUEST;
+		$request = $this->_request;
 		
 		//(bugId 20180806-01) //if format of dispaly is specified in AddEditModal (FRPLCEMNT4FMT is specified)
 		$columnLists = $this->libObject->revisedColumnDescriptions;
@@ -630,8 +651,8 @@ class formResponse extends mainForms {
 	 * @return int	 
 	 */ 
 	function getIdFieldValueAndSubEntityInfo(){		
-		//use $request instead of $this->_REQUEST to prevent accidentally modify its contents.
-		$request = $this->_REQUEST;			
+		//use $request instead of $this->_request to prevent accidentally modify its contents.
+		$request = $this->_request;			
 		unset($request['entityOrdinal']);
 		
 		$columnListsInfo = $this->libObject->columnListInfo;
@@ -712,7 +733,7 @@ class formResponse extends mainForms {
 	 * @return array 
 	 */
 	private function _getInfoForUpdateSubEntity(){
-		$request = $this->_REQUEST; 
+		$request = $this->_request; 
 		$tableName = $this->CI->db->dbprefix."".$this->libName; 
 		$columnName = $this->getSubEntityColumnName($request[1]);		
 		//convert date and time 

@@ -1,7 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-require_once(APPPATH.'libraries/extraEntityInfos.php');
 require_once(APPPATH.'libraries/forms/mainForms.php');
 require_once(APPPATH.'libraries/forms/formResponse.php');
 
@@ -43,7 +42,7 @@ class M extends CI_Controller {
 		$entityOrdinal = $this->uri->segment(3);	
 		
 		/**
-		 * Get entity name
+		 * Get entity name from 
 		 */
 		$entityName = extraEntityInfos::getEntityName($entityOrdinal);
 		
@@ -68,12 +67,12 @@ class M extends CI_Controller {
 		$this->load->view('entity_view',$viewData);
 	}
 	
-	private function _getEntityViewData($entityOrdinal, $entityName, $forms, $formExtraInfo){
+	private function _getEntityViewData($entityOrdinal, $entityName, $mainForms, $formExtraInfo){
 		
-		$viewData = self::getViewData();			
-
-		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:extraEntityInfos::default_header_JS_CSS;
-		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:extraEntityInfos::default_footer_JS_CSS;
+		$viewData = self::getViewData();
+				
+		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:$mainForms->extraEntityInfos_default_header_JS_CSS();
+		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:$mainForms->extraEntityInfos_default_footer_JS_CSS();
 		$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
 		
 		 $viewData['activeMenuItem'] = $entityOrdinal;
@@ -82,16 +81,16 @@ class M extends CI_Controller {
 		 * If the entity is not 'customized', normal entity that create under rules of CI-Entity
 		 */		
 		if(!((isset($formExtraInfo['customized'])) && ($formExtraInfo['customized']===true))){			
-			$viewData['filterRow'] = $forms->createFilterRow();	
-			$viewData['addEditModal'] = $forms->createAddEditModal();
+			$viewData['filterRow'] = $mainForms->createFilterRow();	
+			$viewData['addEditModal'] = $mainForms->createAddEditModal();
 			$viewData['customizedEntity'] = false;			
 		}
 		/**
 		 * If not 'customized, then load do the method in the customized entity in [entityName].php
 		 */
 		else{			
-			$viewData['filterRow'] = $forms->libObject->createFilterRow();	
-			$viewData['addEditModal'] = $forms->libObject->createSearchResultZone();
+			$viewData['filterRow'] = $mainForms->libObject->createFilterRow();	
+			$viewData['addEditModal'] = $mainForms->libObject->createSearchResultZone();
 			$viewData['customizedEntity'] = true;
 		}			
 		return $viewData;
@@ -460,11 +459,11 @@ class M extends CI_Controller {
 		$index = 0;
 		foreach(array_keys($columnsWithOrdered) as $key){
 			if($key=='id'){
-				$subForm->_REQUEST[$index] = ''; //หลอกตัว insert ไม่ให้ error Message: Undefined offset: 0, Filename: forms/mainForms.php
+				$subForm->_request[$index] = ''; //หลอกตัว insert ไม่ให้ error Message: Undefined offset: 0, Filename: forms/mainForms.php
 				$subForm->_setRequestME($index,''); //หลอกตัว insert ไม่ให้ error Message: Undefined offset: 0, Filename: forms/mainForms.php
 			}
 			if($linkField==$key){
-				$subForm->_REQUEST[$index] = $mainEntityIdForSubEntity; //กำหนดค่าให้ $_REQUEST ลำดับที่ index มีค่าเท่ากลับ ฟิลด์ id ของ mainEntity 				
+				$subForm->_request[$index] = $mainEntityIdForSubEntity; //กำหนดค่าให้ $_REQUEST ลำดับที่ index มีค่าเท่ากลับ ฟิลด์ id ของ mainEntity 				
 				$subForm->_setRequestME($index,$mainEntityIdForSubEntity); //กำหนดค่าให้ $_REQUESTM และ $_REQUESTE  ลำดับที่ index มีค่าเท่ากลับ ฟิลด์ id ของ mainEntity 				
 				break;
 			}
