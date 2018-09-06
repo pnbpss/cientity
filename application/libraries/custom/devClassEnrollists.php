@@ -44,15 +44,7 @@ class devClassEnrollists extends entity{
 			//$idValue is main entity id value. In this case, idValue is id of table devClassEnrollists
 			$idValue=$this->infoForAdditionalValidateSubEntity['idValue'];
 			$addsql ="; 
-				declare @classId int, @classCapacity int;
-				set @classId = (select classId from {$tableName} where id='{$idValue}'); 
-				set @classCapacity = (select capacity from {$dbPrefix}devClasses where 1=1 and id=@classId);
-				if @classCapacity < (select count(*) from {$tableName} where classId=@classId)
-				begin
-					set @errorMessage = 'Class capacity is exceeded (Class capacity is '+convert(varchar(5),@classCapacity)+').'; 
-					goto Skipper; 
-				end
-			";
+				declare @classId int, @classCapacity int; set @classId = (select classId from {$tableName} where id='{$idValue}');  set @classCapacity = (select capacity from {$dbPrefix}devClasses where 1=1 and id=@classId); if @classCapacity < (select count(*) from {$tableName} where classId=@classId) begin set @errorMessage = 'Class capacity is exceeded (Class capacity is '+convert(varchar(5),@classCapacity)+').'; goto Skipper; end ";
 		}
 		//if the submited form came from main-entity
 		elseif(isset($this->infoForAdditionalValidate['addEditMainEntity'])){
@@ -64,12 +56,7 @@ class devClassEnrollists extends entity{
 				}
 				$index++;
 			}
-			$addsql = ";
-				declare @classCapacity int;
-				set @classCapacity = (select capacity from {$dbPrefix}devClasses where 1=1 and id='{$thisFieldVal}');
-				if @classCapacity < (select count(*) from {$tableName} where classId='{$thisFieldVal}')
-				begin set @errorMessage = 'Class capacity is exceeded (Class capacity is '+convert(varchar(5),@classCapacity)+').';  goto Skipper; end
-			";
+			$addsql = "; declare @classCapacity int; set @classCapacity = (select capacity from {$dbPrefix}devClasses where 1=1 and id='{$thisFieldVal}'); if @classCapacity < (select count(*) from {$tableName} where classId='{$thisFieldVal}') begin set @errorMessage = 'Class capacity is exceeded (Class capacity is '+convert(varchar(5),@classCapacity)+').';  goto Skipper; end 			";
 		}else{ 
 			//if want to validate other operation such as delete code goes here
 			$addsql = "";

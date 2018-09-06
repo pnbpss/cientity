@@ -9,7 +9,7 @@ require_once(APPPATH.'libraries/forms/formResponse.php');
  * M class is main controller of entire CI-Entity. It is interface of all connection from front-end.
  */
 class M extends CI_Controller {
-
+	
 	/**
 	 * The constructor only check that user is logged in or not
 	 */
@@ -37,16 +37,34 @@ class M extends CI_Controller {
 	 * Display the page according to $this->uri->segment(3), the entityOrdinal.
 	 */
 	public function e(){
+		/**
+		 * Get the ordinal of entity. The ordinal is sequence number of entity in extraEntityInfos::info
+		 */
 		$entityOrdinal = $this->uri->segment(3);	
 		
+		/**
+		 * Get entity name
+		 */
 		$entityName = extraEntityInfos::getEntityName($entityOrdinal);
 		
+		/**
+		 * Create new object forms by using entity name
+		 */
 		$forms = new mainForms($entityName);
 		
+		/**
+		 * Fetch form Extra information of entity 
+		 */
 		$formExtraInfo = $forms->_getLibExtraInfo();
 		
+		/**
+		 * Get viewData that will be sent to 'entity_view'
+		 */
 		$viewData = $this->_getEntityViewData($entityOrdinal, $entityName, $forms, $formExtraInfo);
 		
+		/**
+		 * Load view by using viewData
+		 */		
 		$this->load->view('entity_view',$viewData);
 	}
 	
@@ -96,7 +114,7 @@ class M extends CI_Controller {
 		/**
 		 * get searchOption and keep search key word in cookies.
 		 */
-		$searchOption = $this->keepSelect2KeywordInCookie();
+		$searchOption = $this->_getSelect2SearchOption();
 		
 		/**
 		 * Return search result back to select2.
@@ -124,7 +142,7 @@ class M extends CI_Controller {
 		/**
 		 * get searchOption and keep search key word in cookies.
 		 */
-		$searchOption = $this->keepSelect2KeywordInCookie();
+		$searchOption = $this->_getSelect2SearchOption();
 		
 		/**
 		 * Return search result back to select2.
@@ -137,20 +155,33 @@ class M extends CI_Controller {
 	 * Perform keeping search keyword of select2 in cookies. 
 	 * @return string search option 
 	 */
-	private function keepSelect2KeywordInCookie(){
-		$cookieName = 'infoForAjaxOptions_'.$this->uri->segment(3);		
-		$_request = $this->input->post(null,true);				
+	private function _getSelect2SearchOption(){
+		/**
+		 * Define cookie name for distinguish select2 component
+		 */
+		$cookieName = 'infoForAjaxOptions_'.$this->uri->segment(3);
+		
+		/**
+		 * Get the $_REQUEST via CI input helper
+		 */
+		$_request = $this->input->post(null,true);
+		
+		/**
+		 * If $_REQUEST['q'] was submitted (user typed a keyword), then use that keyword as search condition. This also keep 
+		 * the keyword in to $_COOKIES.
+		 * If user only browses (not typed yet), then check that last keyword kept in $_COOKIES. 
+		 */
 		if(isset($_request['q'])){
-			$searchOption = $_request['q'];
-			$cookie = ['name'=>$cookieName, 'value'=>$_request['q'],'expire'=>'86500'];
-			$this->input->set_cookie($cookie);			
+			$searchOption = $_request['q'];			
+			$this->input->set_cookie(['name'=>$cookieName, 'value'=>$_request['q'],'expire'=>'86500']);			
 		}else{			
 			$searchOption = $this->input->cookie($cookieName, TRUE)?$this->input->cookie($cookieName, TRUE):'';
 		}
+		
 		return $searchOption;
 	}
 	/**
-	 * Receive search criteria from filter row and return the seach result to front-end.
+	 * Receive search criteria from filter row and return the search result to front-end.
 	 */
 	public function getRowListByConditionsInFilterRow()	{
 		
@@ -236,75 +267,155 @@ class M extends CI_Controller {
 		 * Perform delete data, and return the deleting result to back-end.
 		 */
 		$response['results'] = $formResponse->deleteData();
-		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
+		//$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);
 	}
 	
 	/**
-	 * In case of user select record to select, in filter-row's search results, the method perform load saved data and send to fill in add/edit form.
+	 * In case of user select record to edit, in filter-row's search results, the method perform load saved data and send to fill in add/edit form.
 	 */
 	public function loadDataToEditInModal(){
+		/**
+		 * Create new form Object and store in $formResponse.
+		 */
 		$formResponse = new formResponse($this->input->post(null,true));
+		
+		/**
+		 * Perform load data and send back to frond-end
+		 */
 		$response['results'] = $formResponse->loadDataToEditInModal();
 		echo json_encode($response);
 	}
+	
+	/**
+	 * Perform load data from sub-entity of main-entity and send back to display in data-table in sub-entity panel.
+	 * This method will be called when user click view/edit on each row of search result or will be called when user click
+	 * the navigate bar (Navbar) of each sub-entity.
+	 */
 	public function loadDataToSubEntityTable(){
 		
-		$mainFormRequest = $this->input->post('mainEntityInfo',true);	
-		$mainForm = new formResponse($mainFormRequest);
+		/**
+		 * Create mainFormRequest Object, including send a session info to store in its session property for future use
+		 */		
+		$mainForm = new formResponse($this->input->post('mainEntityInfo',true));
 		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
+		/**
+		 * Fetch Library extra info of main-entity
+		 */
 		$mainFormLibExtraInfo = $mainForm->_getLibExtraInfo();
 		
-		//if $mainform Contains subForm
+		/**
+		 * if subEntity of $mainform is declared:
+		 * - Create subForm object, and send session info to use in logging or permission check
+		 * - perform fetch subForm data
+		 */
 		if(isset($mainFormLibExtraInfo['addEditModal']['subEntity'])){
-			$subEntityInfo = $mainForm->getIdFieldValueAndSubEntityInfo();
-			//$subFormRequest = $_REQUEST['subEntityInfo'];
-			$subFormRequest = $this->input->post('subEntityInfo',true);	
-			$subForm = new formResponse($subFormRequest);
+			$subEntityInfo = $mainForm->getIdFieldValueAndSubEntityInfo();			
+			$subForm = new formResponse($this->input->post('subEntityInfo',true));
 			$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 			$response['subEntityResults'] = $subForm->searchResultsForSubEntity($subEntityInfo);
 		}				
 		
-		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
+		#$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);
-	}	
+	}
+	
+	/**
+	 * This method performs insert new record to sub-entity table. It occurred when user submit request to add from sub-entity
+	 */
 	public function insertFromSubEntity(){
 		
+		/**
+		 * $response is variable to store adding result
+		 */
 		$response = [];
 		
-		$hereRequest = $this->input->post(null,true);
+		/**
+		 * Store cleaned $_REQUEST to $request
+		 */
+		$request = $this->input->post(null,true);
 		
-		list ($mainEntityIdForSubEntity, $mainRefTo) = $this->_getMainEntityInfo($hereRequest);		
+		/**
+		 * Get informations that represented how main-entity related to sub-entity
+		 */
+		list ($mainEntityIdForSubEntity, $mainRefTo) = $this->_getMainEntityInfo($request);		
 		
-		$_REQUESTS = $hereRequest['subEntityInfo'];
-		$subForm = new formResponse($_REQUESTS);
+		/**		 
+		 * - Create subForm object, and send session info to use in logging or permission check
+		 * - perform fetch subForm data
+		 */
+		$subEntityRequestInfo = $request['subEntityInfo'];
+		$subForm = new formResponse($subEntityRequestInfo);
 		$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์	
 		
-		$subFormLibName = $subForm->libName();		
+		/**
+		 * Get the field name of sub-entity that must be used to link to main-entity
+		 */
+		$subEntityName = $subForm->libName();		
+		$linkField = $this->_getLinkField($mainRefTo, $subEntityName);		
 		
-		$linkField = $this->_getLinkField($mainRefTo, $subFormLibName);		
+		/**
+		 * Preparing sub-entity, such as ordering of column
+		 */
+		$this->_prepareSubFormForInsert($subForm, $linkField, $mainEntityIdForSubEntity);
 		
-		$this->_prepareSubForForInsert($subForm, $linkField, $mainEntityIdForSubEntity);
-		
+		/**
+		 * Perform insert record
+		 */
 		$response['results'] = $subForm->saveAddEditData();
 		//$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);		
 	}
-	private function _getMainEntityInfo($hereRequest){
+	
+	/**
+	* Get informations that represented how main-entity related to sub-entity
+	*/
+	private function _getMainEntityInfo($request){
 		
-		$_REQUESTM = $hereRequest['mainEntityInfo'];	
-		$mainForm = new formResponse($_REQUESTM);
+		$mainEntityRequestInfo = $request['mainEntityInfo'];
+		
+		/**
+		 * Create mainForm object, and send session info to use in logging or permission check
+		 */		
+		$mainForm = new formResponse($mainEntityRequestInfo);
 		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
-		//$mainEntityIdForSubEntity คือ ค่าฟิลด์ id ของ mainEntity ที่ POST มา ใน  $_REQUEST['mainEntity'] เช่น หาก mainEntity เป็น devClasses นี่คือฟิลด์ id ของ devClasses
+			
+		/*		  
+		 * $mainEntityIdForSubEntity stores the key of $mainEntityRequestInfo that represent the id of main-entity.
+		 * For instance, the follwing is submited $mainEntityRequestInfo 
+		 *	array (size=9)
+		 *		0 => string '1' (length=1) =>this key is id of main entity
+		 *		1 => string '11' (length=2)
+		 *		2 => string '26/08/2018' (length=10)
+		 *		3 => string '3' (length=1)
+		 *		4 => string '3' (length=1)
+		 *		5 => string 'Class for new staff, started work on Jul 2018' (length=45)
+		 *		6 => string '13' (length=2)
+		 *		'entityOrdinal' => string '0' (length=1)
+		 *		'operation' => string '0' (length=1)
+		 * 
+		 *  then the $mainEntityIdForSubEntity value is 0
+		 *  The description how $mainRefTo means, please the description of property columnRefKeyTo in entity.php in APPPATH/libraries/entity. 
+		 */
 		$mainEntityIdForSubEntity = $mainForm->getIdToInsertForSubEntity();		
 		$mainRefTo = $mainForm->libObjectInfo()->columnRefKeyTo;
 		
 		return [$mainEntityIdForSubEntity,$mainRefTo];
 	}
 	
+	/**
+	 * $linkField variable is foreign key field name. CI-Entity use it for link between two table, main-entity and sub-entity.
+	 * @param array $mainRefTo
+	 * @param string $subFormLibName
+	 * @return string
+	 */
 	private function _getLinkField($mainRefTo, $subFormLibName){
+		
+		/**
+		 * Loop through $mainRefTo until the value of 'referenced_to_libName' key is equal to $subFormLibName
+		 */
 		foreach($mainRefTo as $column){
 			if($column['referenced_to_libName']==$subFormLibName){
 				//หาก ชื่อ sub entity เท่ากับ ตัวใดตัวหนึ่งของ reference key นั่นคือ table รองลิ้งค์กับ table หลักด้วยฟิลด์นั้น 
@@ -313,6 +424,10 @@ class M extends CI_Controller {
 			}
 		}
 		
+		/**
+		 * If $linkField never been declared ($column['referenced_to_libName']==$subFormLibName not occurred in  above loop)
+		 * , then halt the operation including send back the warning message to back-end.
+		 */
 		if(!(isset($linkField))){ //หากไม่มี link field ต้องหยุดโปรแกรมพร้อมแจ้งเตือน
 			$response=[];
 			$response['results']['notifications']['danger']=["Error Link field between main-entity and sub-entity is not found , linkField not found in columnRefKeyTo "];
@@ -323,10 +438,25 @@ class M extends CI_Controller {
 		return $linkField;
 	}
 	
-	private function _prepareSubForForInsert(&$subForm, $linkField, $mainEntityIdForSubEntity){
-		//ไปหาว่า $linkFieldนั้น เป็น key ไอดีที่เท่าไหร่
-		list($columnsWithOrdered)=$subForm->p_getColumnOrdered();
-		//var_dump($columnsWithOrdered);
+	/**	
+	 * Prepare sub-entity, such as ordering of column	
+	 * @param Object $subForm
+	 * @param string $linkField
+	 * @param int $mainEntityIdForSubEntity
+	 */
+	private function _prepareSubFormForInsert(&$subForm, $linkField, $mainEntityIdForSubEntity){
+		
+		/**		
+		 * get order of column of sub-form(sub-entity)
+		 */
+		list($columnsWithOrdered)=$subForm->p_getColumnOrdered();				
+		
+		/**
+		 * The sub-entity interface for add new record allow suppressing some filed, not create input tag.
+		 * The suppression of some field may cause sequence of field to construct SQL insert disordered.
+		 * 
+		 * This part of method adjusts the ordering of  $_REQUEST key and value to suit insert SQL composing of sub-entity. 
+		 */
 		$index = 0;
 		foreach(array_keys($columnsWithOrdered) as $key){
 			if($key=='id'){
@@ -342,17 +472,29 @@ class M extends CI_Controller {
 		}
 	}
 	
+	/**
+	 * Perform update record that submitted from sub-entity edit input.
+	 */
 	public function updateSubEntityRecord(){
-		//var_dump($_REQUEST);
-		//$form = new formResponse($_REQUEST);
+		
+		/**		 
+		 * - Create form object, and send session info to use in logging or permission check
+		 * - perform fetch form data
+		 */
 		$form = new formResponse($this->input->post(null,true));
 		$form->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์
 		
+		/**
+		 * Perform update
+		 */
 		$response['results'] = $form->updateSubEntityRecord();
 		$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);
 	}
 	
+	/**
+	 * Response in case of session is dead, or user is not logged in.
+	 */
 	private function responseNotLoggedIn(){
 		$response = [];
 		$response['results']['notifications']['danger']=["Unable to determine user information, please login again =&gt;<a href='".base_url()."user/loginform'>Login</a>"];
