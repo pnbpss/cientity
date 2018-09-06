@@ -193,7 +193,7 @@ class ExtraEntityInfos {
 						 * *** The 'suppressedFields' values must be subset of main-entity's selectAttributes.
 						 * if not specified or not presented or is empty array:
 						 *	The row of data-table of sub-entity might displayed some unnecessary informations.
-						 * Critical:no, optional.						  
+						 * Critical:no, optional.
 						 */
 						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] 
 						
@@ -214,7 +214,7 @@ class ExtraEntityInfos {
 						 * - Identity
 						 * - Foreign key from main-entity
 						 * - Nullable field that you think it is ignorable.
-						 *  Critical:no, optional.						 
+						 *  Critical:no, optional.
 						 */
 						,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 					]
@@ -234,7 +234,7 @@ class ExtraEntityInfos {
 						]
 					,'devClassBudgets' =>[
 						'label'=>'Expenses' 
-						,'suppressedFields'=>['classId','startDate','classDescription'] 						
+						,'suppressedFields'=>['classId','startDate','classDescription']
 						,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 						,'suppressedFieldsInAdd'=>['id','classId'] //ฟิลด์ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
@@ -248,7 +248,7 @@ class ExtraEntityInfos {
 			 *	The filter row won't be constructed.
 			 * Critical:yes
 			 */
-			,'searchAttributes'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row				
+			,'searchAttributes'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row
 				
 				/**
 				 * The 'display' key values is column of any table that will be used as search key, search conditions.
@@ -283,7 +283,7 @@ class ExtraEntityInfos {
 					 *   two table. It doesn't effected to filter-row construction anyway. So, you can shorten it like this
 					 *   "devLocations.descriptions::;;Class Location"
 					 */
-					,"devLocations.descriptions::devClasses.locationId;;Class Location"					
+					,"devLocations.descriptions::devClasses.locationId;;Class Location"
 					,"devClasses.capacity;;Class Capacity"
 					,"devClasses.descriptions;;Class Descriptions"
 					,"devClassStatuses.descriptions::devClasses.statusId;;Class Status" //;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง
@@ -329,7 +329,7 @@ class ExtraEntityInfos {
 				 */
 				'fields'=>[ 
 					'devCourses.name'
-					,'devSubjects.name'														
+					,'devSubjects.name'
 					,'devLocations.code;;Location Code'
 					,'devLocations.descriptions;;Location Desc.'
 					,'devClasses.startDate;;Start Date'
@@ -355,10 +355,10 @@ class ExtraEntityInfos {
 				 *  in configs.php. Using FRPLCEMNT4FMT constant is flexibility to allow developer to change the DBPREFIX.
 				 */
 				,'format'=>[ //รูปแบบที่จะแสดงออกมาหลังจากคลิกปุ่มค้น
-					'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"					
+					'devClasses.startDate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103) startDate"
 					,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
 					,'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
-					,'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"					
+					,'devClasses.descriptions'=>"".FRPLCEMNT4FMT." classDescription"
 					,'devLocations.descriptions'=>"".FRPLCEMNT4FMT." locationDescription"
 					,'devClassStatuses.descriptions'=>"".FRPLCEMNT4FMT." statusDescription"
 					]
@@ -403,7 +403,7 @@ class ExtraEntityInfos {
 			 *					)
 			 * "
 			 */
-			,'join'=>[					
+			,'join'=>[
 					[
 						'left' //type of join such as left, inner, right, full.
 						,'devSubjectCourse' //table name that main-entity will join with.
@@ -443,7 +443,7 @@ class ExtraEntityInfos {
 		#endregion devClasses
 		#region devClassEnrollists
 		,'devClassEnrollists'=>[
-			'descriptions' => 'Class Enrollments'							
+			'descriptions' => 'Class Enrollments'
 			,'addEditModal'=>[
 				'dummy'=>[]
 				,'columnOrdering'=>['id','classId','employeeId','acknowledgedId','refusedId'	,'testTime'
@@ -453,17 +453,17 @@ class ExtraEntityInfos {
 							'classId'=>'devClasses.descriptions'
 							,'employeeId'=>'devEmployeesView.IDNoAndFullName' //ยังไม่เชื่อมให้ เพราะใน columlistInfo ไม่ได้บอกว่า มีการ references ไป table หลัก(แก้ไขแล้ว)
 							,'acknowledgedId'=>'sysAcknowledges.descriptions'
-							,'refusedId'=>'sysRefuses.descriptions'							
+							,'refusedId'=>'sysRefuses.descriptions'
 							]
 				,'fieldLabels'=>[ //ฟิลด์ label ในหน้า Addedit Modal (หากไม่ระบุ จะไปเอา ใน description จากฐานข้อมูลแทน)
 							'classId'=>'Class Descriptions'
 							,'employeeId'=>'PID, First Name and Last Name ']
 			]
 			,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
-							'display'=>[													
-									"devClassEnrollistsView.locationCode;;Location Code"													
+							'display'=>[
+									"devClassEnrollistsView.locationCode;;Location Code"
 									,'devClassEnrollistsView.employeeFullName;;Employee Name'
-									,'devClassEnrollistsView.classDescriptions;;Class Descriptions'													
+									,'devClassEnrollistsView.classDescriptions;;Class Descriptions'
 									]
 							,'between'=>[]
 			]
@@ -476,9 +476,9 @@ class ExtraEntityInfos {
 						,'devClassEnrollistsView.classStartDate;;Start Date'
 						,'devClassEnrollistsView.refused;;Refused'
 						,'devClassEnrollistsView.acknowledged;;Acknowledged'
-						,'devClassEnrollistsView.comments;;Comment'											
+						,'devClassEnrollistsView.comments;;Comment'
 						]
-					,'format'=>[										
+					,'format'=>[
 						'devClassEnrollistsView.testDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') testDate"
 						,'devClassEnrollistsView.testDateTime'=>"CONVERT(varchar(10),".FRPLCEMNT4FMT.",103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(".FRPLCEMNT4FMT." as time), 0), 7), 6, 0, ' ') testDateTime"
 						,'devClassEnrollistsView.testTime'=>"STUFF(RIGHT(' ' + CONVERT(VarChar(7),".FRPLCEMNT4FMT.", 0), 7), 6, 0, ' ') testTime"
@@ -505,9 +505,9 @@ class ExtraEntityInfos {
 						,'testTime'=>'testTime' //This won't effect if 'addEditModal' specified 'hidden'
 						
 						/**
-						 * The key _validationInfo_ values tell backend the field that will be used to get validation rules.						 
+						 * The key _validationInfo_ values tell backend the field that will be used to get validation rules.
 						 */
-						,'_validationInfo_'=>[ 							
+						,'_validationInfo_'=>[
 							'refused'=>'refusedId' //use validation rules of devClassEnrollists.refusedId
 							,'acknowledged'=>'acknowledgedId' //use validation rules of devClassEnrollists.acknowledgedId
 						]
@@ -539,9 +539,9 @@ class ExtraEntityInfos {
 													'devExtInstructors.firstName'
 													,'devExtInstructors.lastName'
 													,'devExtInstructors.emailAddress'
-													//,'devExtInstructors.IDNo'													
+													//,'devExtInstructors.IDNo'
 												]
-												,'hidden'=>[													
+												,'hidden'=>[
 												]
 											]
 							,'selectAttributes'=>[
@@ -553,7 +553,7 @@ class ExtraEntityInfos {
 														,'devExtInstructors.address'
 														,'devSubDistrictsView.fullEnName;;subDistrict/District/Province' //incase of use derived data from other table, descriptions must be specified
 													]
-												,'format'=>[													
+												,'format'=>[
 													]
 											]
 							,'join'=>[
@@ -578,7 +578,7 @@ class ExtraEntityInfos {
 								//,'columnWidth'=>['id'=>2,'code'=>2,'name'=>8,'preSubjectId'=>6,'preCourseId'=>6,'shopDuration'=>3,'classDuration'=>3]
 								,'hidden'=>['createdDate','createdBy']
 								,'references'=>[ //references คือ table ที่จะเอาไว้ select2 
-											'closedId'=>'sysClosed.descriptions'											
+											'closedId'=>'sysClosed.descriptions'
 											]
 							]							
 							,'searchAttributes'=>[

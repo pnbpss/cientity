@@ -23,13 +23,12 @@
   GNU Affero General Public License or the licensing of CI_Entity,     
   see the CI_Entity license FAQ at http://www.cientity.com/licensing        	 
  */
-
 require_once(APPPATH.'libraries/entity/entities.php');
 require_once(APPPATH."libraries/additionalValidationRules.php");
-	
+
 /**
 *
-* @package entity
+* @package CIEntity
 * @copyright CI_Entity LLC (c) 2018
 * @author Panu Boonpromsook <pnbpss@gmail.com>
 *
@@ -45,7 +44,10 @@ limitations:
 /**
  * Entity class is representation of table from database
  */
-class entity extends entities{
+
+
+class entity extends cientity\entities{
+	
 	/** 
 	* CI store &get_instance for referencing to CodeIgniter resources.
 	*/	
@@ -78,7 +80,7 @@ class entity extends entities{
 	public function __construct(){		
 		$this->CI =& get_instance();
 		$this->CI->load->database();
-		$this->setName($this->CI->db->dbprefix(get_class($this))); 
+		$this->setName($this->CI->db->dbprefix(get_class($this))); 		
 		
 		/**
 		 * get type Of Object object (view or table)
@@ -607,8 +609,8 @@ class entity extends entities{
 	*	 information of column 
 	*/
 	private function mergeWithAdditionalRules(&$re_rules,$columnInfo){
-		$entityName = get_class($this);		
-		$re_rules .= '|'.AdditionalValidation::getRules($entityName,$columnInfo['ColumnName']);
+		$entityName = get_class($this);
+		$re_rules .= '|'.cientity\AdditionalValidation::getRules($entityName,$columnInfo['ColumnName']);
 		$re_rules = trim(str_replace('||','|',$re_rules),'|');
 	}
 	

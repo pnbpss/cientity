@@ -1,4 +1,5 @@
 <?php
+namespace cientity;
 class additionalValidation {	
 	const rules = 
 	[
@@ -18,11 +19,12 @@ class additionalValidation {
 	];
 	
 	const validationErrorMessage = [
+		
 		/**/
 		/*
 		'min_length'=>'{field} ต้องยาวอย่างน้อย {param} ตัวอักษร'
 		,'required'=> 'ยังไม่ได้กรอก {field}'
-                ,'is_unique'=> '{field} ที่ระบุมา มีใช้อยู่แล้ว'		
+		 ,'is_unique'=> '{field} ที่ระบุมา มีใช้อยู่แล้ว
 		,'exact_length'=>'{field} ความยาวต้องเท่ากับ {param} ตัวอักษร'
 		,'numeric'=>'{field} ต้องเป็นตัวเลขเท่านั้น'
 		,'integer'=>'{field} ต้องเป็นเลขจำนวนเต็ม'
@@ -32,12 +34,10 @@ class additionalValidation {
 		,'decimal'=>'{field} ต้องเป็นทศนิยม'
 		*/
 	];
-	public static function validationErrorMessage()
-	{
+	public static function validationErrorMessage(){
 		return self::validationErrorMessage;
 	}
-	public static function getRules($entityName,$columnName='')
-	{		
+	public static function getRules($entityName,$columnName=''){		
 		if ($columnName!='')
 		{			
 			return  isset(self::rules[$entityName][$columnName])? self::rules[$entityName][$columnName]:'';

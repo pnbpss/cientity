@@ -1,4 +1,5 @@
 <?php
+namespace cientity;
 /**
 * @author panu boonpromsook 2018/07/10, pnbpss@gmail.com
 */

@@ -6,7 +6,7 @@
  * mainForms is Class which use for create HTML components such as input field in filter row, or input component in mainModal. 
  * It also perform form validation.
  */
-class mainForms{
+class mainForms {
 	
 	/**
 	 * maximum of select2 input 
@@ -155,7 +155,11 @@ class mainForms{
 					continue;
 				}
 			}
-			$this->CI->form_validation->set_rules($val['field'], $val['label'], $val['rules'], additionalValidation::validationErrorMessage());
+			/**
+			 * for more information about cientity\additionalValidation:
+			 * cientity\additionalValidation::validationErrorMessage() is automatically loaded with "$this->CI->load->library('custom/'.$libName);" statement  in _loadLibrary method			 
+			 */
+			$this->CI->form_validation->set_rules($val['field'], $val['label'], $val['rules'], cientity\additionalValidation::validationErrorMessage());
 		}
 
 		if ($this->CI->form_validation->run() == FALSE){
@@ -216,16 +220,17 @@ class mainForms{
 		$haveRules = false;
 		foreach($rules as $cRules){
 			if($cRules['field']===$columnName){
-				$conlumnRules = $cRules['rules'];
-				$columnLabel = $cRules['label'];
-				$haveRules = true;
-				break;
+				$conlumnRules = $cRules['rules']; $columnLabel = $cRules['label']; $haveRules = true; break;
 			}
 		}
 		if($haveRules===false){
 			return true;
-		}		
-		$this->CI->form_validation->set_rules($columnName, $columnLabel, $conlumnRules, additionalValidation::validationErrorMessage());
+		}
+		/**
+		* for more information about cientity\additionalValidation:
+		* cientity\additionalValidation::validationErrorMessage() is automatically loaded with "$this->CI->load->library('custom/'.$libName);" statement  in _loadLibrary method			 
+		*/
+		$this->CI->form_validation->set_rules($columnName, $columnLabel, $conlumnRules, cientity\additionalValidation::validationErrorMessage());
 		if ($this->CI->form_validation->run() == FALSE){
 			$errorArray = $this->CI->form_validation->error_array();
 			foreach($errorArray as $val){				
@@ -795,9 +800,8 @@ class mainForms{
 	* @return object
 	*	
 	*/
-	protected function _loadLibrary($libName){
-
-		$this->CI->load->library('custom/'.$libName);
+	protected function _loadLibrary($libName){		
+		$this->CI->load->library('custom/'.$libName);		
 		$obj = new $libName;
 		return $obj;
 	}
