@@ -21,11 +21,12 @@ $(document).ready(function() {
 			,dropdownParent: $("#cientityAddEditModal") //***
 			,language: "th"
 		});
-	});
-	/**
-	 * init select2 after loaded sub-entity interface
-	 * @param string cientitySubEntityModalPanelId 
-	 */
+	});	
+                /**
+                 *  init select2 after loaded sub-entity interface
+                 * @param {string} cientitySubEntityModalPanelId
+                 * @returns {undefined}
+                 */
 	function cientity_InitSelect2InputInSubEntity(cientitySubEntityModalPanelId){
 		$(".cientitySubmodelPanel[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']")
 		.find(".cientitySelectFromReferenceForSubEntity")
@@ -99,7 +100,7 @@ $(document).ready(function() {
 	
 	/**
 	 * perform update record in subentity
-	 * @param object el
+	 * @param {object} el
 	 *      el is input or select in a row of data table. the updating will be activated every time the INPUT or SELECT is changed their value.
 	 * @returns {undefined}
 	 */
@@ -141,9 +142,9 @@ $(document).ready(function() {
 	
 	/**
 	 * init datatable for sub-entity, and init other component after each loading
-	 * @param string className
+	 * @param {string} className
 	 * className 
-	 * @param string cientitySubEntityModalPanelId
+	 * @param {string} cientitySubEntityModalPanelId
 	 * panelId or tabId in sub-entity selection tab(nav bar)
 	 * @returns {undefined}
 	 */
@@ -186,7 +187,7 @@ $(document).ready(function() {
                                  
 		var tbLength = $("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] th").length;
 
-        //init datatable
+                                 //init datatable
 		$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"']").DataTable({
 			"bFilter": false,
 			"bLengthChange": false,			
@@ -223,7 +224,9 @@ $(document).ready(function() {
 	}
 	
 	/*
-	en: delete multiple record in sub-entity
+	* en: delete multiple record in sub-entity
+                * @param {string} entityId
+                * @param {string} className
 	*/
 	function do_cientitydeleteMultipleRecord(entityId,className){
 		var countChecked = $("."+className+"[cientitySubEntityModalPanelId='"+entityId+"']").find(".cientitySelectToActionSubentity:checked").length;		
@@ -326,6 +329,7 @@ $(document).ready(function() {
 	/**
 	* en:ส่งข้อมูลในฟอร์ม addEditModal เพื่อไปบันทึก
 	* th:send data in addEditModal form to save at back-end
+                * @@param {object} el
 	*/
 	function cientityDoSubmitAddEditModalForm(el){
 		var dataToPost = new Object();
@@ -355,7 +359,7 @@ $(document).ready(function() {
 	*/
                 /**
                  * 
-                 * @param {type} el
+                 * @param {object} el
                  * @returns {undefined}
                  */
 	function cientityPutDataIntoAddEditModalForm(el){
@@ -368,7 +372,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: cientity_base_url+'m/loadDataToEditInModal'
 			,data:dataToPost
-            ,type:"POST"
+                                                ,type:"POST"
 			,dataType:'json'
 			,success:function(data){				
 				if(data.results.fields){
@@ -414,7 +418,15 @@ $(document).ready(function() {
 	}
 	
 	//th: จัดการกับ notifications
-	//en: display notificaitons
+	//
+                /**
+                 * Display notificaitons as pop-up.
+                 * @param {string} alertType
+                 * @param {string} taskMsg
+                 * @param {string} alertMsg
+                 * @param {int} timeOut 
+                 * @returns {defaultForEntityL#6.cientitypopupNotification.returnData}
+                 */
 	function cientitypopupNotification(alertType,taskMsg,alertMsg, timeOut){
 		var fsetTimeout = timeOut?timeOut:3000;
 				
@@ -460,7 +472,7 @@ $(document).ready(function() {
 		var returnData = {notificationTimeOut:notificationTimeOut, idNum:idNum, alertType:alertType};
 		return returnData;
 	}
-	
+	/*
 	function cientityResetetPopupNotification(alertType,taskMsg,alertMsg, objData){
 		var oldAlertType=objData.alertType;
 		var idNum = objData.idNum;
@@ -480,7 +492,7 @@ $(document).ready(function() {
 				});				
 			},2500);
 	}
-	
+	*/
 	//delete data
 	function init_cientityDeleteExistingEntityRecord(){
 		$('.cientityDeleteExistingEntityRecord').unbind('click').click(function(){		
@@ -505,7 +517,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: cientity_base_url+'m/deleteData'
 			,data:{entityOrdinal:entityOrdinal,dataId:dataId}
-            ,type:"POST"
+                                                ,type:"POST"
 			,dataType:'json'
 			,success:function(data){
 				if(notifications) $("#cientityAlertDivId_"+notifications.idNum).remove();
@@ -533,8 +545,8 @@ $(document).ready(function() {
 		cientityLoadDataToSubEntityTable();
 	}
 	
-	/*
-	* en:load data of sub-entity and put into table of sub-entity
+	/**
+	* load data of sub-entity and put into table of sub-entity
 	*/
 	function cientityLoadDataToSubEntityTable(){
 		//th:วนหาอันที่ active ก่อน
@@ -589,5 +601,5 @@ $(document).ready(function() {
 });
 
 
-//*** select2 ที่อยู่บน component อื่นใน modal ทำงานเพี้ยน แก้ปัญหาโดยระบุ พ่อของมันให้ เอาเทคนิคนี้มาจาก มาจาก https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/33884094#33884094
-//***select2 which placed on other component,in modal,not works as expected. The problem solved by tell selec2 its parent. This technic derived from https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/33884094#33884094
+//***th: select2 ที่อยู่บน component อื่นใน modal ทำงานเพี้ยน แก้ปัญหาโดยระบุ พ่อของมันให้ เอาเทคนิคนี้มาจาก มาจาก https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/33884094#33884094
+//***en: select2 which placed on other component,in modal,not works as expected. The problem solved by tell selec2 its parent. This technic derived from https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/33884094#33884094
