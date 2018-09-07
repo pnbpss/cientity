@@ -53,7 +53,14 @@ class mainForms {
 	 * @var array 
 	 */
 	public $_REQUESTM;
-
+	
+	/**
+	 * Width of select, input text and searchButton.
+	 */
+	private $_fr_input_text_width=2;
+	private $_fr_select_width=3;
+	private $_fr_search_button_width=2;
+	
 	/**
 	 * 
 	 * @param string $libName
@@ -585,7 +592,7 @@ class mainForms {
 		$fromToStr = explode('_',$filterOrdinal);
 		$additionalLabel=""; if(isset($fromToStr[1])){ if($fromToStr[1]=='from') {$additionalLabel='(from)';} elseif($fromToStr[1]=='to'){$additionalLabel='(to)';}}
 		
-		$str = "<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL.
+		$str = "<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL.
 			"<label class=\"control-label\">#!#!#!#!#!#{$additionalLabel}</label>".PHP_EOL."{$inputItem}</div>".PHP_EOL."</div>".PHP_EOL."";
 		return $str;
 	}	
@@ -624,7 +631,7 @@ class mainForms {
 		}
 		$str = "
 
-								<div class=\"col-sm-3 col-xs-6\">
+								<div class=\"col-sm-{$this->_fr_select_width} col-xs-{$this->_fr_select_width}\">
 									<div class=\"form-group form-focus select-focus\">
 											<label class=\"control-label\">#!#!#!#!#!#</label>
 											<select cientityFormFilterOrder=\"{$filterOrdinal}\" class=\"select floating select2-hidden-accessible {$cientityClassOptionOverflow} cientityFilter\" tabindex=\"-1\" aria-hidden=\"true\" {$infoForAjaxOptions}>
@@ -648,7 +655,7 @@ class mainForms {
 	*/	
 	private function _inputDateItem($filterOrdinal){
 		$inputItem = "
-						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
+						<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
 								<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
@@ -657,7 +664,7 @@ class mainForms {
 							</div>".PHP_EOL."
 						</div>".PHP_EOL."
 
-						<div class=\"col-sm-3 col-xs-6\">".PHP_EOL."
+						<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
 								<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
@@ -767,7 +774,7 @@ class mainForms {
 	private function _searchButton()	{
 		$entityOrdinal = $this->entityOrdinal($this->libName);
 		return "
-						<div class=\"col-sm-3 col-xs-6\">  ".PHP_EOL."
+						<div class=\"col-sm-{$this->_fr_search_button_width} col-xs-{$this->_fr_search_button_width}\">  ".PHP_EOL."
 							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">Search</a>  ".PHP_EOL."
 						</div>".PHP_EOL."
 		";

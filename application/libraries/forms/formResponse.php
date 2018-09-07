@@ -154,8 +154,11 @@ class formResponse extends mainForms {
 				$display = $this->_getTdTableData($key, $val,$subEntityInfo);					
 				$tableData .= "<td class='{$textAlign}'>{$display}</td>";
 			}
-			$actionTd="<td class=\"text-right\">
-						<div class=\"dropdown\">
+			$actionTd="<td class=\"text-right\">						
+						<span class='cientityEditExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}' data-toggle=\"modal\" data-target=\"#cientityAddEditModal\" data-backdrop=\"static\" data-keyboard=\"false\"><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i></a></span>
+						<span class='cientityDeleteExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'><a href=\"#\" data-toggle=\"modal\" data-target=\"#cientityDeleteModal\"><i class=\"fa fa-trash-o m-r-5\"></i></a></span>							
+						
+						<div class=\"dropdownxxx\" style='display:none;'>
 							<a href=\"#\" class=\"action-icon dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\"><i class=\"fa fa-ellipsis-v\"></i></a>
 							<ul class=\"dropdown-menu pull-right\">
 								<li class='cientityEditExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}' data-toggle=\"modal\" data-target=\"#cientityAddEditModal\" data-backdrop=\"static\" data-keyboard=\"false\"><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i> view or update</a></li>

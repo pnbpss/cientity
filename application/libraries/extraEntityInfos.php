@@ -795,21 +795,21 @@ class ExtraEntityInfos {
 													"devLocations.code" 
 													,"devLocations.descriptions" //ต้องระบุ entityName ด้วย
 													,'devLocations.numberOfSeat'
-													,"sysClosed.descriptions::closedId;;เลือกสถานะสถานที่"	//;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง (จะไม่เอา descriptions ใน column นั้นมาใช้)
+													,"sysClosed.descriptions::closedId;;location status"	//;; สิ่งที่อยู่หลัง ;; คือคำอธิบายที่กำหนดไปเอง (จะไม่เอา descriptions ใน column นั้นมาใช้)
 													]
 											,'between'=>['devLocations.numberOfSeat']
 											
 							]
 							,'selectAttributes'=>[
 													'fields'=>[
-															'devLocations.code'
-															,'devLocations.descriptions;;คำอธิบายเพิ่มเติม'
-															,'sysYesNo.yesno;;สถานที่ของบริษัท'
-															,'devLocations.numberOfSeat'
-															,'devLocations.numberOfComputers'
-															,'devLocations.projector;;โปรเจคเตอร์(เครื่อง)'
-															,'devLocations.microphone;;ไมค์(ตัว)'
-															,'sysClosed.descriptions;;เปิดใช้อยู่'									
+															'devLocations.code;;Location Code'
+															,'devLocations.descriptions;;Descriptions'
+															,'sysYesNo.yesno;;Internal'
+															,'devLocations.numberOfSeat;;Number Seats'
+															,'devLocations.numberOfComputers;;Laptops'
+															,'devLocations.projector;;Projectors'
+															,'devLocations.microphone;;Mics'
+															,'sysClosed.descriptions;;Available?'									
 														]
 													,'format'=>[											
 														'sysClosed.descriptions'=>"".FRPLCEMNT4FMT." closedDescription"
