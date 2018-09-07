@@ -87,7 +87,9 @@ $(document).ready(function() {
                                                                         
                                                                         //if added successed, refresh sub-entity table
                                                                         if(data.results.notifications.success){
-                                                                                cientityLoadDataToSubEntityTable();
+                                                                                if(data.results.notifications.success.length!==0){                                                                                    
+                                                                                    cientityLoadDataToSubEntityTable();
+                                                                                }
                                                                         }
                                                                 }
                                                                 
