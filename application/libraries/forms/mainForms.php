@@ -1466,7 +1466,8 @@ class mainForms {
 						 <div class='panel cientitySubPanel hide' cientitySubEntityModalPanelId='{$entityOrdinal}'>
 							<div class=\"panel-heading text-right\">
 									<div class=\"btn-group btn-group-xs\">
-										<button class=\"btn btn-danger cientityHidePanel\" type=\"button\" cientitySubEntityModalPanelId='{$entityOrdinal}'>&times;</button>
+										<button class=\"btn btn-danger cientityHidePanel\" type=\"button\" cientitySubEntityModalPanelId='{$entityOrdinal}'>&times; Hide</button>
+										
 									</div>
 							  </div>
 							<div class='panel-body'>

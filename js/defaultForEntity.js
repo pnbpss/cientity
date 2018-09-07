@@ -82,7 +82,15 @@ $(document).ready(function() {
 			,success:function(data){
 				$("#cientityAlertDivId_"+notifications.idNum).remove();
 				$(".notification-popup").addClass('hide');
-				if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Adding');
+				if ((data.results) && (data.results.notifications)){ 
+                                                                        cientity_displayAllNotifications(data.results.notifications,'Adding');
+                                                                        
+                                                                        //if added successed, refresh sub-entity table
+                                                                        if(data.results.notifications.success){
+                                                                                cientityLoadDataToSubEntityTable();
+                                                                        }
+                                                                }
+                                                                
 			}
 		});		
 	});
