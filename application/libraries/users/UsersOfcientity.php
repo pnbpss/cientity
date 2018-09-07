@@ -27,28 +27,28 @@ class UsersOfcientity
 				select tg.id taskGroupId,tg.groupName taskGroupName,t.taskName,t.id taskId 
 				from {$this->CI->db->dbprefix}sysUsers u
 				left join {$this->CI->db->dbprefix}sysUserGroups ug on ug.id=u.groupId
-				left join {$this->CI->db->dbprefix}gntPrivileges p on ug.id=p.userGroupId 
-				left join {$this->CI->db->dbprefix}gntTasks t on p.taskId=t.id 
-				left join {$this->CI->db->dbprefix}gntTaskGroups tg on t.taskGroupId=tg.id 
-				where 1=1 and t.display=1 and u.userName='{$userName}'
+				left join {$this->CI->db->dbprefix}sysUserTaskPrivileges p on ug.id=p.userGroupId 
+				left join {$this->CI->db->dbprefix}sysTasks t on p.taskId=t.id 
+				left join {$this->CI->db->dbprefix}sysTaskGroups tg on t.taskGroupId=tg.id 
+				where 1=1 and t.display=1 and u.userName='{$userName}' 
+				and tg.id<>12 -- is not system administration.
 				order by tg.ordering, t.ordering ";
 		}else{
 			$conditions = "";
 			$sql = "
-			select distinct tg.id taskGroupId,tg.ordering,tg.groupName taskGroupName,t.taskName,t.id taskId
-			from {$this->CI->db->dbprefix}gntTaskGroups tg 
-			left join {$this->CI->db->dbprefix}gntTasks t on tg.id=t.taskGroupId 			
+			select distinct tg.id taskGroupId,tg.ordering,tg.groupName taskGroupName,t.taskName,t.id taskId,t.ordering tordering
+			from {$this->CI->db->dbprefix}sysTaskGroups tg 
+			left join {$this->CI->db->dbprefix}sysTasks t on tg.id=t.taskGroupId 			
 			where 1=1  and t.display=1
-			order by tg.ordering,t.taskName
-			";
+			order by tg.ordering,t.ordering,t.taskName
+			";			
 		}		
 		$q = $this->CI->db->query($sql);
 		$tempTaskGroupName = "";
 		$menus = [];
 		foreach ($q->result() as $row) {
-			// วนลูปเพื่อดึงเมนูออกมา
-			if($tempTaskGroupName!=$row->taskGroupName)
-			{
+			// Loop to fetch menus
+			if($tempTaskGroupName!=$row->taskGroupName){
 				$menus[$row->taskGroupName] = [];
 			}
 			$taskDescription = (isset($extraEntityInfoDesc[$row->taskName]['descriptions']))?$extraEntityInfoDesc[$row->taskName]['descriptions']:"_".$row->taskName;

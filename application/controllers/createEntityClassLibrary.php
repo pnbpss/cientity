@@ -20,15 +20,15 @@ class CreateEntityClassLibrary extends CI_Controller {
 			--users and task for authenticate 
 			'{$this->db->dbprefix}sysConfigs'
 			,'{$this->db->dbprefix}sysConfigTypes'
-			,'{$this->db->dbprefix}gntTasks'
-			,'{$this->db->dbprefix}gntTaskGroups'
-			,'{$this->db->dbprefix}gntPrivileges'
-			,'{$this->db->dbprefix}sysUserGroups'
-			,'{$this->db->dbprefix}sysUsers'
+			--,'{$this->db->dbprefix}sysTasks'
+			--,'{$this->db->dbprefix}sysTaskGroups'
+			--,'{$this->db->dbprefix}sysUserTaskPrivileges'
+			--,'{$this->db->dbprefix}sysUserGroups'
+			--,'{$this->db->dbprefix}sysUsers'
 		)
 		and c.TABLE_NAME not in (
 			--created file
-			select '{$this->db->dbprefix}'+sc.val from hds_sysConfigs sc inner join hds_sysConfigTypes sct on sc.configTypeId=sct.id where sct.id=1
+			select '{$this->db->dbprefix}'+sc.val from {$this->db->dbprefix}sysConfigs sc inner join {$this->db->dbprefix}sysConfigTypes sct on sc.configTypeId=sct.id where sct.id=1
 		)
 		";		
 		$q = $this->db->query($sql);		
@@ -57,13 +57,13 @@ class CreateEntityClassLibrary extends CI_Controller {
 				$this->db->query("insert into hds_sysConfigs (configTypeId, val) values (1,'{$libraryName}') ");
 				$createdFile++;
 				echo " =&gt; created. ";
-				//insert to gntTasks in group unknow for switch to correct task group later
+				//insert to sysTasks in group unknow for switch to correct task group later
 				if($row->TABLE_TYPE!=='VIEW'){
 					//check that is exists or not
 					$insertIntoTaskListSql .= " ".PHP_EOL
-					." if(select count(*) from {$this->db->dbprefix}gntTasks where taskName='{$libraryName}') = 0 ".PHP_EOL
+					." if(select count(*) from {$this->db->dbprefix}sysTasks where taskName='{$libraryName}') = 0 ".PHP_EOL
 					." begin "
-					." insert into {$this->db->dbprefix}gntTasks (taskGroupId, taskName,ordering,display) values(@taskGroupId ,'{$libraryName}',99,1); "
+					." insert into {$this->db->dbprefix}sysTasks (taskGroupId, taskName,ordering,display) values(@taskGroupId ,'{$libraryName}',99,1); "
 					." end ".PHP_EOL
 					;					
 				}
@@ -73,8 +73,8 @@ class CreateEntityClassLibrary extends CI_Controller {
 		}
 		$allTranSql = " ".PHP_EOL
 		." declare @taskGroupId int;".PHP_EOL
-		." set @taskGroupId = (select id from {$this->db->dbprefix}gntTaskGroups where groupName='_notDefinedTaskGroup_');".PHP_EOL
-		." if isnull(@taskGroupId,-1) = -1 begin insert into {$this->db->dbprefix}gntTaskGroups (groupName,ordering) values('_notDefinedTaskGroup_',99); select @taskGroupId = SCOPE_IDENTITY();  end ".PHP_EOL
+		." set @taskGroupId = (select id from {$this->db->dbprefix}sysTaskGroups where groupName='_notDefinedTaskGroup_');".PHP_EOL
+		." if isnull(@taskGroupId,-1) = -1 begin insert into {$this->db->dbprefix}sysTaskGroups (groupName,ordering) values('_notDefinedTaskGroup_',99); select @taskGroupId = SCOPE_IDENTITY();  end ".PHP_EOL
 		."  ".PHP_EOL
 		.$insertIntoTaskListSql;
 		$this->db->query($allTranSql);

@@ -1001,7 +1001,7 @@ class ExtraEntityInfos {
 	static function getEntityName($taskId){
 		$CI =& get_instance();
 		$CI->load->database();
-		$q = $CI->db->query("select taskName from {$CI->db->dbprefix}gntTasks where id=".$CI->db->escape($taskId).";");
+		$q = $CI->db->query("select taskName from {$CI->db->dbprefix}sysTasks where id=".$CI->db->escape($taskId).";");
 		$row = $q->row();
 		if(isset($row)){
 			return $row->taskName;
