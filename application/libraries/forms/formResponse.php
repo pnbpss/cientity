@@ -44,10 +44,10 @@ class formResponse extends mainForms {
 		$this->_REQUESTM = $this->escapeSQL($request);
 		
 		/**
-		 * seek in extraEntityInfos to find library name (entity name)
+		 * seek in entityRecipes to find library name (entity name)
 		 */
 		$index=0;
-		foreach(array_keys(extraEntityInfos::infos) as $key){
+		foreach(array_keys(entityRecipes::recipes) as $key){
 			if($index==$this->entityOrdinal){				
 				$this->_libName = $key;
 				break;
@@ -324,7 +324,7 @@ class formResponse extends mainForms {
 	/**	 
 	 *	compose fields of select for select clause, 
 	 * @param array selectAttributes
-	 *	selectAttributes is array in extra entity info in extraEntityInfos.php 
+	 *	selectAttributes is array in extra entity info in entityRecipes.php 
 	 * @return string
 	 *	"select" clause, for example "select a,b,c,d"
 	 */
@@ -363,7 +363,7 @@ class formResponse extends mainForms {
 	 *	array of column descriptions which will be used as table header.
 	 */
 	protected function getSelectListColumnDescriptions(){
-		//$selectFields = extraEntityInfos::infos[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
+		//$selectFields = entityRecipes::recipes[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
 		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //solved bugId 20180808-01				
 		$returnArray = [];
 		//loop for each field in fields 
@@ -385,7 +385,7 @@ class formResponse extends mainForms {
 	/**	 
 	 * loop through array in key 'join' of current library to create "join" clause for searching 
 	 * @param array joinInfo
-	 *	array of joining from extraEntityInfos.php, specified in key 'join' 
+	 *	array of joining from entityRecipes.php, specified in key 'join' 
 	 * @param string libName
 	 *	current library name(entity name)
 	 * @return string
@@ -403,7 +403,7 @@ class formResponse extends mainForms {
 	/**	 
 	 * create "join" clause for searching 
 	 * @param array joinInfo
-	 *	array of joining from extraEntityInfos.php, specified in each key 'join' 	 
+	 *	array of joining from entityRecipes.php, specified in each key 'join' 	 
 	 * @return string
 	 *	all join clause of current library(entity) for performing select
 	 */
@@ -431,9 +431,9 @@ class formResponse extends mainForms {
 	 * @param array request
 	 *	$_REQUEST
 	 * @param array libDisplaySearchAttribute
-	 *	array in "display" key in 'libraryName'=>searchAttributes in extraEntityInfos.php
+	 *	array in "display" key in 'libraryName'=>searchAttributes in entityRecipes.php
 	 * @param array libHiddenSearchAttribute
-	 *	array in "hidden" key in 'libraryName'=>searchAttributes in extraEntityInfos.php, hidden conditions that will be co-use for searching
+	 *	array in "hidden" key in 'libraryName'=>searchAttributes in entityRecipes.php, hidden conditions that will be co-use for searching
 	 * @return string
 	 *	"where" clause, SQL string part 
 	 */
@@ -603,7 +603,7 @@ class formResponse extends mainForms {
 			}
 			
 			/**
-			 * in case of none-references but it have been specified in extraEntityInfos[$libName][addEditModal][reference]. 
+			 * in case of none-references but it have been specified in entityRecipes[$libName][addEditModal][reference]. 
 			 * For instance, 'empIDNo'=>'devEmployees.IDNoAndFullName'. This must create select2 for this situation.
 			 */			
 			elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName])){ 
@@ -723,7 +723,7 @@ class formResponse extends mainForms {
 			if($updateResult[0]=='ok'){
 				$this->notify('success',"Updated {$libExtraInfo['descriptions']} ");
 			}else{
-				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],extraEntityInfos::infos());
+				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],entityRecipes::recipes());
 				$this->notify('danger',"Unable to update {$libExtraInfo['descriptions']}, because {$updateResult[1]} ");
 			}
 			return $this->response;

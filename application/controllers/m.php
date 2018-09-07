@@ -37,14 +37,14 @@ class M extends CI_Controller {
 	 */
 	public function e(){
 		/**
-		 * Get the ordinal of entity. The ordinal is sequence number of entity in extraEntityInfos::info
+		 * Get the ordinal of entity. The ordinal is sequence number of entity in entityRecipes::recipes
 		 */
 		$entityOrdinal = $this->uri->segment(3);	
 		
 		/**
 		 * Get entity name from 
 		 */
-		$entityName = extraEntityInfos::getEntityName($entityOrdinal);
+		$entityName = entityRecipes::getEntityName($entityOrdinal);
 		
 		/**
 		 * Create new object forms by using entity name
@@ -71,9 +71,9 @@ class M extends CI_Controller {
 		
 		$viewData = self::getViewData();
 				
-		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:$mainForms->extraEntityInfos_default_header_JS_CSS();
-		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:$mainForms->extraEntityInfos_default_footer_JS_CSS();
-		$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"extraEntityInfos[{$entityName}].descriptions not exists";
+		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:$mainForms->entityRecipes_default_header_JS_CSS();
+		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:$mainForms->entityRecipes_default_footer_JS_CSS();
+		$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"entityRecipes[{$entityName}].descriptions not exists";
 		
 		 $viewData['activeMenuItem'] = $entityOrdinal;
 		
@@ -103,7 +103,7 @@ class M extends CI_Controller {
 		/**
 		 * Get entity name by ordinal number of entity(uri->segment(3)).
 		 */		
-		$entityName = extraEntityInfos::entityNameByURISegment($this->uri->segment(3));
+		$entityName = entityRecipes::entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -131,7 +131,7 @@ class M extends CI_Controller {
 		/**
 		 * Get entity name by ordinal number of entity(uri->segment(3)).
 		 */		
-		$entityName = extraEntityInfos::entityNameByURISegment($this->uri->segment(3));
+		$entityName = entityRecipes::entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -210,7 +210,7 @@ class M extends CI_Controller {
 		/**
 		 * Load all extra entity info for creating left menu purpose.
 		 */
-		$extraEntityInfoDesc = extraEntityInfos::getAllDescriptions();		
+		$extraEntityInfoDesc = entityRecipes::getAllDescriptions();		
 		
 		/**
 		 * Load and create user object for creating left menu, and display user name in entity_view.php.

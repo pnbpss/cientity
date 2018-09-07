@@ -639,7 +639,7 @@ class entity extends cientity\entities{
 	 */
 	public function insertUpdateAllowed($userId){		
 		$entityName = get_class($this);
-		$sql = "SELECT p.[id],[userGroupId],[taskId],[allowSave],u.userName FROM {$this->CI->db->dbprefix}sysUserTaskPrivileges p left join {$this->CI->db->dbprefix}sysTasks t on p.taskId=t.id left join {$this->CI->db->dbprefix}_sysUserGroups ug on p.userGroupId=ug.id left join {$this->CI->db->dbprefix}sysUsers u on ug.id=u.groupId where u.id='{$userId}' and t.taskName='{$entityName}' and allowSave='Y' ";
+		$sql = "SELECT p.[id],[userGroupId],[taskId],[allowSave],u.userName FROM {$this->CI->db->dbprefix}sysUserTaskPrivileges p left join {$this->CI->db->dbprefix}sysTasks t on p.taskId=t.id left join {$this->CI->db->dbprefix}sysUserGroups ug on p.userGroupId=ug.id left join {$this->CI->db->dbprefix}sysUsers u on ug.id=u.groupId where u.id='{$userId}' and t.taskName='{$entityName}' and allowSave='Y' ";
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
 		if(isset($row->userName)){

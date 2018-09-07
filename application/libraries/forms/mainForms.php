@@ -1,5 +1,5 @@
 <?php
-require_once(APPPATH.'libraries/extraEntityInfos.php');
+require_once(APPPATH.'libraries/entityRecipes.php');
 /**
  * Class mainForm
  * @author Panu Boonpromsook
@@ -22,7 +22,7 @@ class mainForms {
 	protected $CI;
 
 	/**
-	 * store entity extra info stored in extraEntityInfos.php
+	 * store entity extra info stored in entityRecipes.php
 	 * @var array  
 	 */
 	protected $libExtraInfo;
@@ -40,7 +40,7 @@ class mainForms {
 	/**
 	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
 	 */
-	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in extraEntityInfos.php.</label></div></div></div>";
+	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in entityRecipes.php.</label></div></div></div>";
 	
 	/**
 	 * session data for use in this class and extended.
@@ -284,7 +284,7 @@ class mainForms {
 						continue;
 					}else{
 						$method = __METHOD__;
-						$this->notify('danger','Fatal Error _001: The hidden keys in extraEntityInfos is defined, but not yet declared default. =&gt; '.$method);
+						$this->notify('danger','Fatal Error _001: The hidden keys in entityRecipes is defined, but not yet declared default. =&gt; '.$method);
 						return;
 					}
 				}
@@ -381,7 +381,7 @@ class mainForms {
 						continue;
 					}else{
 						$method = __METHOD__;
-						$this->notify('danger','Fatal Error _002: The hidden keys in extraEntityInfos is defined, but not yet declared default. =&gt;  '.$method);
+						$this->notify('danger','Fatal Error _002: The hidden keys in entityRecipes is defined, but not yet declared default. =&gt;  '.$method);
 						return;
 					}
 				}
@@ -815,15 +815,15 @@ class mainForms {
 	}
 	
 	/**
-	*	load extra information of specified entity of APPPATH/libraries/extraEntityInfos.php, this is important part of using cientity
+	*	load extra information of specified entity of APPPATH/libraries/entityRecipes.php, this is important part of using cientity
 	* @param string libName
 	*	name of specified library
 	* @return array
-	*	In case of undefined extra entity info in extraEntityInfos.php it will return blank array.
+	*	In case of undefined extra entity info in entityRecipes.php it will return blank array.
 	*/
 	private function _libExtraInfo($libName){
-		//$this->CI->load->library('extraEntityInfos');
-		return isset(extraEntityInfos::infos[$libName])?extraEntityInfos::infos[$libName]:[];
+		//$this->CI->load->library('entityRecipes');
+		return isset(entityRecipes::recipes[$libName])?entityRecipes::recipes[$libName]:[];
 	}
 
 	/**
@@ -831,22 +831,22 @@ class mainForms {
 	* @return array	
 	*/
 	private function _AllLibExtraInfo(){
-		//$this->CI->load->library('extraEntityInfos');
-		return extraEntityInfos::infos;
+		//$this->CI->load->library('entityRecipes');
+		return entityRecipes::recipes;
 	}
 	
 	function ret_AllLibExtraInfo(){
 		return $this->_AllLibExtraInfo();
 	}
 	
-	function extraEntityInfos_default_header_JS_CSS(){
-		//$this->CI->load->library('extraEntityInfos');
-		return extraEntityInfos::default_header_JS_CSS;
+	function entityRecipes_default_header_JS_CSS(){
+		//$this->CI->load->library('entityRecipes');
+		return entityRecipes::default_header_JS_CSS;
 	}
 	
-	function extraEntityInfos_default_footer_JS_CSS(){
-		//$this->CI->load->library('extraEntityInfos');
-		return extraEntityInfos::default_footer_JS_CSS;
+	function entityRecipes_default_footer_JS_CSS(){
+		//$this->CI->load->library('entityRecipes');
+		return entityRecipes::default_footer_JS_CSS;
 	}
 	 /**
 	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
@@ -914,7 +914,7 @@ class mainForms {
 				$cStr=$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal,$fields);
 			}
 
-			//if specified custom descriptin in extraEntityInfos, then use the specified
+			//if specified custom descriptin in entityRecipes, then use the specified
 			$columnDescriptions = isset($fieldInfo[1]) ?$fieldInfo[1] :$this->_getFieldDescriptions($entities[$entityName],  $columnName) ;
 
 			$replacedCStr = str_replace("#!#!#!#!#!#",$columnDescriptions,$cStr);
@@ -1135,7 +1135,7 @@ class mainForms {
 		
 		/**
 		 *  if the column isn't references from other table in database design, but it was specified that it have to be referenced 
-		 * from other table in in extraEntityInfos[$libName][addEditModal][reference] then it must create input as select2
+		 * from other table in in entityRecipes[$libName][addEditModal][reference] then it must create input as select2
 		 */
 		elseif(isset($allLibExtraInfo[$this->libName]['addEditModal']['references'][$key])){
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
@@ -1160,7 +1160,7 @@ class mainForms {
 			
 		}
 
-		//if field label is declared in extraEntityInfos
+		//if field label is declared in entityRecipes
 		$fieldLabels = (isset($allLibExtraInfo[$this->libName]['addEditModal']['fieldLabels'][$key]))
 					?$allLibExtraInfo[$this->libName]['addEditModal']['fieldLabels'][$key]
 					:$this->libObject->revisedColumnDescriptions[$key][0]

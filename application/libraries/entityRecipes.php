@@ -1,14 +1,14 @@
 <?php
 /**
- * Class extraEntityInfos 
+ * Class entityRecipes 
  * @author Panu Boonpromsook <pnbpss@gmail.com>
  * 
- * ExtraEntityInfos declares and supplies an information each entity for class formResponses and mainForm.
+ * entityRecipes declares and supplies an information each entity for class formResponses and mainForm.
  * Information in this file will be varied on table in database, or table design. 
  * 
  * For none Thai reader, you can ignore Thai comment in this file. It provided for easier Thai reader to understand the code. The contexts are same as English. 
  */
-class ExtraEntityInfos {
+class entityRecipes {
 	/**
 	 * default header of Javascript and CSS file linked
 	 */
@@ -28,7 +28,7 @@ class ExtraEntityInfos {
 	 * - etc.
 	 * devClasses and devClassEnrollists will be use as examples, so I will put a comment to described each Item one by one.
 	 */
-	const infos = [
+	const recipes = [
 		#region devClasses
 		/**
 		 * The 'devClasses' key is library name or you can call entity name. 
@@ -980,23 +980,26 @@ class ExtraEntityInfos {
 		,'devTest001'=>[
 				'descriptions' => 'just for test 001'
 		]
+		,'sysUsers'=>[
+				'descriptions' => 'Users'
+		]
 		,'repExpenseReports'=>[
 			'customized'=>true
 			,'descriptions'=>'Expense reports'
 		]
 	];
 	
-	static function infos(){
-		$allInfo = self::infos;
+	static function recipes(){
+		$allInfo = self::recipes;
 		$allInfo['footer_JS_CSS'] = self::default_footer_JS_CSS;
 		$allInfo['header_JS_CSS'] = self::default_header_JS_CSS;
 		return $allInfo;
 	}
 	static function getDescriptions($entityName){		
-		return self::infos[$entityName];		
+		return self::recipes[$entityName];		
 	}
 	static function getAllDescriptions(){
-		return self::infos;
+		return self::recipes;
 	}
 	static function getEntityName($taskId){
 		$CI =& get_instance();
@@ -1010,7 +1013,7 @@ class ExtraEntityInfos {
 		}
 	}
 	static function infokeysArray(){
-		$info = self::infos;
+		$info = self::recipes;
 		$newArray = [];
 		foreach(array_keys($info) as $key){
 			array_push($newArray,$key);
@@ -1023,4 +1026,4 @@ class ExtraEntityInfos {
 		$entityOrdinal = (int) $property[0];
 		return $entityInfoKey[$entityOrdinal];
 	}
-} //end of class ExtraEntityInfos
+} //end of class entityRecipes
