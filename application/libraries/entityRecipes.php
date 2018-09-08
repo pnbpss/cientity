@@ -1031,7 +1031,7 @@ class entityRecipes {
 			'descriptions' => "User Group's Priviledges to Task"
 			,'filtersBar'=>['display'=>["sysUserGroups.name::;;User Group Name",'sysTasks.taskName::;;Task Name']]
 			,'selectAttributes'=>[
-				'fields'=>[						
+				'fields'=>[		
 						'sysUserGroups.name;;User Group Name'
 						,'sysUserGroups.descriptions;;User Group Descriptions'
 						,'sysTasks.taskName;;Task Name'
