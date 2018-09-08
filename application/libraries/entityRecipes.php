@@ -240,12 +240,12 @@ class entityRecipes {
 			]
 			
 			/**
-			 * The 'searchAttributes' key values are informations that CI-Entity uses to construct filter row and searching mechanism.
+			 * The 'filtersBar' key values are informations that CI-Entity uses to construct filter row and searching mechanism.
 			 * if not specified or not presented or is empty array:
 			 *	The filter row won't be constructed.
 			 * Critical:yes
 			 */
-			,'searchAttributes'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row
+			,'filtersBar'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row
 				
 				/**
 				 * The 'display' key values is column of any table that will be used as search key, search conditions.
@@ -456,7 +456,7 @@ class entityRecipes {
 							'classId'=>'Class Descriptions'
 							,'employeeId'=>'PID, First Name and Last Name ']
 			]
-			,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
+			,'filtersBar'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
 							'display'=>[
 									"devClassEnrollistsView.locationCode;;Location Code"
 									,'devClassEnrollistsView.employeeFullName;;Employee Name'
@@ -532,7 +532,7 @@ class entityRecipes {
 											'subDistrictId'=>'devSubDistrictsView.fullEnName'											
 											]
 							]
-							,'searchAttributes'=>[
+							,'filtersBar'=>[
 												'display'=>[
 													'devExtInstructors.firstName'
 													,'devExtInstructors.lastName'
@@ -579,7 +579,7 @@ class entityRecipes {
 											'closedId'=>'sysClosed.descriptions'
 											]
 							]							
-							,'searchAttributes'=>[
+							,'filtersBar'=>[
 												'display'=>[
 													'devExpenseTypes.name'
 													,'devExpenseTypes.accountCode'
@@ -624,7 +624,7 @@ class entityRecipes {
 											'classId'=>'Class Descriptions'
 											,'expenseId'=>'Expense Type']
 							]
-							,'searchAttributes'=>[
+							,'filtersBar'=>[
 												'display'=>[
 													'devExpenseTypes.name::devClassBudgets.expenseId'
 													,'devClasses.descriptions::devClassBudgets.classId;;Class Descriptions'													
@@ -683,7 +683,7 @@ class entityRecipes {
 											,'employeeId'=>'PID and Staff Full Name'
 											]
 							]
-							,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
+							,'filtersBar'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
 											'display'=>[
 													"devClassInstructorsView.locationCode;;Class Location Code" 
 													//,'devSubjects.name::devSubjectCourse.subjectId::devClasses.scId::classId;;ชื่อวิชา'													
@@ -740,7 +740,7 @@ class entityRecipes {
 											,'extInstructorId'=>'External Instructor\'s name'
 											]
 							]
-							,'searchAttributes'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
+							,'filtersBar'=>[ //ฟิลด์ที่จะ ใช้ search ใน filter row ใช้ join ร่วมกับ selectAttributes ด้านล่าง ('join'=>)
 											'display'=>[													
 													
 													"devClassExtInstructorsView.locationCode;;Class Location Code" 													
@@ -788,7 +788,7 @@ class entityRecipes {
 											//,'preCourseId'=>'devCourses.name'
 											]
 							]
-							,'searchAttributes'=>[
+							,'filtersBar'=>[
 											'display'=>[
 													"devLocations.code" 
 													,"devLocations.descriptions" //ต้องระบุ entityName ด้วย
@@ -851,7 +851,7 @@ class entityRecipes {
 											//,'preCourseId'=>'devCourses.name'
 											]
 							]
-							,'searchAttributes'=>[
+							,'filtersBar'=>[
 											'display'=>[
 													"devCourses.code" 
 													,"devCourses.name" 																									
@@ -904,7 +904,7 @@ class entityRecipes {
 										,'name'=>'Subject Name'
 										]
 						]
-						,'searchAttributes'=>[
+						,'filtersBar'=>[
 											'display'=>[
 												"devSubjects.name"
 												,'devSubjects.classDuration'
@@ -949,7 +949,7 @@ class entityRecipes {
 									,'courseId'=>'devCourses.name'
 									]
 				]
-				,'searchAttributes'=>[
+				,'filtersBar'=>[
 								'display'=>[
 									"devCourses.name::devSubjectCourse.courseId"	
 									,"devSubjects.name::devSubjectCourse.subjectId"
@@ -985,7 +985,7 @@ class entityRecipes {
 		#region System Administration
 		,'sysUsers'=>[
 			'descriptions' => 'Users'
-			,'searchAttributes'=>[
+			,'filtersBar'=>[
 				'display'=>["sysUsers.userName;;User Name"]
 				,'hidden'=>[] 
 				]
@@ -995,7 +995,7 @@ class entityRecipes {
 				'fields'=>[
 						'sysUsers.userName'
 						,'sysUserGroups.name;;group name'
-						,'sysUsers.updateBy'
+						,'sysUsers.updateBy;;Last update by'
 						,'sysUsers.lastUpdate;;last update'
 					]
 				,'format'=>['sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]												
@@ -1013,7 +1013,7 @@ class entityRecipes {
 		]
 		,'sysUserGroups'=>[
 			'descriptions' => 'User Groups'
-			,'searchAttributes'=>['display'=>["sysUserGroups.name;;User Group Name"]]
+			,'filtersBar'=>['display'=>["sysUserGroups.name;;User Group Name"]]
 			,'selectAttributes'=>[
 				'fields'=>[						
 						'sysUserGroups.name;;Group Name'
@@ -1027,9 +1027,40 @@ class entityRecipes {
 				,'fieldLabels'=>['name'=>"Group Name"]
 			]
 		]
+		,'sysUserTaskPrivileges'=>[ //devSubjects.name::;;Subject Name
+			'descriptions' => "User Group's Priviledges to Task"
+			,'filtersBar'=>['display'=>["sysUserGroups.name::;;User Group Name",'sysTasks.taskName::;;Task Name']]
+			,'selectAttributes'=>[
+				'fields'=>[						
+						'sysUserGroups.name;;User Group Name'
+						,'sysUserGroups.descriptions;;User Group Descriptions'
+						,'sysTasks.taskName;;Task Name'
+						,'sysTaskGroups.groupName;;Task Group Name'
+						,'sysTasks.ordering;;Ordering in Menu'
+					]
+				,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
+			]
+			,'join'=>[
+				['left','sysUserGroups','on'=>[[['sysUserTaskPrivileges.userGroupId','=','sysUserGroups.id']]]]
+				,['left','sysTasks','on'=>[[['sysUserTaskPrivileges.taskId','=','sysTasks.id']]]]
+				,['left','sysTaskGroups','on'=>[[['sysTasks.taskGroupId','=','sysTaskGroups.id']]]]
+			]
+			
+		]
+		,'sysTaskGroups'=>[
+			'descriptions' => 'Task Groups'
+			,'filtersBar'=>['display'=>['sysTaskGroups.groupName;;Task Group Name']]
+			,'selectAttributes'=>[
+				'fields'=>[
+						'sysTaskGroups.groupName;;Task Group Name'
+						,'sysTaskGroups.ordering;;Ordering in Menu'						
+					]
+				,'format'=>['sysTaskGroups.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;' ordering"]
+			]
+		]
 		,'sysTasks'=>[
 			'descriptions' => 'Tasks'
-			,'searchAttributes'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
+			,'filtersBar'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
 			,'selectAttributes'=>[
 				'fields'=>[
 						'sysTasks.taskName;;Task Name'
@@ -1037,7 +1068,7 @@ class entityRecipes {
 						,'sysTasks.ordering;;Ordering'
 						,'sysYesNo.yesno;;Display In Menu?'
 					]
-				//,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' ordering"]
+				,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
 			]
 			,'join'=>[
 				['left','sysYesNo','on'=>[[['sysTasks.display','=','sysYesNo.id']]]]
@@ -1047,11 +1078,7 @@ class entityRecipes {
 				'references'=>['display'=>'sysYesNo.yesno','taskGroupId'=>'sysTaskGroups.groupName']	
 				,'fieldLabels'=>['taskName'=>"Task Name",'display'=>'Display in menu or not?','ordering'=>'Ordering in Menu','taskGroupId'=>'Task Group']
 			]
-		]
-		,'sysTaskGroups'=>[
-			'descriptions' => 'Task Groups'
-			,'searchAttributes'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
-		]
+		]		
 		#endregion System Administration
 	];
 	/*

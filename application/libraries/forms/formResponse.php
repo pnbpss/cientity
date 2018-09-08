@@ -75,8 +75,8 @@ class formResponse extends mainForms {
 	}
 	function searchResults($subEntityInfo=[]){		
 		$libInfos = $this->libExtraInfo;
-		$libDisplaySearchAttribute = $libInfos['searchAttributes']['display'];
-		$libHiddenSearchAttribute = isset($libInfos['searchAttributes']['hidden'])?$libInfos['searchAttributes']['hidden']:[];		
+		$libDisplayFiltersBars = $libInfos['filtersBar']['display'];
+		$libHiddenFiltersBars = isset($libInfos['filtersBar']['hidden'])?$libInfos['filtersBar']['hidden']:[];		
 				
 		$request = $this->_request;
 		
@@ -110,7 +110,7 @@ class formResponse extends mainForms {
 			$sqlCondition = " where 1=1 and {$this->CI->db->dbprefix}{$this->libName}.{$fieldName}='{$idValue}' ";			
 			
 		}else{ //if search condition submited from filter row in mainModal
-			$sqlCondition = " where 1=1 ".$this->createWhereConditions($request,$libDisplaySearchAttribute, $libHiddenSearchAttribute);
+			$sqlCondition = " where 1=1 ".$this->createWhereConditions($request,$libDisplayFiltersBars, $libHiddenFiltersBars);
 		}		
 				
 		if(method_exists($this->libName,'additionalWhereInFilterRow')){
@@ -434,42 +434,42 @@ class formResponse extends mainForms {
 	 *	create "where" clause for searching 
 	 * @param array request
 	 *	$_REQUEST
-	 * @param array libDisplaySearchAttribute
-	 *	array in "display" key in 'libraryName'=>searchAttributes in entityRecipes.php
-	 * @param array libHiddenSearchAttribute
-	 *	array in "hidden" key in 'libraryName'=>searchAttributes in entityRecipes.php, hidden conditions that will be co-use for searching
+	 * @param array libDisplayFiltersBars
+	 *	array in "display" key in 'libraryName'=>filtersBar in entityRecipes.php
+	 * @param array libHiddenFiltersBars
+	 *	array in "hidden" key in 'libraryName'=>filtersBar in entityRecipes.php, hidden conditions that will be co-use for searching
 	 * @return string
 	 *	"where" clause, SQL string part 
 	 */
-	private function createWhereConditions($request,$libDisplaySearchAttribute, $libHiddenSearchAttribute){
+	private function createWhereConditions($request,$libDisplayFiltersBars, $libHiddenFiltersBars){
 		$sqlCondition="";
 		foreach($request as $ordinal => $condition){
 			if($condition!=""){
 				//$condition = $this->escapeSQL($condition);				
-				$searchAttributeKey = explode("_",$ordinal);
-				$sqlCondition.=$this->_SQLCondition($searchAttributeKey,$libDisplaySearchAttribute,$condition,$sqlCondition);
+				$filtersBarsKey = explode("_",$ordinal);
+				$sqlCondition.=$this->_SQLCondition($filtersBarsKey,$libDisplayFiltersBars,$condition,$sqlCondition);
 			}
 		}
 		//include hidden fields in "where" clause
-		foreach($libHiddenSearchAttribute as $val){ 
+		foreach($libHiddenFiltersBars as $val){ 
 			$sqlCondition.= " and {$this->CI->db->dbprefix}{$val}";
 		}
 		return $sqlCondition;
 	}
 	/**
 	 * use by createWhereConditions to avoid too many nested blocks, and to maintain 20 lines per method
-	 * @param array $searchAttributeKey
-	 * @param array $libDisplaySearchAttribute
+	 * @param array $filtersBarsKey
+	 * @param array $libDisplayFiltersBars
 	 * @param string $condition
 	 * @param string $sqlCondition
 	 * @return string
 	 */
-	private function _SQLCondition($searchAttributeKey,$libDisplaySearchAttribute,$condition,$sqlCondition){
+	private function _SQLCondition($filtersBarsKey,$libDisplayFiltersBars,$condition,$sqlCondition){
 		
-		list($tableName,$columnName) =$this->_getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $searchAttributeKey[0]);	
-		// if $searchAttributeKey is array that means condition is from and to (between)
-		if(isset($searchAttributeKey[1])){ 
-			$sqlCondition.=$this->_getFromAndToCond($tableName,$columnName,$condition,$searchAttributeKey,$sqlCondition);
+		list($tableName,$columnName) =$this->_getTableAndColumnNameInFiltersBar($libDisplayFiltersBars, $filtersBarsKey[0]);	
+		// if $filtersBarsKey is array that means condition is from and to (between)
+		if(isset($filtersBarsKey[1])){ 
+			$sqlCondition.=$this->_getFromAndToCond($tableName,$columnName,$condition,$filtersBarsKey,$sqlCondition);
 		}else{			
 			$tableName = $tableName==''?$this->libName:$tableName;
 			//create object of mainForm class for create where conditions by datatype distinguishing  
@@ -491,12 +491,12 @@ class formResponse extends mainForms {
 	 * @param string $tableName
 	 * @param string $columnName
 	 * @param string $condition
-	 * @param array $searchAttributeKey
+	 * @param array $filtersBarsKey
 	 * @param string $sqlCondition
 	 * @return string
 	 */
-	private function _getFromAndToCond($tableName,$columnName,$condition,$searchAttributeKey,$sqlCondition){		
-		if($searchAttributeKey[1]=='from'){									
+	private function _getFromAndToCond($tableName,$columnName,$condition,$filtersBarsKey,$sqlCondition){		
+		if($filtersBarsKey[1]=='from'){									
 			$tableName = $tableName==''?$this->libName:$tableName;
 			//create object of mainForm class for create where conditions by datatype distinguishing  
 			$obj = new mainForms($tableName); 
@@ -507,7 +507,7 @@ class formResponse extends mainForms {
 			}else{
 				$sqlCondition.=" and {$this->CI->db->dbprefix}{$tableName}.{$columnName} >= '{$condition}'";
 			}
-		}elseif($searchAttributeKey[1]=='to'){
+		}elseif($filtersBarsKey[1]=='to'){
 			$tableName = $tableName==''?$this->libName:$tableName;
 			//create object of mainForm class for create where conditions by datatype distinguishing
 			$obj = new mainForms($tableName); 

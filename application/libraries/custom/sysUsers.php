@@ -12,13 +12,13 @@ class sysUsers extends entity{
 	} 
 	/**
 	 * Override parent parent::doDbTransactions() for additional validation, or business rule validation.
-	 * Suppose each class is not allow student enrolled more than capacity of class
+	 * This method update the lastUpdate column of updated row in table sysUsers to current datetime.
 	 * @param string $sql
 	 * @return string
 	 */
 	public function doDbTransactions($sql) { //overide method doDbTransactions in class "Entity"	
 		//if operation is Updating
-		if($this->_REQUESTE['operation']=='2'){
+		if($this->_REQUESTE['operation']=='0'){
 			$dbPrefix = $this->_returnDbPrefix();
 			$id =  $this->_getIdOfCurrentOperation();
 			$newSql = $sql."; update {$dbPrefix}sysUsers set lastUpdate=getdate() where id={$id}";	

@@ -40,7 +40,7 @@ class mainForms {
 	/**
 	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
 	 */
-	const searchAttributesNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in entityRecipes.php.</label></div></div></div>";
+	const filtersBarNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in entityRecipes.php.</label></div></div></div>";
 	
 	/**
 	 * session data for use in this class and extended.
@@ -512,21 +512,21 @@ class mainForms {
 	}
 	
 	/**
-	*  extract field of filter row to perform search by using searchAttributes in extraEntityInfo[entityName][searchAttributes]
-	* @param array libDisplaySearchAttribute
-	*	array of search attributes which specified in extraEntityInfo[entityName][searchAttributes]
+	*  extract field of filter row to perform search by using filtersBar in extraEntityInfo[entityName][filtersBar]
+	* @param array libDisplayFiltersBars
+	*	array of search attributes which specified in extraEntityInfo[entityName][filtersBar]
 	* @param string ordinal
-	*	string of numeric, represent the order number in libDisplaySearchAttribute
+	*	string of numeric, represent the order number in libDisplayFiltersBars
 	* @return array
 	*	two element array [table name, column name]
 	*/	
-	protected function _getTableAndColumnNameInSearchAttributes($libDisplaySearchAttribute, $ordinal){
+	protected function _getTableAndColumnNameInFiltersBar($libDisplayFiltersBars, $ordinal){
 		
 		/**
 		 * Get the first element of array split by "::". The first element is table and column name of selected.
 		 * For example devClassStatuses.descriptions::devClasses.statusId
 		 */
-		$temp1 = explode(";;",$libDisplaySearchAttribute[(int)$ordinal]);
+		$temp1 = explode(";;",$libDisplayFiltersBars[(int)$ordinal]);
 		$temp2 = explode("::",$temp1[0]);
 		
 		$index = 0;
@@ -555,7 +555,7 @@ class mainForms {
 	}
 	
 	/**
-	*  create HTML of each input in extraEntityInfo[entityName][searchAttributes]
+	*  create HTML of each input in extraEntityInfo[entityName][filtersBar]
 	* @param array OBJ
 	*	array of information of current entity
 	* @param string entityName
@@ -563,9 +563,9 @@ class mainForms {
 	* @param string columnName
 	*	column name
 	* @param string filterOrdinal
-	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
+	*	order number of column specified in extraEntityInfo[entityName][filtersBar]
 	* @param array fields
-	*	array of fields in extraEntityInfo[entityName][searchAttributes] that was split by '::'
+	*	array of fields in extraEntityInfo[entityName][filtersBar] that was split by '::'
 	* @return array
 	*	two element array [table name, column name]
 	*/	
@@ -602,9 +602,9 @@ class mainForms {
 	}	
 	
 	/**	
-	*  create HTML of each input in extraEntityInfo[entityName][searchAttributes] in case of referenced from other table
+	*  create HTML of each input in extraEntityInfo[entityName][filtersBar] in case of referenced from other table
 	* @param string filterOrdinal
-	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
+	*	order number of column specified in extraEntityInfo[entityName][filtersBar]
 	* @param array fields
 	*	table.column
 	* @return string
@@ -640,10 +640,10 @@ class mainForms {
 	}	
 	
 	/**
-	*  create html of each input  in extraEntityInfo[entityName][searchAttributes] in case of its type is date.
+	*  create html of each input  in extraEntityInfo[entityName][filtersBar] in case of its type is date.
 	*  In this case,datetime datatype, the input will be created twice, from and to.
 	* @param string $filterOrdinal
-	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
+	*	order number of column specified in extraEntityInfo[entityName][filtersBar]
 	* @param string $dataType 
 	* @return string
 	*	html of input of filter row
@@ -669,9 +669,9 @@ class mainForms {
 	/**	
 	*  compose information for select2 to initialize after page is loaded. the information consists of entity order number, field order number, etc. 		
 	* @param string filterOrdinal
-	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]	
+	*	order number of column specified in extraEntityInfo[entityName][filtersBar]	
 	* @return string
-	*	string of ordinal position is in following format: i_j_k_l, i=order of entity, j= order of 'searchAttribute', k=order of 'display', l=order of filed
+	*	string of ordinal position is in following format: i_j_k_l, i=order of entity, j= order of 'filtersBars', k=order of 'display', l=order of filed
 	*/	
 	private function _getInfoForAjaxOptions($fields){
 		$allLibExtraInfo = $this->_AllLibExtraInfo();
@@ -681,7 +681,7 @@ class mainForms {
 			if($key1==$this->libName){
 				$j=0;
 				foreach($val1 as $key2=>$items){
-					if($key2=='searchAttributes'){
+					if($key2=='filtersBar'){
 						$k=0;
 						foreach($items as $key3=>$itemss){
 							if($key3=='display'){
@@ -860,31 +860,31 @@ class mainForms {
 	 */
 	public function createFilterRow()	{
 				
-		//if search searchAttributes haven't been declared yet, then return searchAttributesNotExist
-		if( !(isset($this->libExtraInfo['searchAttributes']))){
-			return str_replace('######',$this->libName,self::searchAttributesNotExist);
+		//if search filtersBar haven't been declared yet, then return filtersBarNotExist
+		if( !(isset($this->libExtraInfo['filtersBar']))){
+			return str_replace('######',$this->libName,self::filtersBarNotExist);
 		}else{
-			$searchAttributes = $this->libExtraInfo['searchAttributes'];
+			$filtersBar = $this->libExtraInfo['filtersBar'];
 		}
 
-		//if search searchAttributes['display'] haven't been declared yet, then return searchAttributesNotExist
-		if( !(isset($searchAttributes['display']))){
-			return str_replace('######',$this->libName,selff::searchAttributesNotExist);
+		//if search filtersBar['display'] haven't been declared yet, then return filtersBarNotExist
+		if( !(isset($filtersBar['display']))){
+			return str_replace('######',$this->libName,selff::filtersBarNotExist);
 		}else{
-			$searchAttributes = $this->libExtraInfo['searchAttributes'];
+			$filtersBar = $this->libExtraInfo['filtersBar'];
 		}
 		
 		//load library of entity that involved this current entity
-		foreach($searchAttributes['display'] as $key=>$item){ 
+		foreach($filtersBar['display'] as $key=>$item){ 
 			$fieldInfo = explode(";;",$item);
 			$fields = explode("::",$fieldInfo[0]);
 			list($entityName, $columnName) = explode(".",$fields[0]);
 			$entities[$entityName] = $this->_loadLibrary($entityName);
 		}
 		
-		reset($searchAttributes['display']);
+		reset($filtersBar['display']);
 		$str = ""; $filterOrdinal=0;
-		foreach($searchAttributes['display'] as $key=>$item){
+		foreach($filtersBar['display'] as $key=>$item){
 			$fieldInfo = explode(";;",$item);
 			//FieldInfo[0] is first entity.column which will be used to create filter in filter row.
 			$fields = explode("::",$fieldInfo[0]); 
@@ -892,9 +892,9 @@ class mainForms {
 			list($entityName, $columnName) = explode(".",$fields[0]);
 
 			//if between is specified
-			if(isset($searchAttributes['between'])){  
+			if(isset($filtersBar['between'])){  
 				// if "between" is specified, the create from and to filter.
-				if(in_array($fields[0], $searchAttributes['between'])){ 
+				if(in_array($fields[0], $filtersBar['between'])){ 
 					$cStr=$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_from',$fields)
 						 .$this->_eachFilter($entities[$entityName], $columnName,$filterOrdinal.'_to',$fields);
 				}else{
@@ -925,7 +925,7 @@ class mainForms {
 	  *  method that what is table and colum name should be query , and execute the SQL string
 	  * @param string properties
 	  *	The "properties" contains ordinal position of table and column name in allLibExtranInfo 
-	  * and is in the following format: i_j_k_l, i=order of entity, j= order of 'searchAttribute', 
+	  * and is in the following format: i_j_k_l, i=order of entity, j= order of 'filtersBars', 
 	  * k=order of 'display', l=order of filed should be query 
 	  * @param string condition
 	  *	user search keyword, typed on select2 search bar
