@@ -565,23 +565,26 @@ class formResponse extends mainForms {
 		//(bugId 20180806-01) //if format of dispaly is specified in AddEditModal (FRPLCEMNT4FMT is specified)
 		$columnLists = $this->libObject->revisedColumnDescriptions;
 		$selectColumnInit="";
-		foreach(array_keys($columnLists) as $kk){ //kk=columnName
-			if(isset($allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])){
-				$selectColumnInit .= "{{".str_replace(FRPLCEMNT4FMT,$kk,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$kk])."}}";
+		foreach(array_keys($columnLists) as $columnName){ //kk is columnName
+			if(isset($allLibExtraInfo[$this->libName]['addEditModal']['format'][$columnName])){
+				$selectColumnInit .= "{{".str_replace(FRPLCEMNT4FMT,$columnName,$allLibExtraInfo[$this->libName]['addEditModal']['format'][$columnName])."}}";
 			}else{
-				$selectColumnInit .= "{{".$kk."}}";
+				$selectColumnInit .= "{{".$columnName."}}";
 			}
 		}
-		$selectColumn = str_replace("}}","",str_replace("{{","",str_replace("}}{{",',',$selectColumnInit)));		
+		$selectColumn = str_replace("}}","",str_replace("{{","",str_replace("}}{{",',',$selectColumnInit)));
 		
-		$sql = "select {$selectColumn} from {$this->CI->db->dbprefix}{$this->libName} where id={$request['id']}";		
+		$sql = "select {$selectColumn} from {$this->CI->db->dbprefix}{$this->libName} where id={$request['id']}";
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
 		$rowArray = (array) $row;
 		
 		//perform get data for modal
-		$this->extend_loadDataToEditInModal($columnsWithOrdered,$allLibExtraInfo,$rowArray);
-				
+		if(!(isset($allLibExtraInfo[$this->libName]['addEditModal']))){
+			$this->notify('danger', "Unable to load form data, {$this->_libName}['addEditModal'] not exists.");
+			return $this->response;
+		}
+		$this->extend_loadDataToEditInModal($columnsWithOrdered,$allLibExtraInfo,$rowArray);				
 		return $this->response;
 	}
 	/**

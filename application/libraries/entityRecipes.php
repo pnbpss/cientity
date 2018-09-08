@@ -1036,6 +1036,7 @@ class entityRecipes {
 						,'sysUserGroups.descriptions;;User Group Descriptions'
 						,'sysTasks.taskName;;Task Name'
 						,'sysTaskGroups.groupName;;Task Group Name'
+						,'sysUserTaskPrivileges.allowSave;;Allow U/I/D'
 						,'sysTasks.ordering;;Ordering in Menu'
 					]
 				,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
@@ -1045,7 +1046,10 @@ class entityRecipes {
 				,['left','sysTasks','on'=>[[['sysUserTaskPrivileges.taskId','=','sysTasks.id']]]]
 				,['left','sysTaskGroups','on'=>[[['sysTasks.taskGroupId','=','sysTaskGroups.id']]]]
 			]
-			
+			,'addEditModal'=>[				
+				'references'=>['userGroupId'=>'sysTaskGroups.groupName','taskId'=>'sysTasks.taskName']	
+				,'fieldLabels'=>['userGroupId'=>"User Group",'taskId'=>'Task Name','allowSave'=>'Allow Edit/Delete/Insert']
+			]
 		]
 		,'sysTaskGroups'=>[
 			'descriptions' => 'Task Groups'

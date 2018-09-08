@@ -55,7 +55,7 @@ class User extends CI_controller{
 			,d.lastName,d.nick,d.gender,d.workStart,d.workEnd,d.IDNo,d.positionName,d.officeName,d.em_status,d.email,d.mobile
 			,isnull(d.em_status,'') as em_status
 			from {$this->db->dbprefix}sysUsers a
-			left join {$this->db->dbprefix}sysUserGroups c on a.groupId=c.id and c.[status]='Y'
+			left join {$this->db->dbprefix}sysUserGroups c on a.groupId=c.id and c.[statusId]='1'
 			left join {$this->db->dbprefix}devEmployees d on a.userName=d.employeeCode
 			where lower(a.userName) = lower('{$Username}') and a.PW='{$Password}'
 		";
