@@ -602,7 +602,7 @@ class mainForms {
 	}	
 	
 	/**	
-	*  create html of each input in extraEntityInfo[entityName][searchAttributes] in case of referenced from other table
+	*  create HTML of each input in extraEntityInfo[entityName][searchAttributes] in case of referenced from other table
 	* @param string filterOrdinal
 	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
 	* @param array fields
@@ -617,12 +617,12 @@ class mainForms {
 		list($tableName,$field) = explode(".",$fields);
 		$sql = "select top ".($this->maxSelectOptionShow+1)." id, {$field} name from {$this->CI->db->dbprefix}{$tableName} order by id desc";
 		$q = $this->CI->db->query($sql);
-		$i = 0;
+		$index = 0;
 		$cientityClassOptionOverflow="";
 		$infoForAjaxOptions="";
 		foreach($q->result() as $row)
 		{
-			if ($i==$this->maxSelectOptionShow){
+			if ($index==$this->maxSelectOptionShow){
 				$cientityClassOptionOverflow="cientitySelectOptionsOverflow";
 				$options="";				
 				//if selected <option> count is greater than $maxSelectOptionShow then use select2
@@ -631,20 +631,10 @@ class mainForms {
 				break;
 			}
 			$options.="<option value=\"{$row->id}\">{$row->name}</option>";
-			$i++;
+			$index++;
 		}
 		$str = "
-
-								<div class=\"col-sm-{$this->_fr_select_width} col-xs-{$this->_fr_select_width}\">
-									<div class=\"form-group form-focus select-focus\">
-											<label class=\"control-label\">#!#!#!#!#!#</label>
-											<select cientityFormFilterOrder=\"{$filterOrdinal}\" class=\"select floating select2-hidden-accessible {$cientityClassOptionOverflow} cientityFilter\" tabindex=\"-1\" aria-hidden=\"true\" {$infoForAjaxOptions}>
-												<option value=\"\">#!#!#!#!#!#</option>
-												{$options}
-											</select>
-										</div>
-								</div>
-
+			<div class=\"col-sm-{$this->_fr_select_width} col-xs-{$this->_fr_select_width}\"><div class=\"form-group form-focus select-focus\"><label class=\"control-label\">#!#!#!#!#!#</label><select cientityFormFilterOrder=\"{$filterOrdinal}\" class=\"select floating select2-hidden-accessible {$cientityClassOptionOverflow} cientityFilter\" tabindex=\"-1\" aria-hidden=\"true\" {$infoForAjaxOptions}><option value=\"\">#!#!#!#!#!#</option>{$options}</select></div></div>
 			";
 		return $str;
 	}	
@@ -652,38 +642,27 @@ class mainForms {
 	/**
 	*  create html of each input  in extraEntityInfo[entityName][searchAttributes] in case of its type is date.
 	*  In this case,datetime datatype, the input will be created twice, from and to.
-	* @param string filterOrdinal
-	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]	
+	* @param string $filterOrdinal
+	*	order number of column specified in extraEntityInfo[entityName][searchAttributes]
+	* @param string $dataType 
 	* @return string
 	*	html of input of filter row
 	*/	
 	private function _inputDateItem($filterOrdinal,$dataType){
+		
+		//determins datatype for using datetime format
 		if($dataType=='date'){
-			$format = 'DD/MM/YYYY';
+			$format = 'DD/MM/YYYY'; //date only
 		}elseif($dataType=='datetime'){
-			$format = 'DD/MM/YYYY LT';
+			$format = 'DD/MM/YYYY LT'; //date and time
 		}else{
 			$format='error';
 		}
 		$inputItem = "
-						<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."
-							<div class=\"form-group form-focus\">".PHP_EOL."
-								<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."
-								<div class=\"cal-icon\">".PHP_EOL."
-									<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
-								</div>".PHP_EOL."
-							</div>".PHP_EOL."
-						</div>".PHP_EOL."
+				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."
 
-						<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."
-							<div class=\"form-group form-focus\">".PHP_EOL."
-								<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."
-								<div class=\"cal-icon\">".PHP_EOL."
-									<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
-								</div>".PHP_EOL."
-							</div>".PHP_EOL."
-						</div>".PHP_EOL."
-				";
+				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL.""
+			. "";
 		return $inputItem;
 	}
 	
