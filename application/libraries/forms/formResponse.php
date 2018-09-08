@@ -86,6 +86,10 @@ class formResponse extends mainForms {
 		$parameters = (Object) null;
 		
 		//create select clause
+		if(!(isset($libInfos['selectAttributes']))){
+			$this->notify('danger'," 'selectAttributes' not found in entityRecipes['{$this->libName}'].");
+			return $this->response;
+		}
 		$sqlSelect = $this->createSelectFields($libInfos['selectAttributes']);
 		//if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //for view at response tab in debuging
 		$parameters->sql['select'] = $sqlSelect;

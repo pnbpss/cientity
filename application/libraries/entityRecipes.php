@@ -991,23 +991,66 @@ class entityRecipes {
 				]
 				//,'between'=>['devSubjects.classDuration','devSubjects.shopDuration']
 			
-				,'selectAttributes'=>[
-					'fields'=>[
-							'sysUsers.userName'
-							,'sysUserGroups.name;;group name'
-							,'sysUsers.updateBy'
-							,'sysUsers.lastUpdate;;last update'
-						]
-					,'format'=>['sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]												
-				]
-				,'join'=>[['left','sysUserGroups','on'=>[[['sysUsers.groupId','=','sysUserGroups.id']]]]]			
-				,'addEditModal'=>[
-					'dummy'=>[]				
-					,'references'=>['groupId'=>'sysUserGroups.name']
-					,'fieldLabels'=>['lastUpdate'=>"Last Update"]
-					//,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
-					,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
-				]			
+			,'selectAttributes'=>[
+				'fields'=>[
+						'sysUsers.userName'
+						,'sysUserGroups.name;;group name'
+						,'sysUsers.updateBy'
+						,'sysUsers.lastUpdate;;last update'
+					]
+				,'format'=>['sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]												
+			]
+			,'join'=>[['left','sysUserGroups','on'=>[[['sysUsers.groupId','=','sysUserGroups.id']]]]]
+			,'addEditModal'=>[
+				'dummy'=>[]				
+				,'references'=>['groupId'=>'sysUserGroups.name']
+				,'fieldLabels'=>['lastUpdate'=>"Last Update"]
+				//,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
+				,'hidden'=>['updateBy','lastUpdate']
+				,'default'=>['updateBy'=>'_getUserSessionValue::userName','lastUpdate'=>'sql::getdate()']
+				,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
+			]			
+		]
+		,'sysUserGroups'=>[
+			'descriptions' => 'User Groups'
+			,'searchAttributes'=>['display'=>["sysUserGroups.name;;User Group Name"]]
+			,'selectAttributes'=>[
+				'fields'=>[						
+						'sysUserGroups.name;;Group Name'
+						,'sysUserGroups.descriptions;;Descriptions'
+						,'sysYesNo.yesno;;Available?'
+					]				
+			]
+			,'join'=>[['left','sysYesNo','on'=>[[['sysUserGroups.statusId','=','sysYesNo.id']]]]]
+			,'addEditModal'=>[				
+				'references'=>['statusId'=>'sysYesNo.yesno']	
+				,'fieldLabels'=>['name'=>"Group Name"]
+			]
+		]
+		,'sysTasks'=>[
+			'descriptions' => 'Tasks'
+			,'searchAttributes'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
+			,'selectAttributes'=>[
+				'fields'=>[
+						'sysTasks.taskName;;Task Name'
+						,'sysTaskGroups.groupName;;Task Group Name'						
+						,'sysTasks.ordering;;Ordering'
+						,'sysYesNo.yesno;;Display In Menu?'
+					]
+				//,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' ordering"]
+			]
+			,'join'=>[
+				['left','sysYesNo','on'=>[[['sysTasks.display','=','sysYesNo.id']]]]
+				,['left','sysTaskGroups','on'=>[[['sysTasks.taskGroupId','=','sysTaskGroups.id']]]]
+			]
+			,'addEditModal'=>[				
+				'references'=>['display'=>'sysYesNo.yesno','taskGroupId'=>'sysTaskGroups.groupName']	
+				,'fieldLabels'=>['taskName'=>"Task Name",'display'=>'Display in menu or not?','ordering'=>'Ordering in Menu','taskGroupId'=>'Task Group']
+			]
+		]
+		,'sysTaskGroups'=>[
+			'descriptions' => 'Task Groups'
+			,'searchAttributes'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
 		]
 		#endregion System Administration
 	];

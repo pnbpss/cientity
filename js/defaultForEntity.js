@@ -287,12 +287,11 @@ $(document).ready(function() {
 		dataToPost['entityOrdinal'] = $(".cientityFilterStartSearch").attr('entityOrdinal');
 		$(".searchProgressBarRow").show();
 		$(".searchResultsDataTableRow").hide();
-		$(".cientityFilter").each(function(){
-				
-				if($(this).hasClass('cientityFormDate')){				
-						
-				}
-				dataToPost[$(this).attr('cientityFormFilterOrder')] = $(this).val();
+		$(".cientityFilter").each(function(){				
+                                        if($(this).hasClass('cientityFormDate')){				
+
+                                        }
+                                        dataToPost[$(this).attr('cientityFormFilterOrder')] = $(this).val();
 		});
 		$.ajax({
 			url: cientity_base_url+'m/getRowListByConditionsInFilterRow'
@@ -305,19 +304,20 @@ $(document).ready(function() {
 				//en:if search result is found, th:ถ้ามีผลการค้นส่งกลับมา				
 				if(data.searchResults) 
 				{
-					$(".cientityDisplaySearchResult").html(data.searchResults.results);				
-					$(".searchResultsDataTableRow").show();
-					$('.cientityEditExistingEntityRecord').unbind('click').click(function(){		
-						$('#cientityOperationAddOrEditDesc').html('Edit ');
-						$('.cientityOperationForAddEditModal').val('0');
-						cientityPutDataIntoAddEditModalForm(this);						
-					});
+                                                                            $(".cientityDisplaySearchResult").html(data.searchResults.results);				
+                                                                            $(".searchResultsDataTableRow").show();
+                                                                            $('.cientityEditExistingEntityRecord').unbind('click').click(function(){		
+                                                                                    $('#cientityOperationAddOrEditDesc').html('Edit ');
+                                                                                    $('.cientityOperationForAddEditModal').val('0');
+                                                                                    cientityPutDataIntoAddEditModalForm(this);						
+                                                                            });
+                                                                        if((data.searchResults.notifications)) cientity_displayAllNotifications(data.searchResults.notifications,'danger/warning');
 				}
 				init_cientityDeleteExistingEntityRecord();
 
 				//th:เอาไว้จัดการกับ error message บางกรณีเช่น session หลุดไปแล้ว และแจ้งเตือนให้เข้าสู่ระบบใหม่
 				//en:display error message in case of any error at back-end such as session is dead.
-				if((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'');
+				
 			}
 		});
 	}

@@ -48,7 +48,7 @@ class devClassEnrollists extends entity{
 		}
 		//if the submited form came from main-entity
 		elseif(isset($this->infoForAdditionalValidate['addEditMainEntity'])){
-			list($columnsWithOrdered)=$this->infoForAdditionalValidate;			
+			list($columnsWithOrdered)=$this->infoForAdditionalValidate;	
 			$index = 0;
 			foreach(array_keys($columnsWithOrdered) as $fieldName)	{
 				if($fieldName=='classId'){
