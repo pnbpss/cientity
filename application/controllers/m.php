@@ -11,8 +11,9 @@ class M extends CI_Controller {
 	
 	/**
 	 * The constructor only check that user is logged in or not
-	 */
-	 public function __construct(){
+	*/
+	private $entityRecipes;
+	public function __construct(){
 		parent::__construct();
 		$this->session = $this->session->userdata(USER_INFO_SESSION_KEY);
 		if(!(isset($this->session))){
@@ -24,6 +25,7 @@ class M extends CI_Controller {
 				exit;
 			}
 		}
+		$this->entityRecipes = new entityRecipes();
 	 }
 	/**
 	 * Display the home page.
@@ -37,14 +39,14 @@ class M extends CI_Controller {
 	 */
 	public function e(){
 		/**
-		 * Get the ordinal of entity. The ordinal is sequence number of entity in entityRecipes::getRecipes()
+		 * Get the ordinal of entity. The ordinal is sequence number of entity in entityRecipes->getRecipes()
 		 */
 		$entityOrdinal = $this->uri->segment(3);	
 		
 		/**
 		 * Get entity name from 
 		 */
-		$entityName = entityRecipes::getEntityName($entityOrdinal);
+		$entityName = $this->entityRecipes->getEntityName($entityOrdinal);
 		
 		/**
 		 * Create new object forms by using entity name
@@ -103,7 +105,7 @@ class M extends CI_Controller {
 		/**
 		 * Get entity name by ordinal number of entity(uri->segment(3)).
 		 */		
-		$entityName = entityRecipes::entityNameByURISegment($this->uri->segment(3));
+		$entityName = $this->entityRecipes->entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -131,7 +133,7 @@ class M extends CI_Controller {
 		/**
 		 * Get entity name by ordinal number of entity(uri->segment(3)).
 		 */		
-		$entityName = entityRecipes::entityNameByURISegment($this->uri->segment(3));
+		$entityName = $this->entityRecipes->entityNameByURISegment($this->uri->segment(3));
 		
 		/**
 		 * Create forms object for perform search.
@@ -210,7 +212,7 @@ class M extends CI_Controller {
 		/**
 		 * Load all  entity recipes info for creating left menu purpose.
 		 */
-		$allEntityRecipes = entityRecipes::getRecipes();		
+		$allEntityRecipes = $this->entityRecipes->getRecipes();		
 		
 		/**
 		 * Load and create user object for creating left menu, and display user name in entity_view.php.

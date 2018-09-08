@@ -61,6 +61,7 @@ class mainForms {
 	private $_fr_select_width=3;
 	private $_fr_search_button_width=2;
 	
+	protected $entityRecipes;
 	/**
 	 * 
 	 * @param string $libName
@@ -70,6 +71,12 @@ class mainForms {
 		 * get CodeIniter Instance
 		 */
 		$this->CI =& get_instance();
+		
+		/**
+		 * Create entityRecipes object
+		 */
+		
+		$this->entityRecipes = new entityRecipes();
 		
 		/**
 		 *  load codeIgniter database library
@@ -813,7 +820,7 @@ class mainForms {
 	*/
 	private function _libExtraInfo($libName){
 		//$this->CI->load->library('entityRecipes');
-		return isset(entityRecipes::getRecipes()[$libName])?entityRecipes::getRecipes()[$libName]:[];
+		return isset($this->entityRecipes->getRecipes()[$libName])?$this->entityRecipes->getRecipes()[$libName]:[];
 	}
 
 	/**
@@ -822,7 +829,7 @@ class mainForms {
 	*/
 	private function _AllLibExtraInfo(){
 		//$this->CI->load->library('entityRecipes');
-		return entityRecipes::getRecipes();
+		return $this->entityRecipes->getRecipes();
 	}
 	
 	function ret_AllLibExtraInfo(){
@@ -831,12 +838,12 @@ class mainForms {
 	
 	function entityRecipes_default_header_JS_CSS(){
 		//$this->CI->load->library('entityRecipes');
-		return entityRecipes::default_header_JS_CSS;
+		return $this->entityRecipes->default_header_JS_CSS();
 	}
 	
 	function entityRecipes_default_footer_JS_CSS(){
 		//$this->CI->load->library('entityRecipes');
-		return entityRecipes::default_footer_JS_CSS;
+		return $this->entityRecipes->default_footer_JS_CSS();
 	}
 	 /**
 	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array

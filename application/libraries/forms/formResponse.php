@@ -46,8 +46,11 @@ class formResponse extends mainForms {
 		/**
 		 * seek in entityRecipes to find library name (entity name)
 		 */
+		
+		$this->entityRecipes =new entityRecipes();
+		
 		$index=0;
-		foreach(array_keys(entityRecipes::getRecipes()) as $key){
+		foreach(array_keys($this->entityRecipes->getRecipes()) as $key){
 			if($index==$this->entityOrdinal){				
 				$this->_libName = $key;
 				break;
@@ -56,6 +59,8 @@ class formResponse extends mainForms {
 		}
 		
 		parent::__construct($this->_libName);
+		
+		
 		
 		/**
 		 * store $_REQUEST value in for additional validation or permission check
@@ -367,7 +372,7 @@ class formResponse extends mainForms {
 	 *	array of column descriptions which will be used as table header.
 	 */
 	protected function getSelectListColumnDescriptions(){
-		//$selectFields = entityRecipes::getRecipes()[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
+		
 		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //solved bugId 20180808-01				
 		$returnArray = [];
 		//loop for each field in fields 
@@ -729,7 +734,7 @@ class formResponse extends mainForms {
 			if($updateResult[0]=='ok'){
 				$this->notify('success',"Updated {$libExtraInfo['descriptions']} ");
 			}else{
-				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],entityRecipes::getRecipes());
+				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],$this->entityRecipes->getRecipes());
 				$this->notify('danger',"Unable to update {$libExtraInfo['descriptions']}, because {$updateResult[1]} ");
 			}
 			return $this->response;
