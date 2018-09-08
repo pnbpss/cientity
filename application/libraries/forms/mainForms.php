@@ -585,8 +585,12 @@ class mainForms {
 				$maxLength = $this->_getColumnLength($obj, $columnName);
 				$inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" maxlength=\"{$maxLength}\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 			break;
-			case 'datetime': case 'date': // return function _inputDateItem if datatype is date or datetime
-				return $this->_inputDateItem($filterOrdinal);			
+			case 'datetime': 
+			case 'date': // return function _inputDateItem if datatype is date or datetime
+				return $this->_inputDateItem($filterOrdinal,$dataType);
+			case 'time':
+				$inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" cientityDTFormat='LT' class=\"form-control floating datetimepicker cientityFilter\" />".PHP_EOL."";
+			break;
 			default: $inputItem = "<input cientityFormFilterOrder=\"{$filterOrdinal}\" type=\"text\" class=\"form-control floating cientityFilter\" />".PHP_EOL."";
 		}
 		$fromToStr = explode('_',$filterOrdinal);
@@ -653,13 +657,20 @@ class mainForms {
 	* @return string
 	*	html of input of filter row
 	*/	
-	private function _inputDateItem($filterOrdinal){
+	private function _inputDateItem($filterOrdinal,$dataType){
+		if($dataType=='date'){
+			$format = 'DD/MM/YYYY';
+		}elseif($dataType=='datetime'){
+			$format = 'DD/MM/YYYY LT';
+		}else{
+			$format='error';
+		}
 		$inputItem = "
 						<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."
 							<div class=\"form-group form-focus\">".PHP_EOL."
 								<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
-									<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
+									<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
 								</div>".PHP_EOL."
 							</div>".PHP_EOL."
 						</div>".PHP_EOL."
@@ -668,7 +679,7 @@ class mainForms {
 							<div class=\"form-group form-focus\">".PHP_EOL."
 								<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."
 								<div class=\"cal-icon\">".PHP_EOL."
-									<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
+									<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."
 								</div>".PHP_EOL."
 							</div>".PHP_EOL."
 						</div>".PHP_EOL."
@@ -823,7 +834,7 @@ class mainForms {
 	*/
 	private function _libExtraInfo($libName){
 		//$this->CI->load->library('entityRecipes');
-		return isset(entityRecipes::recipes[$libName])?entityRecipes::recipes[$libName]:[];
+		return isset(entityRecipes::getRecipes()[$libName])?entityRecipes::getRecipes()[$libName]:[];
 	}
 
 	/**
@@ -832,7 +843,7 @@ class mainForms {
 	*/
 	private function _AllLibExtraInfo(){
 		//$this->CI->load->library('entityRecipes');
-		return entityRecipes::recipes;
+		return entityRecipes::getRecipes();
 	}
 	
 	function ret_AllLibExtraInfo(){
@@ -1151,13 +1162,14 @@ class mainForms {
 					$maxLength = $columns[$key]['MaxLength'];
 					$inputString = "<input {$disabledString} maxLength='{$maxLength}' class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
-				case 'datetime': case 'date':
-					$inputString = "<input {$disabledString} class=\"form-control datetimepicker cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
+				case 'datetime': 
+					$inputString = "<input {$disabledString} class=\"form-control datetimepicker cientityInputField\" cientityDTFormat='DD/MM/YYYY LT' cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
-
-					default: $inputString = "<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
-			}
-			
+				case 'date':
+					$inputString = "<input {$disabledString} class=\"form-control datetimepicker cientityInputField\" cientityDTFormat='DD/MM/YYYY' cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
+				break;
+				default: $inputString = "<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
+			}			
 		}
 
 		//if field label is declared in entityRecipes

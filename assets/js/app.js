@@ -154,18 +154,17 @@ $(document).ready(function() {
 		}
 	});
 	
-	// Date Time Picker
-	
+	// Date Time Picker, This interfered customized datetime input in cientity. Comment it on [20180808]
+                 /*
 	if($('.datetimepicker').length > 0 ){
-		$('.datetimepicker').datetimepicker({
-                                                format: 'DD/MM/YYYY' //date only
-                                                ,useCurrent: false
-			//format: 'DD/MM/YYYY LT' // date and time (default)
-                                                //format: 'LT' // time only
-                                                //,locale: 'th'
+		$('.datetimepicker').datetimepicker({                                                
+                                                useCurrent: false,
+			format: 'DD/MM/YYYY LT', // date and time (default)
+                                                //format: 'LT' // time only                                                
 		});
 	}
-	
+	*/
+
 	// Datatable
 	if($('.datatable').length > 0 ){
 		$('.datatable').DataTable({

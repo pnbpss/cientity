@@ -47,7 +47,7 @@ class formResponse extends mainForms {
 		 * seek in entityRecipes to find library name (entity name)
 		 */
 		$index=0;
-		foreach(array_keys(entityRecipes::recipes) as $key){
+		foreach(array_keys(entityRecipes::getRecipes()) as $key){
 			if($index==$this->entityOrdinal){				
 				$this->_libName = $key;
 				break;
@@ -363,7 +363,7 @@ class formResponse extends mainForms {
 	 *	array of column descriptions which will be used as table header.
 	 */
 	protected function getSelectListColumnDescriptions(){
-		//$selectFields = entityRecipes::recipes[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
+		//$selectFields = entityRecipes::getRecipes()[$libraryName]['selectAttributes']['fields']; //bugId 20180808-01
 		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //solved bugId 20180808-01				
 		$returnArray = [];
 		//loop for each field in fields 
@@ -642,8 +642,7 @@ class formResponse extends mainForms {
 	 */
 	private function extend_loadDataToEditInModal_getNoneRef(&$index,$fieldName,$allLibExtraInfo,$rowArray){
 		list($refTableName, $refFieldName) = explode(".",$allLibExtraInfo[$this->libName]['addEditModal']['references'][$fieldName]);			
-		$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";
-		//echo $refSql;
+		$refSql = "select id, {$refFieldName} [name]  from {$this->CI->db->dbprefix}{$refTableName} where id = '{$rowArray[$fieldName]}' ";		
 		$refQ = $this->CI->db->query($refSql);
 		$refRow = $refQ->row();
 		$refRowArray = (array) $refRow;		
@@ -723,7 +722,7 @@ class formResponse extends mainForms {
 			if($updateResult[0]=='ok'){
 				$this->notify('success',"Updated {$libExtraInfo['descriptions']} ");
 			}else{
-				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],entityRecipes::recipes());
+				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],entityRecipes::getRecipes());
 				$this->notify('danger',"Unable to update {$libExtraInfo['descriptions']}, because {$updateResult[1]} ");
 			}
 			return $this->response;

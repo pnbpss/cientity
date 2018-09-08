@@ -4,6 +4,23 @@
 * @author Panu Boonpromsook
 */
 $(document).ready(function() {
+                
+                 //init input datetime in filter row to use the specific format
+                $(".cientityFilter").each(function(){
+                    if($(this).hasClass('datetimepicker')){
+                        var cientityDTFormat = $(this).attr('cientityDTFormat');
+                        $(this).datetimepicker({format:cientityDTFormat,useCurrent: false});
+                   }
+                });
+                
+                //init input datetime in main-enitity to use the specific format
+                $(".cientityInputField").each(function(){
+                    if($(this).hasClass('datetimepicker')){
+                        var cientityDTFormat = $(this).attr('cientityDTFormat');                        
+                        $(this).datetimepicker({format:cientityDTFormat,useCurrent: false});
+                   }
+                });
+    
 	//init select2 for "select" in filter row
 	$(".cientitySelectOptionsOverflow").each( 
 	function(){
@@ -48,8 +65,8 @@ $(document).ready(function() {
 	
 	//init select2 input in SubEntity
 	$(".cientitySubmodelPanel").each(function(){ 
-		var cientitySubEntityModalPanelId = $(this).attr('cientitySubEntityModalPanelId');
-		cientity_InitSelect2InputInSubEntity(cientitySubEntityModalPanelId);
+                        var cientitySubEntityModalPanelId = $(this).attr('cientitySubEntityModalPanelId');
+                        cientity_InitSelect2InputInSubEntity(cientitySubEntityModalPanelId);
 	});
 	
 	//confirm add button in sub-entity is clicked 
@@ -150,20 +167,20 @@ $(document).ready(function() {
 	 */
 	function cientityInitDataTableAndOtherControl(className, cientitySubEntityModalPanelId){
 		
-		$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] input.datetimepicker").each(function(){
-			var cientityDTFormat = $(this).attr('cientityDTFormat');
-			
-			$(this).datetimepicker({
-					format:cientityDTFormat
-					,useCurrent: false
-			})			
-			.on("dp.change",function(e){
-				//bug id 20180823-01 prevent onchange fire twice
-				if(($(this).val()) !== ($(this).attr('cientityRollbackValue'))){                                                         
-						do_cientityUpdateSubEntityRecord(this);
-				}                                                
-			});
-		});
+		$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] input.datetimepicker")
+                                        .each(function(){
+                                                var cientityDTFormat = $(this).attr('cientityDTFormat');			
+                                                $(this).datetimepicker({
+                                                                format:cientityDTFormat
+                                                                ,useCurrent: false
+                                                })			
+                                                .on("dp.change",function(e){
+                                                        //bug id 20180823-01 prevent onchange fire twice
+                                                        if(($(this).val()) !== ($(this).attr('cientityRollbackValue'))){                                                         
+                                                                        do_cientityUpdateSubEntityRecord(this);
+                                                        }                                                
+                                                });
+                                        });
 		
 			$("."+className+"[cientitySubEntityModalPanelId='"+cientitySubEntityModalPanelId+"'] select.cientitySubEntitySelectTd").each(function(){
 					var myUrl = $(this).attr('infoForAjaxOptions');
@@ -406,14 +423,14 @@ $(document).ready(function() {
 	
 	//put references information for select2 in addEditModal
 	function cientityPutRefDataIntoAddEditForm(references){		
-		references.forEach(function(item,index){			
-			var tempArr = item.split('#++||||++#'); 
-			var itemIdex = tempArr[0];
-			//th:เผื่อ ฟิลด์ references นั้น มีค่าเป็น null
-			//en:prevent error if current field is null
-			tempArr[1] = (tempArr[1]?tempArr[1]:""); 
-			$(".cientityInputField[cientityfieldReferenceNumber='"+itemIdex+"']").append("<option value='"+tempArr[1]+"'>"+tempArr[2]+"</option>");
-			$(".cientityInputField[cientityfieldReferenceNumber='"+itemIdex+"']").val(tempArr[1]);			
+                        references.forEach(function(item,index){			
+                                    var tempArr = item.split('#++||||++#'); 
+                                    var itemIdex = tempArr[0];
+                                    //th:เผื่อ ฟิลด์ references นั้น มีค่าเป็น null
+                                    //en:prevent error if current field is null
+                                    tempArr[1] = (tempArr[1]?tempArr[1]:""); 
+                                    $(".cientityInputField[cientityfieldReferenceNumber='"+itemIdex+"']").append("<option value='"+tempArr[1]+"'>"+tempArr[2]+"</option>");
+                                    $(".cientityInputField[cientityfieldReferenceNumber='"+itemIdex+"']").val(tempArr[1]);			
 		});
 	}
 	

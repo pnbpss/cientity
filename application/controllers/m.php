@@ -37,7 +37,7 @@ class M extends CI_Controller {
 	 */
 	public function e(){
 		/**
-		 * Get the ordinal of entity. The ordinal is sequence number of entity in entityRecipes::recipes
+		 * Get the ordinal of entity. The ordinal is sequence number of entity in entityRecipes::getRecipes()
 		 */
 		$entityOrdinal = $this->uri->segment(3);	
 		
@@ -208,16 +208,16 @@ class M extends CI_Controller {
 	 */
 	private function getViewData(){
 		/**
-		 * Load all extra entity info for creating left menu purpose.
+		 * Load all  entity recipes info for creating left menu purpose.
 		 */
-		$extraEntityInfoDesc = entityRecipes::getAllDescriptions();		
+		$allEntityRecipes = entityRecipes::getRecipes();		
 		
 		/**
 		 * Load and create user object for creating left menu, and display user name in entity_view.php.
 		 */		
 		$this->load->library('users/UsersOfcientity');
 		$user = new UsersOfcientity;
-		$user->init($this->session['userName'],$extraEntityInfoDesc);
+		$user->init($this->session['userName'],$allEntityRecipes);
 		
 		/**
 		 * Create left menu according to grant to view entity of user.

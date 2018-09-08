@@ -131,10 +131,7 @@ class entityRecipes {
 				 * Critical:no
 				 * Effected:addEditModal.
 				 */
-				,'fieldLabels'=>[
-					'scId'=>"Course Code and Subject's Name"
-					,'capacity'=>'class capacity'
-					]
+				,'fieldLabels'=>['scId'=>"Course Code and Subject's Name",'capacity'=>'class capacity']
 				
 				/**
 				 * The 'format' key will be specified when you have to change the format of display field in addEditModal,
@@ -464,6 +461,7 @@ class entityRecipes {
 									"devClassEnrollistsView.locationCode;;Location Code"
 									,'devClassEnrollistsView.employeeFullName;;Employee Name'
 									,'devClassEnrollistsView.classDescriptions;;Class Descriptions'
+									//,'devClassEnrollists.testTime;;test time'
 									]
 							,'between'=>[]
 			]
@@ -941,59 +939,88 @@ class entityRecipes {
 		#endregion devSubjects
 		#region devSubjectCourse
 		,'devSubjectCourse'=>[
-							'descriptions' => 'Course\'s Subjects'
-							,'addEditModal'=>[
-									'dummy'=>[]
-									,'columnOrdering'=>['id','courseId','subjectId']
-									,'columnWidth'=>['id'=>12,'subjectId'=>12,'courseId'=>12]
-									,'references'=>[ //references คือ table ที่จะเอาไว้ select2 												
-												'subjectId'=>'devSubjectsView.codeAndName'
-												,'courseId'=>'devCourses.name'
-												]
+				'descriptions' => 'Course\'s Subjects'
+				,'addEditModal'=>[
+						'dummy'=>[]
+						,'columnOrdering'=>['id','courseId','subjectId']
+						,'columnWidth'=>['id'=>12,'subjectId'=>12,'courseId'=>12]
+						,'references'=>[ //references คือ table ที่จะเอาไว้ select2 												
+									'subjectId'=>'devSubjectsView.codeAndName'
+									,'courseId'=>'devCourses.name'
+									]
+				]
+				,'searchAttributes'=>[
+								'display'=>[
+									"devCourses.name::devSubjectCourse.courseId"	
+									,"devSubjects.name::devSubjectCourse.subjectId"
+
+								]
+								,'hidden'=>[] //hidden คือเงื่อนไขที่จะเอาไปใช้ร่วมในการ search แต่ไม่แสดงออกมาให้เลือก
+								//,'between'=>['devSubjects.classDuration','devSubjects.shopDuration']
 							]
-							,'searchAttributes'=>[
-											'display'=>[
-												"devCourses.name::devSubjectCourse.courseId"	
-												,"devSubjects.name::devSubjectCourse.subjectId"
-															
-											]
-											,'hidden'=>[] //hidden คือเงื่อนไขที่จะเอาไปใช้ร่วมในการ search แต่ไม่แสดงออกมาให้เลือก
-											//,'between'=>['devSubjects.classDuration','devSubjects.shopDuration']
-										]
-							,'selectAttributes'=>[
-											'fields'=>[
-													'devCourses.name'
-													,'devSubjects.code'
-													,'devSubjects.name'																										
-												]
-											,'format'=>[
-												'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
-												,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
-											]												
-										]
-							,'join'=>[
-								['left','devSubjects','on'=>[[['devSubjectCourse.subjectId','=','devSubjects.id']]]]
-								,['left','devCourses','on'=>[[['devSubjectCourse.courseId','=','devCourses.id'] ]]]
+				,'selectAttributes'=>[
+								'fields'=>[
+										'devCourses.name'
+										,'devSubjects.code'
+										,'devSubjects.name'																										
+									]
+								,'format'=>[
+									'devSubjects.name'=>"".FRPLCEMNT4FMT." subjectName"
+									,'devCourses.name'=>"".FRPLCEMNT4FMT." courseName"
+								]												
 							]
-						]
+				,'join'=>[
+					['left','devSubjects','on'=>[[['devSubjectCourse.subjectId','=','devSubjects.id']]]]
+					,['left','devCourses','on'=>[[['devSubjectCourse.courseId','=','devCourses.id'] ]]]
+				]
+			]
 		#endregion devSubjectCourse
 		,'devTest001'=>[
 				'descriptions' => 'just for test 001'
-		]
-		,'sysUsers'=>[
-				'descriptions' => 'Users'
-		]
+		]		
 		,'repExpenseReports'=>[
 			'customized'=>true
 			,'descriptions'=>'Expense reports'
 		]
+		#region System Administration
+		,'sysUsers'=>[
+			'descriptions' => 'Users'
+			,'searchAttributes'=>[
+				'display'=>["sysUsers.userName;;User Name"]
+				,'hidden'=>[] 
+				]
+				//,'between'=>['devSubjects.classDuration','devSubjects.shopDuration']
+			
+				,'selectAttributes'=>[
+					'fields'=>[
+							'sysUsers.userName'
+							,'sysUserGroups.name;;group name'
+							,'sysUsers.updateBy'
+							,'sysUsers.lastUpdate;;last update'
+						]
+					,'format'=>['sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]												
+				]
+				,'join'=>[['left','sysUserGroups','on'=>[[['sysUsers.groupId','=','sysUserGroups.id']]]]]			
+				,'addEditModal'=>[
+					'dummy'=>[]				
+					,'references'=>['groupId'=>'sysUserGroups.name']
+					,'fieldLabels'=>['lastUpdate'=>"Last Update"]
+					//,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
+					,'format'=>['lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]
+				]			
+		]
+		#endregion System Administration
 	];
-	
+	/*
 	static function recipes(){
 		$allInfo = self::recipes;
 		$allInfo['footer_JS_CSS'] = self::default_footer_JS_CSS;
 		$allInfo['header_JS_CSS'] = self::default_header_JS_CSS;
 		return $allInfo;
+	}
+	*/
+	static function getRecipes(){
+		return self::recipes;
 	}
 	static function getDescriptions($entityName){		
 		return self::recipes[$entityName];		
