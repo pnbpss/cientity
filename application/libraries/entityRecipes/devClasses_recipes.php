@@ -1,4 +1,7 @@
 <?php
+/**
+*  For none-Thai, you can ignore Thai comment in this file. It provided for easier Thai reader to understand the code. The contexts are same as described English. 
+*/
 $recipes = [
 #region devClasses
 		/**
@@ -50,7 +53,7 @@ $recipes = [
 				 * Effected:addEditModal
 				 * 
 				 * For more informations, field id will disabled because it is auto-increment (identity). 
-				 * Please see "How to design database to suits CI-Entity" in CI-Entity Document.				 * 
+				 * Please see "How to design database to suits CI-Entity" in CI-Entity Document.
 				 */
 				,'columnWidth'=>['descriptions'=>12]
 
@@ -116,7 +119,9 @@ $recipes = [
 				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] 
 
 				/**
-				 * The 'disabled' key values tell CI-Entity to disabled the input in addEditModal				 * 
+				 * The 'disabled' key values tell CI-Entity to disabled the input in addEditModal.
+				 * For example, if capacity and locationId input needed to be disabled, then use the follwing syntax:
+				 * ,'disabled'=>['capacity','locationId']
 				 */
 				,'disabled'=>[]
 				
@@ -176,7 +181,6 @@ $recipes = [
 						 * displayed.
 						 *  Critical:no optional.
 						 */
-
 						,'allowDelete'=>true // มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 
 						/**
@@ -195,22 +199,22 @@ $recipes = [
 						'label'=>'Internal Instructors'
 						,'alterView'=>'devClassInstructors.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
-						,'allowDelete'=>True// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
+						,'allowDelete'=>True // มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
 						,'suppressedFieldsInAdd'=>['id','classId']  //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 						]
 					,'devClassExtInstructors' =>[
 						'label'=>'External Instructors' 
-						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
-						,'alterView'=>'devClassExtInstructorsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
-						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
-						,'suppressedFieldsInAdd'=>['id','classId'] //ฟิลด์ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
+						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] 
+						,'alterView'=>'devClassExtInstructorsView.classId' 
+						,'allowDelete'=>true 
+						,'suppressedFieldsInAdd'=>['id','classId'] 
 						]
 					,'devClassBudgets' =>[
 						'label'=>'Expenses' 
 						,'suppressedFields'=>['classId','startDate','classDescription']
-						,'alterView'=>'devClassBudgetsView.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
-						,'allowDelete'=>true// มีปุ่มให้เลือกลบทางขวาสุดหรือไม่
-						,'suppressedFieldsInAdd'=>['id','classId'] //ฟิลด์ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
+						,'alterView'=>'devClassBudgetsView.classId' 
+						,'allowDelete'=>true 
+						,'suppressedFieldsInAdd'=>['id','classId'] 
 					]
 				]
 			]
@@ -221,7 +225,7 @@ $recipes = [
 			 *	The filter row won't be constructed.
 			 * Critical:yes
 			 */
-			,'filtersBar'=>[ //ฟิลด์ที่จะใช้เป็นเงื่อนไขในการ search ตรง filter row
+			,'filtersBar'=>[ 
 
 				/**
 				 * The 'display' key values is column of any table that will be used as search key, search conditions.
