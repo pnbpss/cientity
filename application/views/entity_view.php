@@ -421,7 +421,7 @@ require_once APPPATH."views/incPage.php";
 								<a href="#" class="btn btn-default" data-dismiss="modal">No, close</a>
 								<input type='hidden' id='cientityEntityIdToDelete'>
 								<input type='hidden' id='cientityDataIdToDelete'>
-								<button id='cientityConfirmDelete' type="submit" class="btn btn-danger">YES!</button>
+								<button id='cientityConfirmDelete' type="submit" class="btn btn-danger" data-dismiss="modal">YES!</button>
 							</div>
 						</div>
 					</div>

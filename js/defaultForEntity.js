@@ -541,7 +541,8 @@ $(document).ready(function() {
 				$(".notification-popup").addClass('hide');
 				if(data.results.notifications) cientity_displayAllNotifications(data.results.notifications,'Deletion');				
 				if(data.results.notifications.success[0]){
-					$("tr[cientityDataIdRow='"+dataId+"_"+entityOrdinal+"']").fadeOut("slow");
+                                                                        $("tr[cientityDataIdRow='"+dataId+"_"+entityOrdinal+"']").fadeOut("slow");
+                                                                        cientity_getRowListByConditionsInFilterRow();         
 				}
 			}
 		});

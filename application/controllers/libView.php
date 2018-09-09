@@ -28,8 +28,8 @@ class LibView extends CI_Controller {
 		//$libName = 'devClassInstructors';
 		//$libName = 'penaltyConfigs';
 		//$libName = 'devExpenseTypes';
-		$libName = 'devClassBudgets';
-		//$libName = 'devEmployees';
+		//$libName = 'devClassBudgets';
+		$libName = 'devEmployees';
 		////$libName = 'devLocations';
 		//$libName = 'devClassExtInstructors';
 		//$libName = 'devExtInstructors';

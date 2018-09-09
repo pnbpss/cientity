@@ -51,7 +51,7 @@ class entity extends cientity\entities{
 	/** 
 	* CI store &get_instance for referencing to CodeIgniter resources.
 	*/	
-	private $CI;
+	protected $CI;
 	
 	/**
 	 * Store session data
@@ -665,7 +665,7 @@ class entity extends cientity\entities{
 	public function doDbTransactions($sql){
 		$transactionSql = "
 		declare @errorMessage as varchar(max);
-		create table #thisTemporaryStatus (id varchar(max), msg varchar(max) collate THAI_CI_AS); 
+		create table #thisTemporaryStatus (id varchar(max), msg varchar(max)); 
 		begin tran t1
 		begin try
 				

@@ -301,7 +301,7 @@ class mainForms {
 			//bug-id 20180805-00
 			if(in_array($colInfos['Datatype'], ['date','datetime'])){
 				list($year,$month,$day) = $this->splitAndConvertDate($thisFieldVal);
-				$thisFieldVal = "{$year}/{$month}/{$day}";
+				$thisFieldVal = "{$year}/{$month}/{$day}"=="//"?"":"{$year}/{$month}/{$day}";
 			}
 			//bug-id 20180805-00
 
@@ -398,7 +398,7 @@ class mainForms {
 
 			if(in_array($colInfos['Datatype'], ['date','datetime'])){
 				list($year,$month,$day) = $this->splitAndConvertDate($thisFieldVal);
-				$thisFieldVal = "{$year}/{$month}/{$day}";
+				$thisFieldVal =  "{$year}/{$month}/{$day}"=="//"?"":"{$year}/{$month}/{$day}";
 			}
 
 			$thisFieldVal = $thisFieldVal===""?"NULL":"'".$this->escapeSQL($thisFieldVal)."'";
@@ -1121,6 +1121,8 @@ class mainForms {
 		$disabledString="";
 		if($key=='id'){
 			$disabledString = "disabled";
+		}elseif((isset($allLibExtraInfo[$this->libName]['addEditModal']['disabled']))&&(in_array($key,$allLibExtraInfo[$this->libName]['addEditModal']['disabled']))) {
+			$disabledString = "disabled";
 		}
 		$inputString="<span class=\"text-danger\">Unable to retreived input type.</span>";
 		$fieldReferenceNumber = $this->_getReferenceNumber($key,$allLibExtraInfo);
@@ -1128,8 +1130,7 @@ class mainForms {
 		if(isset($column['references'])){ 
 			$select2Info=$this->_getSelect2Info($key,$allLibExtraInfo[$this->libName]);
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" tabindex=\"-1\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
-		}
-		
+		}		
 		/**
 		 *  if the column isn't references from other table in database design, but it was specified that it have to be referenced 
 		 * from other table in in entityRecipes[$libName][addEditModal][reference] then it must create input as select2

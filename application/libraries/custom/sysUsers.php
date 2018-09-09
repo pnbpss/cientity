@@ -18,7 +18,7 @@ class sysUsers extends entity{
 	 */
 	public function doDbTransactions($sql) { //overide method doDbTransactions in class "Entity"	
 		//if operation is Updating
-		if($this->_REQUESTE['operation']=='0'){
+		if((isset($this->_REQUESTE['operation']))&&($this->_REQUESTE['operation']=='0')){
 			$dbPrefix = $this->_returnDbPrefix();
 			$id =  $this->_getIdOfCurrentOperation();
 			$newSql = $sql."; update {$dbPrefix}sysUsers set lastUpdate=getdate() where id={$id}";	
@@ -37,5 +37,9 @@ class sysUsers extends entity{
 			$index++;
 		}
 		return $id;
+	}
+	public function _getUserSessionValue($key){
+		$session = $this->_retSessionData();
+		return $session[$key];
 	}
 }

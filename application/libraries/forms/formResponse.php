@@ -95,8 +95,13 @@ class formResponse extends mainForms {
 			$this->notify('danger'," 'selectAttributes' not found in entityRecipes['{$this->libName}'].");
 			return $this->response;
 		}
-		$sqlSelect = $this->createSelectFields($libInfos['selectAttributes']);
-		//if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //for view at response tab in debuging
+		$sqlSelect = $this->createSelectFields($libInfos['selectAttributes']);		
+		if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //for view at response tab in debuging		
+		if(method_exists($this->libName,'additionalSelectInFilterRow')){
+			$sqlSelect=$this->libObject->additionalSelectInFilterRow($sqlSelect);
+		}
+		if(CODING_ENVIROMENT=='develop') $response->sql['select']  = $sqlSelect; //for view at response tab in debuging		
+		
 		$parameters->sql['select'] = $sqlSelect;
 		
 		//create from clause and join clause
@@ -238,6 +243,7 @@ class formResponse extends mainForms {
 		$table.="</table>";
 		return $table;
 	}
+	
 	/**	 
 	 *	distinguish datatype between date and datetime and time and return format for datepicker
 	 * @param string dataType
@@ -580,6 +586,7 @@ class formResponse extends mainForms {
 		$selectColumn = str_replace("}}","",str_replace("{{","",str_replace("}}{{",',',$selectColumnInit)));
 		
 		$sql = "select {$selectColumn} from {$this->CI->db->dbprefix}{$this->libName} where id={$request['id']}";
+		if(CODING_ENVIROMENT==='develop'){ $this->response['converted']['sqlSelect'] = $sql;}
 		$q = $this->CI->db->query($sql);
 		$row = $q->row();
 		$rowArray = (array) $row;

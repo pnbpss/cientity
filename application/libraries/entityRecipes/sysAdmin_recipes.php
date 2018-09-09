@@ -1,10 +1,4 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 $recipes = [
 	#region System Administration
 			'sysUsers'=>[
@@ -18,13 +12,19 @@ $recipes = [
 				,'selectAttributes'=>[
 					'fields'=>[
 							'sysUsers.userName'
+							,'devEmployeesView.FLName;;Employee Name'
 							,'sysUserGroups.name;;group name'
 							,'sysUsers.updateBy;;Last update by'
 							,'sysUsers.lastUpdate;;last update'
 						]
-					,'format'=>['sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"]												
+					,'format'=>[
+						'sysUsers.lastUpdate'=>"CONVERT(varchar(max),".FRPLCEMNT4FMT.",103)+' '+CONVERT(varchar(max),cast(".FRPLCEMNT4FMT." as time),100) lastUpdate"						
+						]												
 				]
-				,'join'=>[['left','sysUserGroups','on'=>[[['sysUsers.groupId','=','sysUserGroups.id']]]]]
+				,'join'=>[
+						['left','sysUserGroups','on'=>[[['sysUsers.groupId','=','sysUserGroups.id']]]]
+						,['left','devEmployeesView','on'=>[[['sysUsers.userName','=','devEmployeesView.employeeCode']]]]
+					]
 				,'addEditModal'=>[
 					'dummy'=>[]				
 					,'references'=>['groupId'=>'sysUserGroups.name']
@@ -91,7 +91,7 @@ $recipes = [
 				,'filtersBar'=>['display'=>['sysTasks.taskName;;Task Name','sysTaskGroups.groupName;;Task Group Name']]
 				,'selectAttributes'=>[
 					'fields'=>[
-							'sysTasks.taskName;;Task Name'
+							'sysTasks.taskName;;Task Name(descriptions)'
 							,'sysTaskGroups.groupName;;Task Group Name'						
 							,'sysTasks.ordering;;Ordering'
 							,'sysYesNo.yesno;;Display In Menu?'
@@ -105,9 +105,8 @@ $recipes = [
 				,'addEditModal'=>[				
 					'references'=>['display'=>'sysYesNo.yesno','taskGroupId'=>'sysTaskGroups.groupName']	
 					,'fieldLabels'=>['taskName'=>"Task Name",'display'=>'Display in menu or not?','ordering'=>'Ordering in Menu','taskGroupId'=>'Task Group']
+					,'disabled'=>['taskName']
 				]
 			]		
 			#endregion System Administration
 ];
-
-foreach($recipes as $key=>$recipe){$this->recipes[$key]=$recipe;}

@@ -316,7 +316,9 @@ class M extends CI_Controller {
 			$subForm = new formResponse($this->input->post('subEntityInfo',true));
 			$subForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 			$response['subEntityResults'] = $subForm->searchResultsForSubEntity($subEntityInfo);
-		}				
+		}else{
+			$response['subEntityResults'] ='';
+		}		
 		
 		#$response['_request'] = $this->input->post(null,true); //เอาไว้ดูเฉยๆ 
 		echo json_encode($response);

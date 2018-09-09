@@ -31,7 +31,7 @@ class UsersOfcientity
 				left join {$this->CI->db->dbprefix}sysTasks t on p.taskId=t.id 
 				left join {$this->CI->db->dbprefix}sysTaskGroups tg on t.taskGroupId=tg.id 
 				where 1=1 and t.display=1 and u.userName='{$userName}' 
-				and tg.id<>12 -- is not system administration.
+				and tg.id<>1 -- is not system administration.
 				order by tg.ordering, t.ordering ";
 		}else{
 			$conditions = "";
