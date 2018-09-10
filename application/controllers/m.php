@@ -56,7 +56,7 @@ class M extends CI_Controller {
 		/**
 		 * Fetch form Extra information of entity 
 		 */
-		$formExtraInfo = $forms->_getLibExtraInfo();
+		$formExtraInfo = $forms->_getCurrentEntityRecipes();
 		
 		/**
 		 * Get viewData that will be sent to 'entity_view'
@@ -302,9 +302,9 @@ class M extends CI_Controller {
 		$mainForm->_setSession($this->session); //ส่งค่า session เพื่อเอาไว้ใช้ในกรณีต่างๆ เช่น บันทึก logs หรือเช็คสิทธิ์		
 		
 		/**
-		 * Fetch Library extra info of main-entity
+		 * Fetch entity recipes of main-entity
 		 */
-		$mainFormLibExtraInfo = $mainForm->_getLibExtraInfo();
+		$mainFormLibExtraInfo = $mainForm->_getCurrentEntityRecipes();
 		
 		/**
 		 * if subEntity of $mainform is declared:
@@ -330,7 +330,7 @@ class M extends CI_Controller {
 	public function insertFromSubEntity(){
 		
 		/**
-		 * $response is variable to store adding result
+		 * $response is variable to store insertion result
 		 */
 		$response = [];
 		

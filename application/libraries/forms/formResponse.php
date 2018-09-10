@@ -78,7 +78,8 @@ class formResponse extends mainForms {
 		$this->session = $sessionData;
 		$this->libObject->_saveSessionData($this->session);
 	}
-	function searchResults($subEntityInfo=[]){		
+	function searchResults($subEntityInfo=[]){	
+		
 		$libInfos = $this->onFocusEntityRecipes;
 		$libDisplayFiltersBars = $libInfos['filtersBar']['display'];
 		$libHiddenFiltersBars = isset($libInfos['filtersBar']['hidden'])?$libInfos['filtersBar']['hidden']:[];		
@@ -113,6 +114,7 @@ class formResponse extends mainForms {
 		//create where clause		
 		//if search conditions submited from subEntity
 		if(isset($subEntityInfo['subEntity'][$this->libName])){
+			
 			//return ['idValue'=>$valueToReturn, 'subEntity'=>$this->onFocusEntityRecipes['addEditModal']['subEntity']];
 			$idValue = $this->escapeSQL($subEntityInfo['idValue']);
 			$temp = explode(".", $subEntityInfo['subEntity'][$this->libName]['alterView']);
@@ -137,6 +139,7 @@ class formResponse extends mainForms {
 		
 		return $response;
 	}
+	
 	/**	 
 	 * execute SQL string which composed in this->searchResults and return search result in HTML format to front-end.
 	 * @param array sqlObj 
@@ -149,25 +152,42 @@ class formResponse extends mainForms {
 	 *	HTML string of table, which will be use as dataTable
 	 */
 	private function _getResultFromSQL($sqlObj,$headerArray,$subEntityInfo=[]){
+		/**
+		 * Compose and Execute SQL
+		 */		
 		$sqlStr = $sqlObj['select'].$sqlObj['join'].$sqlObj['condition'];		
 		$q = $this->CI->db->query($sqlStr);
+		
+		/**
+		 * Declare $tableRow variable that will use to store each table row HTML.
+		 */
 		$tableRow="";
 		foreach($q->result() as $row){
 			$rowArray = (array)$row;
 			$tableData="";
 			foreach($rowArray as $key=>$val)	{
+				
 				//if key is dataId, 
 				if($key=='CIEntityDataId'){
 					continue;
 				}
+				
+				//if datatype is number, make the text in td align right.
 				if((is_float($val)) || (is_int($val))){
 				 $textAlign='text-right';
 				}else{
 					$textAlign='';
 				}
+				
+				//get table data from _getTdTableData
 				$display = $this->_getTdTableData($key, $val,$subEntityInfo);					
 				$tableData .= "<td class='{$textAlign}'>{$display}</td>";
 			}
+			
+			/**
+			 * Put action selector TD at the right-end of each row of search result table.
+			 * Action selector consists of 'edit' and 'delete'
+			 */
 			$actionTd="<td class=\"text-right\">						
 						<span class='cientityEditExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}' data-toggle=\"modal\" data-target=\"#cientityAddEditModal\" data-backdrop=\"static\" data-keyboard=\"false\"><a href=\"#\"><i class=\"fa fa-pencil m-r-5\"></i></a></span>
 						<span class='cientityDeleteExistingEntityRecord' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'><a href=\"#\" data-toggle=\"modal\" data-target=\"#cientityDeleteModal\"><i class=\"fa fa-trash-o m-r-5\"></i></a></span>							
@@ -181,12 +201,19 @@ class formResponse extends mainForms {
 						</div>
 					</td>";
 			
+			/**
+			 * Action TD for sub-entity
+			 * The action TD for sub-entity is difference from action TD for man-entity, it only consists of checkbox for select.
+			 */
 			$actionTdForSubEntity="
 				<td class=\"text-center\" name='cientitydataTablesActionSubModule' style='whitespace:nowrap'>													
 					<input type='checkbox' class='form-control input-group-addon cientitySelectToActionSubentity' cientityEntityReference='{$this->entityOrdinal}' cientityDataId='{$row->CIEntityDataId}'>												
 				</td>";
 			
-			
+			/**
+			 * Distinguish that the query is belong to main-entity or sub-entity, if it belong to sub-entity then verify that this 
+			 * sub-entity's is allowDelete or not. 
+			 */
 			if(isset($subEntityInfo['subEntity'])) {				
 				if(isset($subEntityInfo['subEntity'][$this->libName]['allowDelete'])){
 					if($subEntityInfo['subEntity'][$this->libName]['allowDelete']){
@@ -204,13 +231,15 @@ class formResponse extends mainForms {
 			}			
 			$tableRow .= "<tr cientityDataIdRow='{$row->CIEntityDataId}_{$this->entityOrdinal}'>".$tableData."</tr>";
 		}
-		//not found
+		
+		//Iif searching yields no result (not found), return alert waring of search result not fund
 		if($tableRow==""){ 
 			$table = "<table  class=\"table table-striped custom-table datatable\">";
 			$table.="<tbody><tr><td><div class=\"alert alert-warning\" role=\"alert\">search result not found.</div></td></tr></tbody";
 			$table.="</table>";
 			return $table;
 		}
+		
 		//fetch column header
 		reset($rowArray);
 		$tableHead="<thead>";
@@ -221,7 +250,12 @@ class formResponse extends mainForms {
 			}
 			$tableHead .= "<th>{$headerArray[$colIndex]}</th>";
 			$colIndex++;
-		}
+		}		
+		
+		/**
+		 * if this sub-entity is allow delete, as declared in entityRecipes.php, put the checkbox input at the end of each-row.
+		 * This also compose a "delete selected" drop-down menu at the top-right cornder of sub-entity's panel
+		 */
 		if(isset($subEntityInfo['subEntity'][$this->libName]['allowDelete'])) {
 			if($subEntityInfo['subEntity'][$this->libName]['allowDelete']){
 				$tableHead .= "<th>All <input type='checkbox' class='cientityAction cientitySelectToggleAll' cientityEntityReference='{$this->entityOrdinal}'></th>";
@@ -237,6 +271,9 @@ class formResponse extends mainForms {
 		}
 		$tableHead .="</thead>";
 		
+		/**
+		 * use $tableRow from above to compose HTML Table that will be displayed in sub-entity
+		 */
 		$table = "<table  class=\"table table-striped custom-table datatable {$datableClass}\" {$subEntityOrdinalInfo}>";
 		$table.=$tableHead;
 		$table.="<tbody>".$tableRow."</tbody";

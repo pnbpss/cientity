@@ -32,7 +32,8 @@ class mainForms {
 	protected $CI;
 
 	/**
-	 * store entity extra info stored in entityRecipes.php
+	 * store entity recipes stored in entityRecipes.php. This property store only 
+	 * recipes information of on-focused entity. 
 	 * @var array  
 	 */
 	protected $onFocusEntityRecipes;
@@ -87,7 +88,7 @@ class mainForms {
 		$this->CI->load->database();
 
 		/**
-		 * onFocusEntityRecipes is extra information of each libObject that will be fetch for compose input or form or sub-form
+		 * onFocusEntityRecipes is recipes of each libObject that will be fetch for compose input or form or sub-form
 		 */
 		$this->onFocusEntityRecipes = $this->_onFocusEntityRecipes($libName);
 		
@@ -160,7 +161,7 @@ class mainForms {
 	}
 	
 	/**
-	*	construct html code of search button in filter row
+	* Construct HTML code of search button in filter row
 	* @return string
 	*	HTML code of "search" button in filter row which contains important information such as entityOrdinal.
 	*/
@@ -174,14 +175,14 @@ class mainForms {
 	}
 	
 	/**
-	*	loop through this->_AllLibExtraInfo until found the specified libName.
-	 * This method return the ordinal position of library(entity) in array of $this->_AllLibExtraInfo.
+	* Loop through this->_AllEntityRecipes until found the specified libName.
+	 * This method return the ordinal position of library(entity) in array of $this->_AllEntityRecipes.
 	* @param string libName
 	* @return int
 	*	in case of not found return -1
 	*/
 	private function entityOrdinal($libName){
-		$allLibInfo = $this->_AllLibExtraInfo();
+		$allLibInfo = $this->_AllEntityRecipes();
 		$entityOrdinal=0;
 		$notFound = true;
 		foreach(array_keys($allLibInfo) as $key)	{
@@ -212,7 +213,7 @@ class mainForms {
 	* @param string libName
 	*	name of specified library
 	* @return array
-	*	In case of undefined extra entity info in entityRecipes.php it will return blank array.
+	*	In case of undefined recipes info in entityRecipes.php it will return blank array.
 	*/
 	private function _onFocusEntityRecipes($libName){
 		//$this->CI->load->library('entityRecipes');
@@ -220,16 +221,16 @@ class mainForms {
 	}
 
 	/**
-	* fetch all library extra info 
+	* fetch all entity recipes
 	* @return array	
 	*/
-	private function _AllLibExtraInfo(){
+	private function _AllEntityRecipes(){
 		//$this->CI->load->library('entityRecipes');
 		return $this->entityRecipes->getRecipes();
 	}
 	
-	function ret_AllLibExtraInfo(){
-		return $this->_AllLibExtraInfo();
+	function ret_AllEntityRecipes(){
+		return $this->_AllEntityRecipes();
 	}
 	
 	function entityRecipes_default_header_JS_CSS(){
@@ -276,7 +277,7 @@ class mainForms {
 	 * return Library Extra entity info
 	 * @return array
 	 */
-	public function _getLibExtraInfo(){
+	public function _getCurrentEntityRecipes(){
 		return $this->onFocusEntityRecipes;
 	}
 	
@@ -582,7 +583,7 @@ class mainForms {
 	* @param string errorMessage
 	*	error Message from performed SQL execution
 	* @param array allLibExtraInfo
-	*	all library extra information
+	*	all entity recipesrmation
 	* @return string str
 	*	message that easy to be understood by user
 	*/
@@ -834,7 +835,7 @@ class mainForms {
 	*	string of ordinal position is in following format: i_j_k_l, i=order of entity, j= order of 'filtersBars', k=order of 'display', l=order of filed
 	*/	
 	private function _getInfoForAjaxOptions($fields){
-		$allLibExtraInfo = $this->_AllLibExtraInfo();
+		$allLibExtraInfo = $this->_AllEntityRecipes();
 		$properties = "";
 		$i = 0;
 		foreach($allLibExtraInfo as $key1=>$val1){
@@ -954,7 +955,7 @@ class mainForms {
 		foreach($property as $key => $val){
 			$loopCompare[$key] = (int) $val;
 		}
-		$allLibExtraInfo = $this->_AllLibExtraInfo();
+		$allLibExtraInfo = $this->_AllEntityRecipes();
 		$i=0;
 		foreach($allLibExtraInfo as $val1){
 			if($i==$loopCompare[0]){
@@ -1024,7 +1025,7 @@ class mainForms {
 			$columns[$newKey] = $val;
 		}
 
-		$allLibExtraInfo = $this->_AllLibExtraInfo();
+		$allLibExtraInfo = $this->_AllEntityRecipes();
 		
 		//if columnOrdering is declared in AddEditModal, then use columnOrdering
 		if (isset($allLibExtraInfo[$this->libName]['addEditModal']['columnOrdering'])){ 
@@ -1242,7 +1243,7 @@ class mainForms {
 	 *	string of ordinal $properties is in following format: i_j_k_l, i=order of entity, j= order of 'addEditModal', k='references', l=order of filed
 	 */
 	private function _getInfoForAjaxOptionsInAddEditModal($columnName){
-		$allLibExtraInfo = $this->_AllLibExtraInfo();
+		$allLibExtraInfo = $this->_AllEntityRecipes();
 		$properties = "";
 		$i = 0;
 		foreach($allLibExtraInfo as $key1=>$val1)
@@ -1299,7 +1300,7 @@ class mainForms {
 		foreach($property as $key => $val){
 			$loopCompare[$key] = (int) $val;
 		}
-		$allLibExtraInfo = $this->_AllLibExtraInfo();
+		$allLibExtraInfo = $this->_AllEntityRecipes();
 		$i=0;
 		foreach($allLibExtraInfo as $val1){
 			if($i==$loopCompare[0]){
@@ -1418,7 +1419,7 @@ class mainForms {
 	/**
 	 * create nav-bars and sub-entity panels	 
 	 * @param array allLibExtraInfo
-	 *	all library extra information 
+	 *	all entity recipesrmation 
 	 * @return string
 	 *	HTML string of nav-bars and panels of sub-entity
 	 */
