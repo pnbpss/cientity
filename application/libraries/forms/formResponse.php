@@ -79,7 +79,7 @@ class formResponse extends mainForms {
 		$this->libObject->_saveSessionData($this->session);
 	}
 	function searchResults($subEntityInfo=[]){		
-		$libInfos = $this->libExtraInfo;
+		$libInfos = $this->onFocusEntityRecipes;
 		$libDisplayFiltersBars = $libInfos['filtersBar']['display'];
 		$libHiddenFiltersBars = isset($libInfos['filtersBar']['hidden'])?$libInfos['filtersBar']['hidden']:[];		
 				
@@ -113,7 +113,7 @@ class formResponse extends mainForms {
 		//create where clause		
 		//if search conditions submited from subEntity
 		if(isset($subEntityInfo['subEntity'][$this->libName])){
-			//return ['idValue'=>$valueToReturn, 'subEntity'=>$this->libExtraInfo['addEditModal']['subEntity']];
+			//return ['idValue'=>$valueToReturn, 'subEntity'=>$this->onFocusEntityRecipes['addEditModal']['subEntity']];
 			$idValue = $this->escapeSQL($subEntityInfo['idValue']);
 			$temp = explode(".", $subEntityInfo['subEntity'][$this->libName]['alterView']);
 			$fieldName=$temp[1];
@@ -267,7 +267,7 @@ class formResponse extends mainForms {
 	 *	็HTML of TD
 	 */
 	private function _getTdTableData($key, $val,$subEntityInfo){		
-		$libInfos = $this->libExtraInfo;		
+		$libInfos = $this->onFocusEntityRecipes;		
 		if((isset($libInfos['selectAttributes']['editableInSubEntity'][$key])) && (isset($subEntityInfo['subEntity']))){ //if editable data in td, and called from display in sub-entity
 			$cientityKeyReference = $this->_referenceKeyForSubEntityEditTable($libInfos['selectAttributes']['editableInSubEntity'], $key);
 			 //if it is input text
@@ -300,13 +300,13 @@ class formResponse extends mainForms {
 	 *	html of "select" 
 	 */
 	private function _inputSelectForSubEntity($key,$text,$cientityKeyReference){		
-		$linkInfo = $this->libExtraInfo['selectAttributes']['editableInSubEntity'][$key];			
+		$linkInfo = $this->onFocusEntityRecipes['selectAttributes']['editableInSubEntity'][$key];			
 		
 		$linkKey = explode("::",$linkInfo);
-		$ajaxInputOption = $this->_getSelect2Info($linkKey[1],$this->libExtraInfo);
+		$ajaxInputOption = $this->_getSelect2Info($linkKey[1],$this->onFocusEntityRecipes);
 		
 		//get value of current text
-		$referenceInfo = $this->libExtraInfo['addEditModal']['references'][$linkKey[1]];
+		$referenceInfo = $this->onFocusEntityRecipes['addEditModal']['references'][$linkKey[1]];
 		list($tableName,$fieldName) = explode(".",$referenceInfo);
 		$sql = "select id from {$this->CI->db->dbprefix}{$tableName} where {$fieldName}='{$text}' ";
 		//var_dump($sql);
@@ -379,7 +379,7 @@ class formResponse extends mainForms {
 	 */
 	protected function getSelectListColumnDescriptions(){
 		
-		$selectFields = $this->libExtraInfo['selectAttributes']['fields']; //solved bugId 20180808-01				
+		$selectFields = $this->onFocusEntityRecipes['selectAttributes']['fields']; //solved bugId 20180808-01				
 		$returnArray = [];
 		//loop for each field in fields 
 		foreach($selectFields as $item){ 
@@ -539,7 +539,7 @@ class formResponse extends mainForms {
 	 */ 		
 	function saveAddEditData(){		
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
-			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+			$this->notify('danger',"You're not authorized to insert, update or delete {$this->onFocusEntityRecipes['descriptions']}.");
 		}elseif($this->formValidate($this->_request)){
 			if($this->_request['operation']==='1'){ parent::insertData(); }
 			if($this->_request['operation']==='0'){ parent::editData(); }
@@ -686,7 +686,7 @@ class formResponse extends mainForms {
 			unset($request[$key]);
 			$index++;
 		}		
-		return ['idValue'=>$valueToReturn, 'subEntity'=>$this->libExtraInfo['addEditModal']['subEntity']];
+		return ['idValue'=>$valueToReturn, 'subEntity'=>$this->onFocusEntityRecipes['addEditModal']['subEntity']];
 	}
 	/**	 
 	 * verify that alterView of subEntity is exists or not, if not then return warning message, in the other nand,
@@ -707,7 +707,7 @@ class formResponse extends mainForms {
 			
 			$suppressFields = $subEntityInfo['subEntity'][$this->libName]['suppressedFields'];		
 			
-			$selectAttributeFields = $this->libExtraInfo['selectAttributes']['fields'];
+			$selectAttributeFields = $this->onFocusEntityRecipes['selectAttributes']['fields'];
 			foreach($selectAttributeFields as $key=>$val)
 			{
 				$temp1 = explode(";;", $val);
@@ -716,7 +716,7 @@ class formResponse extends mainForms {
 					unset($selectAttributeFields[$key]);
 				}
 			}
-			$this->libExtraInfo['selectAttributes']['fields'] = $selectAttributeFields;
+			$this->onFocusEntityRecipes['selectAttributes']['fields'] = $selectAttributeFields;
 		}
 		return $this->searchResults($subEntityInfo);
 	}
@@ -727,7 +727,7 @@ class formResponse extends mainForms {
 		list($request, $tableName, $columnName, $fieldValue) = $this->_getInfoForUpdateSubEntity();
 		
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
-			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}."); 
+			$this->notify('danger',"You'You're not authorized to insert, update or delete {$this->onFocusEntityRecipes['descriptions']}."); 
 			return $this->response;
 		}elseif($this->formValidateForSubEntity($columnName, $fieldValue)){
 			//in case of additional validation, for example see devClassExtInstructors.php. 		
@@ -737,12 +737,12 @@ class formResponse extends mainForms {
 			$updateSql = "update {$tableName} set {$columnName} = {$fieldValue} where id='{$request[0]}' ";
 			//if(CODING_ENVIROMENT=='develop'){ $this->response['converted']['updateSql'] = $updateSql;}
 			$updateResult = $this->libObject->doDbTransactions($updateSql);
-			$libExtraInfo = $this->libExtraInfo;
+			$onFocusEntityRecipes = $this->onFocusEntityRecipes;
 			if($updateResult[0]=='ok'){
-				$this->notify('success',"Updated {$libExtraInfo['descriptions']} ");
+				$this->notify('success',"Updated {$onFocusEntityRecipes['descriptions']} ");
 			}else{
 				$updateResult[1] = $this->convertDBErrorMessageToUser($updateResult['errorCode'],$updateResult['errorMessage'],$this->entityRecipes->getRecipes());
-				$this->notify('danger',"Unable to update {$libExtraInfo['descriptions']}, because {$updateResult[1]} ");
+				$this->notify('danger',"Unable to update {$onFocusEntityRecipes['descriptions']}, because {$updateResult[1]} ");
 			}
 			return $this->response;
 		}else{
@@ -789,7 +789,7 @@ class formResponse extends mainForms {
 	 */
 	private function getSubEntityColumnName($refKey){
 		$index=0;
-		foreach($this->libExtraInfo['selectAttributes']['editableInSubEntity'] as $key=>$val){
+		foreach($this->onFocusEntityRecipes['selectAttributes']['editableInSubEntity'] as $key=>$val){
 			if($index===((int)$refKey)){
 				return $this->extend_getSubEntityColumnName($key,$val);
 			}
@@ -807,7 +807,7 @@ class formResponse extends mainForms {
 			return $key;
 		}else{
 			$temp = explode("::", $val);
-			foreach(array_keys($this->libExtraInfo['addEditModal']['references']) as $key2){
+			foreach(array_keys($this->onFocusEntityRecipes['addEditModal']['references']) as $key2){
 				if($temp[1]==$key2){
 					return $key2;
 				}

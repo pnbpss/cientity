@@ -10,6 +10,16 @@ require_once(APPPATH.'libraries/entityRecipes.php');
 class mainForms {
 	
 	/**
+	 * HTML for warning user if extraEntityInfo[$libName]
+	 */
+	const notFoundLibExtraInfoKey ="<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Not found ##### key of Entity in infos::extraEntityInfo</label></div></div></div>";
+	
+	/**
+	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
+	 */
+	const filtersBarNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in entityRecipes.php.</label></div></div></div>";
+	
+	/**
 	 * maximum of select2 input 
 	 * @var type 
 	 */
@@ -25,23 +35,13 @@ class mainForms {
 	 * store entity extra info stored in entityRecipes.php
 	 * @var array  
 	 */
-	protected $libExtraInfo;
+	protected $onFocusEntityRecipes;
 	/**
 	 * name of library (name of entity)
 	 * @var string
 	 */
-	protected $libName;
-	
-	/**
-	 * HTML for warning user if extraEntityInfo[$libName]
-	 */
-	const notFoundLibExtraInfoKey ="<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Not found ##### key of Entity in infos::extraEntityInfo</label></div></div></div>";
-	
-	/**
-	 * HTML for warning user if extraEntityInfo[$libName]['descriptions']
-	 */
-	const filtersBarNotExist = "<div class=\"row filter-row\"><div class=\"col-sm-12 col-xs-6\"><div class=\"form-group form-focus\"><label class=\"control-label\">Filter informations of ###### is not created in entityRecipes.php.</label></div></div></div>";
-	
+	protected $libName;	
+
 	/**
 	 * session data for use in this class and extended.
 	 * @var array 
@@ -61,6 +61,10 @@ class mainForms {
 	private $_fr_select_width=3;
 	private $_fr_search_button_width=2;
 	
+	/**
+	 * Store Object of EntityRecipes Class. It contains all entity's recipes of this package.
+	 * @var type object
+	 */
 	protected $entityRecipes;
 	/**
 	 * 
@@ -74,8 +78,7 @@ class mainForms {
 		
 		/**
 		 * Create entityRecipes object
-		 */
-		
+		 */		
 		$this->entityRecipes = new entityRecipes();
 		
 		/**
@@ -84,9 +87,9 @@ class mainForms {
 		$this->CI->load->database();
 
 		/**
-		 * libExtraInfo is extra information of each libObject that will be fetch for compose input or form or sub-form
+		 * onFocusEntityRecipes is extra information of each libObject that will be fetch for compose input or form or sub-form
 		 */
-		$this->libExtraInfo = $this->_libExtraInfo($libName);
+		$this->onFocusEntityRecipes = $this->_onFocusEntityRecipes($libName);
 		
 		/*
 		 * libObject is class entity in entity.php that will be loaded for use.
@@ -98,7 +101,7 @@ class mainForms {
 		 */
 		$this->libName = $libName;
 		
-		if((isset($this->libExtraInfo['customized'])) && ($this->libExtraInfo['customized']===true)){
+		if((isset($this->onFocusEntityRecipes['customized'])) && ($this->onFocusEntityRecipes['customized']===true)){
 			/*
 			 * do something else...
 			 */
@@ -111,14 +114,161 @@ class mainForms {
 	}
 	
 	/**
+	* fetch specified column informations
+	* @param object obj
+	*	this entity information 
+	* @param string columnName
+	*	name of column you want to all info.
+	* @return array
+	*/
+	private function _getColumnInfos($obj, $columnName)	{
+		//fetch all column datatype and store in $columnInfos array
+		foreach($obj->columnListInfo as $columnInfos){
+			if($columnInfos['ColumnName']==$columnName){
+				return $columnInfos;
+			}
+		}
+		return [];
+	}
+	
+	/**
+	* return datatype of column such as varchar, char, int
+	* @param object obj
+	*	this entity information 
+	* @param string columnName
+	*	name of column you want to know data type
+	* @return string
+	*	data type of column, such as varchar, char
+	*/
+	protected function _getColumnDataType($obj, $columnName){
+		$columnInfo = $this->_getColumnInfos($obj, $columnName);
+		return $columnInfo['Datatype'];
+	}
+	
+	/**
+	* return max-length of column 
+	* @param object obj
+	*	this entity information 
+	* @param string columnName
+	*	name of column you want to know data type
+	* @return string
+	*	data type of column, such as varchar, char
+	*/
+	private function _getColumnLength($obj, $columnName){
+		$columnInfo = $this->_getColumnInfos($obj, $columnName);
+		return $columnInfo['MaxLength'];
+	}
+	
+	/**
+	*	construct html code of search button in filter row
+	* @return string
+	*	HTML code of "search" button in filter row which contains important information such as entityOrdinal.
+	*/
+	private function _searchButton()	{
+		$entityOrdinal = $this->entityOrdinal($this->libName);
+		return "
+						<div class=\"col-sm-{$this->_fr_search_button_width} col-xs-{$this->_fr_search_button_width}\">  ".PHP_EOL."
+							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">Search</a>  ".PHP_EOL."
+						</div>".PHP_EOL."
+		";
+	}
+	
+	/**
+	*	loop through this->_AllLibExtraInfo until found the specified libName.
+	 * This method return the ordinal position of library(entity) in array of $this->_AllLibExtraInfo.
+	* @param string libName
+	* @return int
+	*	in case of not found return -1
+	*/
+	private function entityOrdinal($libName){
+		$allLibInfo = $this->_AllLibExtraInfo();
+		$entityOrdinal=0;
+		$notFound = true;
+		foreach(array_keys($allLibInfo) as $key)	{
+			if($key==$libName){
+				$notFound = false;
+				break;
+			}
+			$entityOrdinal++;
+		}
+		return $notFound?(-1):$entityOrdinal;
+	}
+	
+	/**	
+	*	load library of entity in APPPATH/libraries/custom folder, this is important part of using cientity
+	* @param string libName
+	*	name of specified library
+	* @return object
+	*	
+	*/
+	protected function _loadLibrary($libName){		
+		$this->CI->load->library('custom/'.$libName);		
+		$obj = new $libName;
+		return $obj;
+	}
+	
+	/**
+	*	Load recipes of specified entity from APPPATH/libraries/entityRecipes.php, this is important part of using CI-Entity
+	* @param string libName
+	*	name of specified library
+	* @return array
+	*	In case of undefined extra entity info in entityRecipes.php it will return blank array.
+	*/
+	private function _onFocusEntityRecipes($libName){
+		//$this->CI->load->library('entityRecipes');
+		return isset($this->entityRecipes->getRecipes()[$libName])?$this->entityRecipes->getRecipes()[$libName]:[];
+	}
+
+	/**
+	* fetch all library extra info 
+	* @return array	
+	*/
+	private function _AllLibExtraInfo(){
+		//$this->CI->load->library('entityRecipes');
+		return $this->entityRecipes->getRecipes();
+	}
+	
+	function ret_AllLibExtraInfo(){
+		return $this->_AllLibExtraInfo();
+	}
+	
+	function entityRecipes_default_header_JS_CSS(){
+		//$this->CI->load->library('entityRecipes');
+		return $this->entityRecipes->default_header_JS_CSS();
+	}
+	
+	function entityRecipes_default_footer_JS_CSS(){
+		//$this->CI->load->library('entityRecipes');
+		return $this->entityRecipes->default_footer_JS_CSS();
+	}
+	
+	 /**
+	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
+	  * @param object obj
+	  *	object of entity which working on
+	  * @param string columnName
+	  *	name of column
+	  * @return string
+	  *	the description of field that use as label in add or edit form at front-end.
+	 */	
+	protected function _getFieldDescriptions($obj, $columnName){
+
+		$tempData = explode("||",$obj->columnDescriptionsColumnIndexed[$columnName]['descriptions']);
+		return $tempData[0];
+	}
+	
+	/**
 	 * store session in to some variable 
 	 * @param type $index
 	 * @param type $val
 	 */
 	public function _setRequestME($index, $val){
+		
 		//_REQUESTM use in m controller
 		$this->_REQUESTM[$index] = $val;
-		//libObject->_REQUESTE use in libObject, especially for additional validation. See example in APPPATH/libraries/custom/devClassEnrollists.php
+		
+		//libObject->_REQUESTE use in libObject, especially for additional validation. 
+		//See example in APPPATH/libraries/custom/devClassEnrollists.php
 		$this->libObject->_REQUESTE[$index] = $val;
 	}
 	
@@ -127,8 +277,9 @@ class mainForms {
 	 * @return array
 	 */
 	public function _getLibExtraInfo(){
-		return $this->libExtraInfo;
+		return $this->onFocusEntityRecipes;
 	}
+	
 	/**
 	* return the library object
 	* @return object
@@ -137,6 +288,7 @@ class mainForms {
 	public function libObjectInfo(){
 		return $this->libObject;
 	}
+	
 	/**
 	* return library name or entity name
 	* @return string
@@ -148,7 +300,8 @@ class mainForms {
 	
 	/**
 	* validate the submit $_REQUEST for update or insert by using stdValidationRules.
-	* Looping through columnListInfo and validate one by one of column. if valdation error occured then put error message into response.
+	* Looping through columnListInfo and validate one by one of column. if validation 
+	 * error occurred then put error message into response.
 	* @return boolean
 	*		true if passed, or false if not passed
 	*/
@@ -480,7 +633,7 @@ class mainForms {
 	*/
 	protected function deleteData(){
 		if(!($this->libObject->insertUpdateAllowed($this->session['id']))){
-			$this->notify('danger',"You're not authorized to insert, update or delete {$this->libExtraInfo['descriptions']}.");
+			$this->notify('danger',"You're not authorized to insert, update or delete {$this->onFocusEntityRecipes['descriptions']}.");
 			return;
 		}		
 		
@@ -717,149 +870,6 @@ class mainForms {
 		return "infoForAjaxOptions=\"{$baseUrl}m/infoForAjaxOptions/{$properties}\" ";
 	}
 	
-	/**
-	* fetch specified column informations
-	* @param object obj
-	*	this entity information 
-	* @param string columnName
-	*	name of column you want to all info.
-	* @return array
-	*/
-	private function _getColumnInfos($obj, $columnName)	{
-		//fetch all column datatype and store in $columnInfos array
-		foreach($obj->columnListInfo as $columnInfos){
-			if($columnInfos['ColumnName']==$columnName){
-				return $columnInfos;
-			}
-		}
-		return [];
-	}
-	
-	/**
-	* return datatype of column such as varchar, char, int
-	* @param object obj
-	*	this entity information 
-	* @param string columnName
-	*	name of column you want to know data type
-	* @return string
-	*	data type of column, such as varchar, char
-	*/
-	protected function _getColumnDataType($obj, $columnName){
-		$columnInfo = $this->_getColumnInfos($obj, $columnName);
-		return $columnInfo['Datatype'];
-	}
-	
-	/**
-	* return max-length of column 
-	* @param object obj
-	*	this entity information 
-	* @param string columnName
-	*	name of column you want to know data type
-	* @return string
-	*	data type of column, such as varchar, char
-	*/
-	private function _getColumnLength($obj, $columnName){
-		$columnInfo = $this->_getColumnInfos($obj, $columnName);
-		return $columnInfo['MaxLength'];
-	}
-	
-	/**
-	*	construct html code of search button in filter row
-	* @return string
-	*	HTML code of "search" button in filter row which contains important information such as entityOrdinal.
-	*/
-	private function _searchButton()	{
-		$entityOrdinal = $this->entityOrdinal($this->libName);
-		return "
-						<div class=\"col-sm-{$this->_fr_search_button_width} col-xs-{$this->_fr_search_button_width}\">  ".PHP_EOL."
-							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">Search</a>  ".PHP_EOL."
-						</div>".PHP_EOL."
-		";
-	}
-	
-	/**
-	*	loop through this->_AllLibExtraInfo until found the specified libName.
-	 * This method return the ordinal position of library(entity) in array of $this->_AllLibExtraInfo.
-	* @param string libName
-	* @return int
-	*	in case of not found return -1
-	*/
-	private function entityOrdinal($libName){
-		$allLibInfo = $this->_AllLibExtraInfo();
-		$entityOrdinal=0;
-		$notFound = true;
-		foreach(array_keys($allLibInfo) as $key)	{
-			if($key==$libName){
-				$notFound = false;
-				break;
-			}
-			$entityOrdinal++;
-		}
-		return $notFound?(-1):$entityOrdinal;
-	}
-	
-	/**	
-	*	load library of entity in APPPATH/libraries/custom folder, this is important part of using cientity
-	* @param string libName
-	*	name of specified library
-	* @return object
-	*	
-	*/
-	protected function _loadLibrary($libName){		
-		$this->CI->load->library('custom/'.$libName);		
-		$obj = new $libName;
-		return $obj;
-	}
-	
-	/**
-	*	load extra information of specified entity of APPPATH/libraries/entityRecipes.php, this is important part of using cientity
-	* @param string libName
-	*	name of specified library
-	* @return array
-	*	In case of undefined extra entity info in entityRecipes.php it will return blank array.
-	*/
-	private function _libExtraInfo($libName){
-		//$this->CI->load->library('entityRecipes');
-		return isset($this->entityRecipes->getRecipes()[$libName])?$this->entityRecipes->getRecipes()[$libName]:[];
-	}
-
-	/**
-	* fetch all library extra info 
-	* @return array	
-	*/
-	private function _AllLibExtraInfo(){
-		//$this->CI->load->library('entityRecipes');
-		return $this->entityRecipes->getRecipes();
-	}
-	
-	function ret_AllLibExtraInfo(){
-		return $this->_AllLibExtraInfo();
-	}
-	
-	function entityRecipes_default_header_JS_CSS(){
-		//$this->CI->load->library('entityRecipes');
-		return $this->entityRecipes->default_header_JS_CSS();
-	}
-	
-	function entityRecipes_default_footer_JS_CSS(){
-		//$this->CI->load->library('entityRecipes');
-		return $this->entityRecipes->default_footer_JS_CSS();
-	}
-	 /**
-	  * find description of field in columnDescriptionsColumnIndexed by exploded it with "||" and extract only first element of array
-	  * @param object obj
-	  *	object of entity which working on
-	  * @param string columnName
-	  *	name of column
-	  * @return string
-	  *	the description of field that use as label in add or edit form at front-end.
-	 */	
-	protected function _getFieldDescriptions($obj, $columnName){
-
-		$tempData = explode("||",$obj->columnDescriptionsColumnIndexed[$columnName]['descriptions']);
-		return $tempData[0];
-	}
-
 	 /**	  
 	  * construct the filter row on first page of each entity at front end
 	  * @return string
@@ -868,17 +878,17 @@ class mainForms {
 	public function createFilterRow()	{
 				
 		//if search filtersBar haven't been declared yet, then return filtersBarNotExist
-		if( !(isset($this->libExtraInfo['filtersBar']))){
+		if( !(isset($this->onFocusEntityRecipes['filtersBar']))){
 			return str_replace('######',$this->libName,self::filtersBarNotExist);
 		}else{
-			$filtersBar = $this->libExtraInfo['filtersBar'];
+			$filtersBar = $this->onFocusEntityRecipes['filtersBar'];
 		}
 
 		//if search filtersBar['display'] haven't been declared yet, then return filtersBarNotExist
 		if( !(isset($filtersBar['display']))){
 			return str_replace('######',$this->libName,selff::filtersBarNotExist);
 		}else{
-			$filtersBar = $this->libExtraInfo['filtersBar'];
+			$filtersBar = $this->onFocusEntityRecipes['filtersBar'];
 		}
 		
 		//load library of entity that involved this current entity
