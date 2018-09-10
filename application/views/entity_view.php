@@ -149,7 +149,7 @@ require_once APPPATH."views/incPage.php";
                 <div class="content container-fluid"> 
 					<div class="row">
 						<div class="col-sm-4 col-xs-3">
-							<h4 class="page-title"><?php incPage::display($entityThDescription);?></h4>
+							<h4 class="page-title"><?php incPage::display($entityThDescription);?><?php incPage::display($entityMoreDetailDesc);?></h4>							
 						</div>
 						<?php
 							if($customizedEntity===false){

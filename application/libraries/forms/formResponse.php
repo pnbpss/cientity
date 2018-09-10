@@ -742,9 +742,16 @@ class formResponse extends mainForms {
 		//remove selectAttributeFields['suppressedFields']
 		if(isset($subEntityInfo['subEntity'][$this->libName]['suppressedFields'])){
 			
-			$suppressFields = $subEntityInfo['subEntity'][$this->libName]['suppressedFields'];		
+			$suppressFields = $subEntityInfo['subEntity'][$this->libName]['suppressedFields'];
+			
+			/**
+			* Handle key of recipes array is exist or not
+			*/
+			$this->handlingRecipesKey($this->onFocusEntityRecipes, 'selectAttributes');
+			$this->handlingRecipesKey($this->onFocusEntityRecipes['selectAttributes'],'fields');
 			
 			$selectAttributeFields = $this->onFocusEntityRecipes['selectAttributes']['fields'];
+			
 			foreach($selectAttributeFields as $key=>$val)
 			{
 				$temp1 = explode(";;", $val);

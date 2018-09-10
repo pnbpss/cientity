@@ -603,7 +603,8 @@ $(document).ready(function() {
                                                                 .html(data.subEntityResults.results);
                                                         }
                                                         cientityInitDataTableAndOtherControl("cientitysubEntityDatatable", cientitySubEntityModalPanelId);
-                                                        if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Notification');                                                    
+                                                        if ((data.results) && (data.results.notifications)) cientity_displayAllNotifications(data.results.notifications,'Notification');
+                                                        if (data.notifications) cientity_displayAllNotifications(data.notifications,'Notification');
 			}
 		});
 	}

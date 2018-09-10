@@ -39,6 +39,7 @@ class devClassEnrollists extends entity{
 	private function devClassEnrollists_verify_enrollistNotExceededClassCapacity(){
 		$tableName = $this->getTableName();
 		$dbPrefix = $this->_returnDbPrefix();
+		
 		//if the submited form came from sub-entity
 		if(isset($this->infoForAdditionalValidateSubEntity['idValue'])){			
 			//$idValue is main entity id value. In this case, idValue is id of table devClassEnrollists
@@ -46,6 +47,7 @@ class devClassEnrollists extends entity{
 			$addsql ="; 
 				declare @classId int, @classCapacity int; set @classId = (select classId from {$tableName} where id='{$idValue}');  set @classCapacity = (select capacity from {$dbPrefix}devClasses where 1=1 and id=@classId); if @classCapacity < (select count(*) from {$tableName} where classId=@classId) begin set @errorMessage = 'Class capacity is exceeded (Class capacity is '+convert(varchar(5),@classCapacity)+').'; goto Skipper; end ";
 		}
+		
 		//if the submited form came from main-entity
 		elseif(isset($this->infoForAdditionalValidate['addEditMainEntity'])){
 			list($columnsWithOrdered)=$this->infoForAdditionalValidate;	

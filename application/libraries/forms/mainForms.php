@@ -202,7 +202,19 @@ class mainForms {
 	* @return object
 	*	
 	*/
-	protected function _loadLibrary($libName){		
+	protected function _loadLibrary($libName){
+		//echo APPPATH."/libraries/custom/".$libName.".php";
+		if(!(file_exists(APPPATH."\libraries\custom\\".$libName.".php"))){
+			$this->response = $this->stdResponseFormat();
+			$this->notify("danger","custom library file does not exists ({$libName}).");
+			echo json_encode($this->response);
+			exit;
+		}elseif($libName==""){
+			$this->response = $this->stdResponseFormat();
+			$this->notify("danger","Library name did not declared");
+			echo json_encode($this->response);
+			exit;
+		}
 		$this->CI->load->library('custom/'.$libName);		
 		$obj = new $libName;
 		return $obj;
@@ -1661,6 +1673,18 @@ class mainForms {
 				return $row->datatype;
 		}else{
 			return '';
+		}
+	}
+	
+	/**
+	* Handle key of recipes array is exist or not.
+	* Send notification back to user if it does not exist.
+	*/
+	public function handlingRecipesKey($main,$key){		
+		if(!(isset($main[$key]))){
+			$this->notify('danger','Error:  Undefined index: '.$key);
+			echo json_encode($this->response);
+			exit;
 		}
 	}
 } //end of class mainForm

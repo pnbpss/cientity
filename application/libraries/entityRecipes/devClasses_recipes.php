@@ -195,7 +195,7 @@ $recipes = [
 						 */
 						,'suppressedFieldsInAdd'=>['id','classId'] //field ที่ไม่ต้องแสดงออกมาในส่วนของการ add ใน sub entity
 					]
-					,'devClassInstructors' =>[
+					,'devClassInstructors' =>[ //This key must be also exists in $recipes
 						'label'=>'Internal Instructors'
 						,'alterView'=>'devClassInstructors.classId' //(จำเป็น) หลัง . คือเชื่อมกันด้วยฟิลด์ไหนกับ entity หลัก 
 						,'suppressedFields'=>['classStartDate','classDescriptions','locationCode'] //ฟิลด์ที่ไม่ต้องแสดงออกมาใน subentity โดยไปลบออกจาก entity หลัก
@@ -213,6 +213,13 @@ $recipes = [
 						'label'=>'Expenses' 
 						,'suppressedFields'=>['classId','startDate','classDescription']
 						,'alterView'=>'devClassBudgetsView.classId' 
+						,'allowDelete'=>true 
+						,'suppressedFieldsInAdd'=>['id','classId'] 
+					]
+					,'devClassEvaluators' =>[
+						'label'=>'Evaluators' 
+						,'suppressedFields'=>['classId','startDate','classDescription']
+						,'alterView'=>'devClassEvaluatorsView.classId' 
 						,'allowDelete'=>true 
 						,'suppressedFieldsInAdd'=>['id','classId'] 
 					]

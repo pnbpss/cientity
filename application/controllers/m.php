@@ -75,7 +75,8 @@ class M extends CI_Controller {
 				
 		$viewData['header_JS_CSS'] = (isset($formExtraInfo['header_JS_CSS']))?$formExtraInfo['header_JS_CSS']:$mainForms->entityRecipes_default_header_JS_CSS();
 		$viewData['footer_JS_CSS'] = (isset($formExtraInfo['footer_JS_CSS']))?$formExtraInfo['footer_JS_CSS']:$mainForms->entityRecipes_default_footer_JS_CSS();
-		$viewData['entityThDescription']= (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"entityRecipes[{$entityName}].descriptions not exists";
+		$viewData['entityThDescription'] = (isset($formExtraInfo['descriptions']))?$formExtraInfo['descriptions']:"entityRecipes[{$entityName}].descriptions not exists";
+		$viewData['entityMoreDetailDesc'] = (isset($formExtraInfo['moreDetails']))?"<small><i>(".$formExtraInfo['moreDetails'].")</i></small>":"";
 		
 		 $viewData['activeMenuItem'] = $entityOrdinal;
 		
