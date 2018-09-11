@@ -52,7 +52,7 @@ $recipes = [
 				]
 			]
 			,'sysUserTaskPrivileges'=>[ //devSubjects.name::;;Subject Name
-				'descriptions' => "User Group's Priviledges to Task"
+				'descriptions' => "User Group's Priviledges"
 				,'filtersBar'=>['display'=>["sysUserGroups.name::;;User Group Name",'sysTasks.taskName::;;Task Name']]
 				,'selectAttributes'=>[
 					'fields'=>[		
@@ -85,6 +85,9 @@ $recipes = [
 						]
 					,'format'=>['sysTaskGroups.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;' ordering"]
 				]
+				,'addEditModal'=>[					
+					'fieldLabels'=>['groupName'=>"Task's Group Name",'ordering'=>'Ordering in Menus']
+				]
 			]
 			,'sysTasks'=>[
 				'descriptions' => 'Tasks'
@@ -105,7 +108,7 @@ $recipes = [
 				,'addEditModal'=>[				
 					'references'=>['display'=>'sysYesNo.yesno','taskGroupId'=>'sysTaskGroups.groupName']	
 					,'fieldLabels'=>['taskName'=>"Task Name",'display'=>'Display in menu or not?','ordering'=>'Ordering in Menu','taskGroupId'=>'Task Group']
-					,'disabled'=>['taskName']
+					//,'disabled'=>['taskName']
 				]
 			]		
 			#endregion System Administration

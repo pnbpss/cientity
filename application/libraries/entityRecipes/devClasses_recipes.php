@@ -18,7 +18,7 @@ $recipes = [
 			 * - Warning on first page of entity will be occurred, but able to add or edit record
 			 * - Critical:yes
 			 */
-			'descriptions' => 'Classes or Seminar or Training'
+			'descriptions' => 'Classes'
 
 			/**
 			 * The 'customized' key value is true this means this entity will be customized by developer, please see 

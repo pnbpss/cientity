@@ -54,7 +54,18 @@ class mainForms {
 	 * @var array 
 	 */
 	public $_REQUESTM;
+
+	/**
+	 * max row to display of search results
+	 */
+	protected $maxRowSearchResult=200;
 	
+	/**
+	 * max length of condensed type that will use text area instead of input text.
+	 * This only effected to addEditModal, not include sub-entity updating
+	 */
+	private $fieldMaxWithToBecomeTextArea = 500;
+		
 	/**
 	 * Width of select, input text and searchButton.
 	 */
@@ -168,7 +179,7 @@ class mainForms {
 	private function _searchButton()	{
 		$entityOrdinal = $this->entityOrdinal($this->libName);
 		return "
-						<div class=\"col-sm-{$this->_fr_search_button_width} col-xs-{$this->_fr_search_button_width}\">  ".PHP_EOL."
+						<div class=\"col-sm-{$this->_fr_search_button_width} col-xs-6\">  ".PHP_EOL."
 							<a href=\"#\" entityOrdinal=\"{$entityOrdinal}\" class=\"btn btn-success btn-block cientityFilterStartSearch\">Search</a>  ".PHP_EOL."
 						</div>".PHP_EOL."
 		";
@@ -769,7 +780,7 @@ class mainForms {
 		$fromToStr = explode('_',$filterOrdinal);
 		$additionalLabel=""; if(isset($fromToStr[1])){ if($fromToStr[1]=='from') {$additionalLabel='(from)';} elseif($fromToStr[1]=='to'){$additionalLabel='(to)';}}
 		
-		$str = "<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL.
+		$str = "<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-6\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL.
 			"<label class=\"control-label\">#!#!#!#!#!#{$additionalLabel}</label>".PHP_EOL."{$inputItem}</div>".PHP_EOL."</div>".PHP_EOL."";
 		return $str;
 	}	
@@ -807,7 +818,7 @@ class mainForms {
 			$index++;
 		}
 		$str = "
-			<div class=\"col-sm-{$this->_fr_select_width} col-xs-{$this->_fr_select_width}\"><div class=\"form-group form-focus select-focus\"><label class=\"control-label\">#!#!#!#!#!#</label><select cientityFormFilterOrder=\"{$filterOrdinal}\" class=\"select floating select2-hidden-accessible {$cientityClassOptionOverflow} cientityFilter\" tabindex=\"-1\" aria-hidden=\"true\" {$infoForAjaxOptions}><option value=\"\">#!#!#!#!#!#</option>{$options}</select></div></div>
+			<div class=\"col-sm-{$this->_fr_select_width} col-xs-6\"><div class=\"form-group form-focus select-focus\"><label class=\"control-label\">#!#!#!#!#!#</label><select cientityFormFilterOrder=\"{$filterOrdinal}\" class=\"select floating select2-hidden-accessible {$cientityClassOptionOverflow} cientityFilter\" tabindex=\"-1\" aria-hidden=\"true\" {$infoForAjaxOptions}><option value=\"\">#!#!#!#!#!#</option>{$options}</select></div></div>
 			";
 		return $str;
 	}	
@@ -832,9 +843,9 @@ class mainForms {
 			$format='error';
 		}
 		$inputItem = "
-				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."
+				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-6\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (from)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input  cientityFormFilterOrder=\"{$filterOrdinal}_from\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"from\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."
 
-				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-{$this->_fr_input_text_width}\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL.""
+				<div class=\"col-sm-{$this->_fr_input_text_width} col-xs-6\">".PHP_EOL."<div class=\"form-group form-focus\">".PHP_EOL."<label class=\"control-label\">#!#!#!#!#!# (to)</label>".PHP_EOL."<div class=\"cal-icon\">".PHP_EOL."<input cientityFormFilterOrder=\"{$filterOrdinal}_to\" cientityDTFormat='{$format}' cientityFormDateTimeFilter=\"to\" type=\"text\" class=\"form-control floating datetimepicker cientityFilter cientityFormDate\" /> ".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL."</div>".PHP_EOL.""
 			. "";
 		return $inputItem;
 	}
@@ -1163,14 +1174,17 @@ class mainForms {
 			$inputString="<select {$disabledString} class=\"form-control cientityInputField cientitySelectFromReference\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' {$select2Info}></select>";
 		}else{			
 			$dataType = $columns[$key]['Datatype'];
-			switch($dataType)
-			{
+			switch($dataType){
 				case 'int':
 					$inputString = "<input {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
 				break;
 				case 'char':	case 'varchar': case 'nchar': case 'nvarchar': case 'text': case 'ntext':
-					$maxLength = $columns[$key]['MaxLength'];
-					$inputString = "<input {$disabledString} maxLength='{$maxLength}' class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
+					if(((int)$columns[$key]['MaxLength'])>=$this->fieldMaxWithToBecomeTextArea){
+						$inputString = "<textarea {$disabledString} class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}'></textarea>";
+					}else{
+						$maxLength = $columns[$key]['MaxLength'];
+						$inputString = "<input {$disabledString} maxLength='{$maxLength}' class=\"form-control cientityInputField\" cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";
+					}
 				break;
 				case 'datetime': 
 					$inputString = "<input {$disabledString} class=\"form-control datetimepicker cientityInputField\" cientityDTFormat='DD/MM/YYYY LT' cientityfieldReferenceNumber='{$fieldReferenceNumber}' type=\"text\" />";

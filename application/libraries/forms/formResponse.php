@@ -161,7 +161,7 @@ class formResponse extends mainForms {
 		/**
 		 * Declare $tableRow variable that will use to store each table row HTML.
 		 */
-		$tableRow="";
+		$tableRow=""; $rowCount=0;
 		foreach($q->result() as $row){
 			$rowArray = (array)$row;
 			$tableData="";
@@ -230,6 +230,12 @@ class formResponse extends mainForms {
 				$tableData.=$actionTd;				
 			}			
 			$tableRow .= "<tr cientityDataIdRow='{$row->CIEntityDataId}_{$this->entityOrdinal}'>".$tableData."</tr>";
+		
+			$rowCount++;
+			if($rowCount>$this->maxRowSearchResult){
+				$tableRow .= "<tr'><tr><td colspan='6'>Search results row is greater than {$this->maxRowSearchResult}, please narrow down the search conditions.</td></tr></tr>";
+				break;
+			}
 		}
 		
 		//Iif searching yields no result (not found), return alert waring of search result not fund

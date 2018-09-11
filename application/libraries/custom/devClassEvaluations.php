@@ -20,6 +20,9 @@ class devClassEvaluations extends entity{
 		$newSql = $sql." ".$this->devClassEnrollists_verify_evaluatorAndStudentInSameClass();				
 		return parent::doDbTransactions($newSql);
 	}
+	/**
+	* Additional SQL to prevent user add class evaluator and class enrolllment mismatch
+	*/
 	private function devClassEnrollists_verify_evaluatorAndStudentInSameClass(){
 		$tableName = $this->getTableName();
 		$dbPrefix = $this->_returnDbPrefix();
@@ -29,7 +32,7 @@ class devClassEvaluations extends entity{
 			//$idValue is main entity id value. In this case, idValue is id of table devClassEnrollists
 			$idValue=$this->infoForAdditionalValidateSubEntity['idValue'];
 			$sql ="; 
-				--Sub-entity not declared 
+					--Sub-entity not declared 
 				";
 		}
 		
