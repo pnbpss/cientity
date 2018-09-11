@@ -61,9 +61,9 @@ $recipes = [
 							,'sysTasks.taskName;;Task Name'
 							,'sysTaskGroups.groupName;;Task Group Name'
 							,'sysUserTaskPrivileges.allowSave;;Allow U/I/D'
-							,'sysTasks.ordering;;Ordering in Menu'
+							,'sysTasks.ordering;;Task Ordering in Menu'
 						]
-					,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
+					,'format'=>['sysTasks.ordering'=>"convert(varchar(max),".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
 				]
 				,'join'=>[
 					['left','sysUserGroups','on'=>[[['sysUserTaskPrivileges.userGroupId','=','sysUserGroups.id']]]]
@@ -71,7 +71,7 @@ $recipes = [
 					,['left','sysTaskGroups','on'=>[[['sysTasks.taskGroupId','=','sysTaskGroups.id']]]]
 				]
 				,'addEditModal'=>[				
-					'references'=>['userGroupId'=>'sysTaskGroups.groupName','taskId'=>'sysTasks.taskName']	
+					'references'=>['userGroupId'=>'sysUserGroups.name','taskId'=>'sysTasks.taskName']	
 					,'fieldLabels'=>['userGroupId'=>"User Group",'taskId'=>'Task Name','allowSave'=>'Allow Edit/Delete/Insert']
 				]
 			]
@@ -83,7 +83,7 @@ $recipes = [
 							'sysTaskGroups.groupName;;Task Group Name'
 							,'sysTaskGroups.ordering;;Ordering in Menu'						
 						]
-					,'format'=>['sysTaskGroups.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;' ordering"]
+					,'format'=>['sysTaskGroups.ordering'=>"convert(varchar(max),ordering,".FRPLCEMNT4FMT.")+'&nbsp;&nbsp;' ordering"]
 				]
 				,'addEditModal'=>[					
 					'fieldLabels'=>['groupName'=>"Task's Group Name",'ordering'=>'Ordering in Menus']
@@ -99,7 +99,7 @@ $recipes = [
 							,'sysTasks.ordering;;Ordering'
 							,'sysYesNo.yesno;;Display In Menu?'
 						]
-					,'format'=>['sysTasks.ordering'=>"convert(varchar,5,".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
+					,'format'=>['sysTasks.ordering'=>"convert(varchar(max),".FRPLCEMNT4FMT.")+'&nbsp;' ordering"]
 				]
 				,'join'=>[
 					['left','sysYesNo','on'=>[[['sysTasks.display','=','sysYesNo.id']]]]

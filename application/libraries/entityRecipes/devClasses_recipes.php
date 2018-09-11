@@ -45,7 +45,7 @@ $recipes = [
 				 * Critical:no.
 				 * Effected:addEditModal, SQL string for insert and update
 				 */
-				'columnOrdering'=>['id','scId','startDate','locationId','statusId','descriptions','capacity','createdBy','createdDate']
+				'columnOrdering'=>['id','scId','startDate','quizStartDatetime','minuteAllowToQuiz','locationId','statusId','descriptions','capacity','createdBy','createdDate']
 
 				/**
 				 * The 'columnWidth' keys tell CI-Entity how width in bootstrap-based of input, it will use width=6 if not presented.
@@ -105,7 +105,7 @@ $recipes = [
 				 * Critical:no
 				 * Effected:addEditModal.
 				 */
-				,'fieldLabels'=>['scId'=>"Course Code and Subject's Name",'capacity'=>'class capacity']
+				,'fieldLabels'=>['scId'=>"Course Code and Subject's Name",'capacity'=>'class capacity','quizStartDatetime'=>'Allow Do a Quiz after..','minuteAllowToQuiz'=>'Quiz Must Be Finished in (minutes)']
 
 				/**
 				 * The 'format' key will be specified when you have to change the format of display field in addEditModal,
@@ -116,7 +116,8 @@ $recipes = [
 				 * Critical:no
 				 * Effected:addEditModal.				 
 				 */
-				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"] 
+				,'format'=>['startDate'=>"replace(CONVERT(varchar(max),".FRPLCEMNT4FMT.",103),'-','/') startDate"
+						,'quizStartDatetime'=>"CONVERT(varchar(10),".FRPLCEMNT4FMT.",103)+STUFF(RIGHT(' ' + CONVERT(VarChar(7),cast(".FRPLCEMNT4FMT." as time), 0), 7), 6, 0, ' ') quizStartDatetime"] 
 
 				/**
 				 * The 'disabled' key values tell CI-Entity to disabled the input in addEditModal.
