@@ -6,7 +6,7 @@ class CreateEntityClassLibrary extends CI_Controller {
 		parent::__construct();
 		$this->filePath = APPPATH.'libraries/custom/';		
 	}
-	public function index(){	
+	public function createCustomEntity(){	
 		set_time_limit (0);
 		$sql = "
 		SELECT
@@ -115,6 +115,43 @@ class CreateEntityClassLibrary extends CI_Controller {
 		$winCmd = "echo 	 unset(\$this-^>columnDescriptions[{$i}]);>> ".$this->filePath.$libraryName.".php "; exec($winCmd);
 		$winCmd = "echo 	 list(\$this-^>columnDescriptionsColumnIndexed,\$this-^>revisedColumnDescriptions) = \$this-^>reviseColumnDescriptions(\$this-^>columnDescriptions);>> ".$this->filePath.$libraryName.".php "; exec($winCmd);
 		$winCmd = "echo 	 }>> ".$this->filePath.$libraryName.".php "; exec($winCmd);		
+	}
+	public function listGarbageFile(){
+		$sql = "
+		SELECT
+		distinct 		
+		c.TABLE_NAME
+		,replace(c.TABLE_NAME,'{$this->db->dbprefix}','') entityName
+		,t.TABLE_TYPE
+		FROM INFORMATION_SCHEMA.COLUMNS c
+		left join INFORMATION_SCHEMA.TABLES t on c.TABLE_NAME=t.TABLE_NAME
+		WHERE c.TABLE_NAME like '{$this->db->dbprefix}%' AND c.TABLE_SCHEMA='dbo'		
+		and c.TABLE_NAME not like 'sys%'		
+		";		
+		$q = $this->db->query($sql);
+		$tableRow = ""; $entityArray=[];
+		foreach($q->result() as $row){			
+			$fileExists = file_exists($this->filePath.$row->entityName.".php")?"YES":"NO";
+			$tableRow.= " <tr><td>".$row->TABLE_NAME."</td><td>".$row->entityName."</td> <td>".$fileExists."</td></tr>";
+			array_push($entityArray,$row->entityName);
+		}
+		
+		$table = "<table>
+		<tr><td>Table Name</td><td>Entity Name</td><td>file exists</td></tr>
+		".$tableRow."
+		</table>";
+		//echo $table;
+		
+		$customEntityFiles = scandir(APPPATH."libraries/custom");
+		foreach($customEntityFiles as $file){
+			$entityName = str_replace(".php","",$file);
+			$tableExists="No";
+			if(in_array($entityName, $entityArray)){
+				$tableExists="YES";
+			}
+			if($tableExists=="No") echo $file.", table in db exists=".$tableExists."<br />";
+		}
+		
 	}
 }
 
