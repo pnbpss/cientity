@@ -31,7 +31,7 @@ $recipes =
 			['left','devQuizzes','on'=>[[['devClassExamPapers.quizId','=','devQuizzes.id']]]]
 			,['left','devClassesViewForExamPaper','on'=>[[['devClassExamPapers.classId','=','devClassesViewForExamPaper.id']]]]
 		]
-		,'template'=>'projects.html'
+		
 		,'header_JS_CSS'=>[
 			'assets/css/bootstrap.min.css','assets/css/dataTables.bootstrap.min.css','assets/css/font-awesome.min.css','assets/css/select2.min.css','assets/css/bootstrap-datetimepicker.min.css','assets/plugins/summernote/dist/summernote.css','assets/css/style.css'
 		]

@@ -553,8 +553,7 @@ $(document).ready(function() {
 		
 	});
 	
-	function cientityLoadSubEntityContents(el)
-	{
+	function cientityLoadSubEntityContents(el){
 		var cientitySubEntityModalPanelId = $(el).attr('cientitySubEntityModalPanelId');		
 		$(".cientitySubEntityModalNavBar li").removeClass('active');
 		$(el).addClass('active');
