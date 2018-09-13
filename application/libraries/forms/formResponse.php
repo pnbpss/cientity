@@ -172,12 +172,15 @@ class formResponse extends mainForms {
 					continue;
 				}
 				
+				$textAlign='';
+				/*
 				//if datatype is number, make the text in td align right.
 				if((is_float($val)) || (is_int($val))){
-				 $textAlign='text-right';
+					$textAlign='text-right';
 				}else{
 					$textAlign='';
 				}
+				*/
 				
 				//get table data from _getTdTableData
 				$display = $this->_getTdTableData($key, $val,$subEntityInfo);					
