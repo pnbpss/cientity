@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class CreateEntityClassLibrary extends CI_Controller {
+class EntityTools extends CI_Controller {
 	private $filePath;
 	public function __construct(){
 		parent::__construct();
@@ -150,8 +150,8 @@ class CreateEntityClassLibrary extends CI_Controller {
 				$tableExists="YES";
 			}
 			if($tableExists=="No") echo $file.", table in db exists=".$tableExists."<br />";
-		}
-		
+		}		
 	}
+	
 }
 

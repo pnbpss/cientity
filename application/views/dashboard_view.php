@@ -61,43 +61,45 @@ require_once APPPATH."views/incPage.php";
             <div class="page-wrapper">
                 <div class="content container-fluid">					
 					<div class="row">
-						<div class="col-md-6 col-sm-6 col-lg-3">
+						<div class="col-md-12 col-sm-12 col-lg-6">
 							<div class="dash-widget clearfix card-box">
-								<span class="dash-widget-icon"><i class="fa fa-cubes" aria-hidden="true"></i></span>
+								<span class="dash-widget-icon"><i class="fa fa-opencart" aria-hidden="true"></i></span>
 								<div class="dash-widget-info">
-									<h3>112</h3>
-									<span>Projects</span>
+									<h3><?php incPage::display($openingClasses);?></h3>
+									<span>Opening Classes/Training/Seminars are Opening</span>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-3">
+						<div class="col-md-12 col-sm-12 col-lg-6">
 							<div class="dash-widget clearfix card-box">
-								<span class="dash-widget-icon"><i class="fa fa-usd" aria-hidden="true"></i></span>
+								<span class="dash-widget-icon"><i class="fa fa-users" aria-hidden="true"></i></span>
 								<div class="dash-widget-info">
-									<h3>$44</h3>
-									<span>Clients</span>
+									<h3><?php incPage::display($employeeEnrolled);?></h3>
+									<span>Employees Enrolled</span>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-3">
+						<div class="col-md-12 col-sm-12 col-lg-6">
 							<div class="dash-widget clearfix card-box">
-								<span class="dash-widget-icon"><i class="fa fa-diamond"></i></span>
+								<span class="dash-widget-icon"><i class="fa fa-money" aria-hidden="true"></i></span>
 								<div class="dash-widget-info">
-									<h3>37</h3>
-									<span>Tasks</span>
+									<h3><?php incPage::display($classesExpense);?></h3>
+									<span>Classes/Training/Seminars Expenses</span>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-6 col-sm-6 col-lg-3">
+						<div class="col-md-12 col-sm-12 col-lg-6">
 							<div class="dash-widget clearfix card-box">
-								<span class="dash-widget-icon"><i class="fa fa-user" aria-hidden="true"></i></span>
+								<span class="dash-widget-icon"><i class="fa fa-question"></i></span>
 								<div class="dash-widget-info">
-									<h3>218</h3>
-									<span>Employees</span>
+									<h3><?php incPage::display($quizzes);?></h3>
+									<span>Quizzes</span>
 								</div>
 							</div>
 						</div>
+						
 					</div>
+					<!----
 					<div class="row">
 						<div class="col-md-12">
 							<div class="row">
@@ -129,6 +131,8 @@ require_once APPPATH."views/incPage.php";
 							</div>
 						</div>
 					</div>
+					!-->
+					<!--
 					<div class="row">
 						<div class="col-md-6">
 							<div class="panel panel-table">
@@ -245,163 +249,26 @@ require_once APPPATH."views/incPage.php";
 							</div>
 						</div>
 					</div>
+					!-->
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<div class="panel panel-table">
 								<div class="panel-heading">
-									<h3 class="panel-title">Clients</h3>
+									<h3 class="panel-title">Opening Classes/Training/Seminars</h3>
 								</div>
 								<div class="panel-body">
 									<div class="table-responsive">
 										<table class="table table-striped custom-table m-b-0">
-											<thead>
-												<tr>
-													<th style="min-width:200px;">Name</th>
-													<th>Email</th>
-													<th>Status</th>
-													<th class="text-right">Action</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td style="min-width:200px;">
-														<a href="#" class="avatar">B</a>
-														<h2><a href="client-profile.html">Barry Cuda <span>CEO</span></a></h2>
-													</td>
-													<td>barrycuda@example.com</td>
-													<td>
-														<div class="dropdown action-label">
-															<a class="btn btn-white btn-sm rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-dot-circle-o text-success"></i> Active <i class="caret"></i>
-															</a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a></li>
-																<li><a href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a></li>
-															</ul>
-														</div>
-													</td>
-													<td class="text-right">
-														<div class="dropdown">
-															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#" title="Edit"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-																<li><a href="#" title="Delete"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-															</ul>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<a class="avatar">T</a>
-														<h2><a href="client-profile.html">Tressa Wexler <span>Manager</span></a></h2>
-													</td>
-													<td>tressawexler@example.com</td>
-													<td>
-														<div class="dropdown action-label">
-															<a class="btn btn-white btn-sm rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-dot-circle-o text-danger"></i> Inactive <i class="caret"></i>
-															</a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a></li>
-																<li><a href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a></li>
-															</ul>
-														</div>
-													</td>
-													<td class="text-right">
-														<div class="dropdown">
-															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#" title="Edit"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-																<li><a href="#" title="Delete"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-															</ul>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<a href="client-profile.html" class="avatar">R</a>
-														<h2><a href="client-profile.html">Ruby Bartlett <span>CEO</span></a></h2>
-													</td>
-													<td>rubybartlett@example.com</td>
-													<td>
-														<div class="dropdown action-label">
-															<a class="btn btn-white btn-sm rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-dot-circle-o text-danger"></i> Inactive <i class="caret"></i>
-															</a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a></li>
-																<li><a href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a></li>
-															</ul>
-														</div>
-													</td>
-													<td class="text-right">
-														<div class="dropdown">
-															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#" title="Edit"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-																<li><a href="#" title="Delete"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-															</ul>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<a href="client-profile.html" class="avatar">M</a>
-														<h2><a href="client-profile.html"> Misty Tison <span>CEO</span></a></h2>
-													</td>
-													<td>mistytison@example.com</td>
-													<td>
-														<div class="dropdown action-label">
-															<a class="btn btn-white btn-sm rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-dot-circle-o text-success"></i> Active <i class="caret"></i>
-															</a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a></li>
-																<li><a href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a></li>
-															</ul>
-														</div>
-													</td>
-													<td class="text-right">
-														<div class="dropdown">
-															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#" title="Edit"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-																<li><a href="#" title="Delete"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-															</ul>
-														</div>
-													</td>
-												</tr>
-												<tr>
-													<td>
-														<a href="client-profile.html" class="avatar">D</a>
-														<h2><a href="client-profile.html"> Daniel Deacon <span>CEO</span></a></h2>
-													</td>
-													<td>danieldeacon@example.com</td>
-													<td>
-														<div class="dropdown action-label">
-															<a class="btn btn-white btn-sm rounded dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-dot-circle-o text-danger"></i> Inactive <i class="caret"></i>
-															</a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#"><i class="fa fa-dot-circle-o text-success"></i> Active</a></li>
-																<li><a href="#"><i class="fa fa-dot-circle-o text-danger"></i> Inactive</a></li>
-															</ul>
-														</div>
-													</td>
-													<td class="text-right">
-														<div class="dropdown">
-															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-															<ul class="dropdown-menu pull-right">
-																<li><a href="#" title="Edit"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-																<li><a href="#" title="Delete"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-															</ul>
-														</div>
-													</td>
-												</tr>
-											</tbody>
+											<?php incPage::display($listOfOpeningClasses);?>
 										</table>
 									</div>
 								</div>
 								<div class="panel-footer">
-									<a href="clients.html" class="text-primary">View all clients</a>
+									<a href="<?php incPage::display($viewAllClassesLink);?>" class="text-primary">View all Classes/Training/Seminars</a>
 								</div>
 							</div>
 						</div>
+						<!--
 						<div class="col-md-6">
 							<div class="panel panel-table">
 								<div class="panel-heading">
@@ -542,6 +409,7 @@ require_once APPPATH."views/incPage.php";
 								</div>
 							</div>
 						</div>
+						!-->
 					</div>
 				</div>							
 			</div>			
@@ -554,55 +422,6 @@ require_once APPPATH."views/incPage.php";
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.slimscroll.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>assets/plugins/morris/morris.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>assets/plugins/raphael/raphael-min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>
-		<script>
-				var data = [
-			  { y: '2014', a: 50, b: 90},
-			  { y: '2015', a: 65,  b: 75},
-			  { y: '2016', a: 50,  b: 50},
-			  { y: '2017', a: 75,  b: 60},
-			  { y: '2018', a: 80,  b: 65},
-			  { y: '2019', a: 90,  b: 70},
-			  { y: '2020', a: 100, b: 75},
-			  { y: '2021', a: 115, b: 75},
-			  { y: '2022', a: 120, b: 85},
-			  { y: '2023', a: 145, b: 85},
-			  { y: '2024', a: 160, b: 95}
-			],
-			config = {
-			  data: data,
-			  xkey: 'y',
-			  ykeys: ['a', 'b'],
-			  labels: ['Total Income', 'Total Outcome'],
-			  fillOpacity: 0.6,
-			  hideHover: 'auto',
-			  behaveLikeLine: true,
-			  resize: true,
-			  pointFillColors:['#ffffff'],
-			  pointStrokeColors: ['black'],
-				gridLineColor: '#eef0f2',
-			  lineColors:['gray','#f43b48']
-		  };
-		config.element = 'area-chart';
-		Morris.Area(config);
-		config.element = 'line-chart';
-		Morris.Line(config);
-		config.element = 'bar-chart';
-		Morris.Bar(config);
-		config.element = 'stacked';
-		config.stacked = true;
-		Morris.Bar(config);
-		Morris.Donut({
-		  element: 'pie-chart',
-		  data: [
-			{label: "Employees", value: 30},
-			{label: "Clients", value: 15},
-			{label: "Projects", value: 45},
-			{label: "Tasks", value: 10}
-		  ]
-		});
-		</script>
+		<script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>		
     </body>
 </html>

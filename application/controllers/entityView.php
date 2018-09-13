@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
-class LibView extends CI_Controller {
+require_once(APPPATH.'libraries/forms/mainForms.php');
+require_once(APPPATH.'libraries/forms/formResponse.php');
+class entityView extends CI_Controller {
 	
 	/**
 	 * Index Page for this controller.
@@ -180,5 +181,45 @@ class LibView extends CI_Controller {
 		}else{
 			echo "There is no session id logged_in;";
 		}*/
+	}
+	public function getOrdinality(){
+		//$this->load->library('form_validation');
+		//$_entityName = 'devClassInstructors';
+		//$_entityName = 'penaltyConfigs';
+		//$_entityName = 'devExpenseTypes';
+		//$_entityName = 'devClassBudgets';
+		//$_entityName = 'devEmployees';
+		////$_entityName = 'devLocations';
+		//$_entityName = 'devClassExtInstructors';
+		//$_entityName = 'devExtInstructors';
+		//$_entityName = 'devSubjects';
+		$_entityName = 'devClasses';
+		//$_entityName = 'devClassEnrollists';
+		//$_entityName = 'devSubjectCourse';
+		//$_entityName = 'devSubDistrictsView';
+		
+		$_attributeName = '';
+		$this->load->library('entityRecipes');
+		$entityRecipes = new entityRecipes();
+		$recipes = $entityRecipes->getRecipes();
+		//var_dump($recipes);
+		$index = 0;
+		foreach(array_keys($recipes) as $entityName){
+			echo $index." ".$entityName." ";
+			if($entityName===$_entityName){
+				echo $_entityName.", entity ordinal is ".$index.". ";
+				//var_dump($recipes[$_entityName]);
+				if(isset($recipes[$_entityName]['addEditModal']['columnOrdering'])){
+					echo "Column Ordering ";
+					var_dump($recipes[$_entityName]['addEditModal']['columnOrdering']);
+				}else{					
+					$form = new mainForms($_entityName);
+					echo "libObject->columnListInfo ";
+					var_dump($form->libObject->columnListInfo);
+				}
+				break;
+			}
+			$index++;
+		}
 	}
 }

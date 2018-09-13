@@ -84,6 +84,7 @@ require_once APPPATH."views/incPage.php";
 													<li>Easily creating select2 component if a column is foreign key.</li>
 													<li>Automatically create validations rules for each attributes</li>
 													<li>If a table structure changed, column was added or deleted, CI-Entity will be changed interface automatically.</li>
+													<li>Table and column name will not be disclosed to the public by using _POST and _GET method via AJAX.</li>
 												</ul>
 											</td>
 											<td>

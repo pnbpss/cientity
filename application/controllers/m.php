@@ -36,11 +36,19 @@ class M extends CI_Controller {
 	}
 	
 	/**
-	 * Display the home page.
+	 * Display the home page dashboard 
+	 * *****this function must be removed in Github version.**
 	 */
 	public function dashboard(){		
 		$viewData = self::getViewData();
-		$this->load->view('main_view',$viewData);
+		$this->load->model('dashboard');
+		$viewData['openingClasses']=$this->dashboard->openingClasses();
+		$viewData['employeeEnrolled']=$this->dashboard->employeeEnrolled();
+		$viewData['classesExpense']=$this->dashboard->classesExpense();
+		$viewData['quizzes']=$this->dashboard->quizzes();
+		$viewData['listOfOpeningClasses']=$this->dashboard->listOfOpeningClasses();
+		$viewData['viewAllClassesLink']=$this->dashboard->viewAllClassesLink();
+		$this->load->view('dashboard_view',$viewData);
 	}
 	
 	/**

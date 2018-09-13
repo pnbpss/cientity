@@ -108,7 +108,7 @@ class formResponse extends mainForms {
 		//create from clause and join clause
 		$libInfos['join'] = (isset($libInfos['join']))?$libInfos['join']:[];
 		$sqlJoin = $this->createJoin($libInfos['join'],$this->libName);
-		//if(CODING_ENVIROMENT=='develop') $response->sql['join']  = $sqlJoin; //for view at response tab in debuging
+		if(CODING_ENVIROMENT=='develop') $response->sql['join']  = $sqlJoin; //for view at response tab in debuging
 		$parameters->sql['join'] = $sqlJoin;
 		
 		//create where clause		
@@ -129,7 +129,7 @@ class formResponse extends mainForms {
 			$sqlCondition.=$this->libObject->additionalWhereInFilterRow();
 		}
 		
-		//if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //for view at response tab in debuging
+		if(CODING_ENVIROMENT=='develop') $response->sql['condition'] = $sqlCondition; //for view at response tab in debuging
 		$parameters->sql['condition'] = $sqlCondition;
 		
 		//create column header row for search result table
