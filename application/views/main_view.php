@@ -28,7 +28,7 @@ require_once APPPATH."views/incPage.php";
 					</a>
                 </div>
                 <div class="page-title-box pull-left">
-					<h3>Human Resources Development System (CI-Entity demo)</h3>
+					<h3>Human Resources Development System (CI-Entity Demo)</h3>
                 </div>
 				<a id="mobile_btn" class="mobile_btn pull-left" href="#sidebar"><i class="fa fa-bars" aria-hidden="true"></i></a>
 				<ul class="nav navbar-nav navbar-right user-menu pull-right">					
@@ -59,7 +59,7 @@ require_once APPPATH."views/incPage.php";
                 </div>
             </div>
             <div class="page-wrapper">
-                <div class="content container-fluid">
+                <div class="content container-fluid">					
 					<div class="row">
 						<div class="col-md-6 col-sm-6 col-lg-3">
 							<div class="dash-widget clearfix card-box">

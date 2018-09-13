@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
 		<link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url();?>assets/img/favicon.png">
-        <title>Login hrds- cientity demo</title>
+        <title>Login hrds- CI-Entity demo</title>
 		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>assets/css/font-awesome.min.css">
@@ -18,7 +18,7 @@
         <div class="main-wrapper">
 			<div class="account-page">
 				<div class="container">
-					<h3 class="account-title">cientity demo</h3>
+					<h3 class="account-title">Human Resources Development System (CI-Entity Demo)</h3>
 					<div class="account-box">
 						<div class="account-wrapper">							
 							<?php echo @$loginErrorMessage;?>

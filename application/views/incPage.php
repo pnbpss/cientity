@@ -6,7 +6,10 @@ class incPage
 		?>			
 			<ul>
 			<li class="active" data-toggle="modal" data-target="#cientityPageLoaderModal"> 
-				<a href="<?php echo base_url();?>">Dashboard</a>
+				<a href="<?php echo base_url();?>">Introduction to CI-Entity</a>
+			</li>
+			<li class="active" data-toggle="modal" data-target="#cientityPageLoaderModal"> 
+				<a href="<?php echo base_url()."m/dashboard";?>">Dashboard(HRDS)</a>
 			</li>
 			<?php			
 			foreach ($menus as $taskGroupName => $subMenus)

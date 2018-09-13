@@ -32,8 +32,17 @@ class M extends CI_Controller {
 	 */
 	public function index(){		
 		$viewData = self::getViewData();
+		$this->load->view('cientityIntro_view',$viewData);
+	}
+	
+	/**
+	 * Display the home page.
+	 */
+	public function dashboard(){		
+		$viewData = self::getViewData();
 		$this->load->view('main_view',$viewData);
 	}
+	
 	/**
 	 * Display the page according to $this->uri->segment(3), the entityOrdinal.
 	 */
