@@ -205,9 +205,9 @@ class entityView extends CI_Controller {
 		//var_dump($recipes);
 		$index = 0;
 		foreach(array_keys($recipes) as $entityName){
-			echo $index." ".$entityName." ";
+			echo "{$index} {$entityName} ";
 			if($entityName===$_entityName){
-				echo $_entityName.", entity ordinal is ".$index.". ";
+				echo " {$_entityName}, entity ordinal is {$index} ";
 				//var_dump($recipes[$_entityName]);
 				if(isset($recipes[$_entityName]['addEditModal']['columnOrdering'])){
 					echo "Column Ordering ";

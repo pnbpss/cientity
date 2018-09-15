@@ -15,7 +15,7 @@ class User extends CI_controller{
 		}else{
 			$viewData['loginErrorMessage']="";
 			if($this->uri->segment(3)=='code01'){
-				$viewData['loginErrorMessage']="<div class=\"alert alert-danger alert-dismissible\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button><strong>ผิดพลาด!</strong>ไม่สามารถเข้าสู่ระบบได้</div>";
+				$viewData['loginErrorMessage']="<div class=\"alert alert-danger alert-dismissible\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button><strong>Error!</strong>, Unable to logged in, try again.</div>";
 			}
 			$this->load->view('login_view',$viewData);
 		}

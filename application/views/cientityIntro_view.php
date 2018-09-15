@@ -61,8 +61,8 @@ require_once APPPATH."views/incPage.php";
             <div class="page-wrapper">
                 <div class="content container-fluid">
 					<div class="row">
-						<div class="col-md-12 col-sm-12 col-lg-12">
-							<div class="card-box project-box">								
+						<div class="col-md-12 col-sm-12 col-lg-10">
+							<div class="card-box project-box">	
 								<h4 class="lead"><i>Introduction to CI-Entity</i></h4>
 								<p style="font-size:13px;color:darkred;">
 									This web site created to demonstrated CI-Entity by using Human Resources Development System(HRDS) as case study,<i>This means it is not exactly HRDS</i>. 
@@ -72,13 +72,14 @@ require_once APPPATH."views/incPage.php";
 									deletion and searching. Just create table in database and a few line of code, entity recipes, CI-Entity will take care of the rest.
 								</p>
 								<p style="font-size:13px;text-indent: 50px;">
-									CI-Entity also create validations rules for each entity's attributes. For instance, a column which have decimal datatype and not null will be construct validation rules as "required|decimal" automatically. However, If the additional validations is required, CI-Entity allow to add it in additionalValidation Class, this is described in <a href="/manuals/">CI-Entity's manuals.</a>
+									CI-Entity also create validations rules for each entity's attributes. For instance, a column which have decimal datatype and not null will be construct validation rules as "required|decimal" automatically.
+									However, If the additional validations is required, CI-Entity allow to add it in additionalValidation Class, this is described in <a href="<?php echo base_url();?>manuals/" target="_blank">CI-Entity's manuals.</a>
 								</p>	
 								<table>
-									<thead><th>Pros</th><th>Cons</th></thead>
+									<thead><th>Pros</th></thead>
 									<tbody>
-										<tr style='vertical-align: top;'><td>
-												<ul>													
+										<tr><td>
+												<ul>
 													<li>Entity interface is easily to construct, just create table or view and a few lines of code.</li>
 													<li>Easily creating searching conditions input group, filter-row, for each entity.</li>
 													<li>Easily creating select2 component if a column is foreign key.</li>
@@ -87,9 +88,12 @@ require_once APPPATH."views/incPage.php";
 													<li>Table and column name will not be disclosed to the public by using _POST and _GET method via AJAX.</li>
 												</ul>
 											</td>
+										</tr>
+										<tr><th>Cons</th></tr>
+										<tr>
 											<td>
 												<ul>
-													<li>Only supports MS SQL Server.</li>								
+													<li>Only supports MS SQL Server.</li>
 												</ul>
 											</td>
 										</tr>
@@ -117,7 +121,7 @@ require_once APPPATH."views/incPage.php";
 		</script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.slimscroll.js"></script>		
-		<script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>		
+	<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.slimscroll.js"></script>		
+	<script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>		
     </body>
 </html>
