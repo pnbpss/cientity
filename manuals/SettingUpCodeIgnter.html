@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>What's new</title>
+  <title>Setting Up CodeIgnter</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="What's new">
+  <meta name="twitter:title" content="Setting Up CodeIgnter">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="What's new" />
+  <meta property="og:title" content="Setting Up CodeIgnter" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="CI-Entity's Manual" /> 
@@ -161,34 +161,65 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Whatsnew"
-		  data-hnd-context="2"
-		  data-hnd-title="What's new"
+		  data-hnd-id="SettingUpCodeIgnter"
+		  data-hnd-context="8"
+		  data-hnd-title="Setting Up CodeIgnter"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="Introduction.html">Introduction</a></li>
+                        <li><a href="Installations.html">Installations</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Welcome.html" title="Welcome" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="GettingStarted.html" title="Getting Started" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Installations.html" title="Installations" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="CreateDatabaseandInitialTables.html" title="Create Database and Initial Tables" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="CreatingCustomEntityClass.html" title="Creating Custom Entity Class" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>What's new</h2>
+            <h2>Setting Up CodeIgnter</h2>
 
             <div class="main-content">
                 
 <p></p>
+<p class="rvps2"><span class="rvts14">Before get to set up the CI-Entity, you have to configure CodeIgniter to meet the CI-Entity Requirement. The following a must configurations for CodeIgniter:</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">1. The file APPPATH."\config\autoloads.php"</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">$autoload['libraries'] = array('database','session');</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">$autoload['helper'] = array('url');</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">2. The file file APPPATH."\config\database.php"</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">In this file, just set up the database configuration as you want. I suggest you 'dbprefix', because CI-Entity use 'dbprefix'. For further database configuration in CodeIginter, please read the CodeIgniter manuals.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">3. The file file APPPATH."\config\constants.php"</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">Add the following php code in constants.php</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">//define evironment develop or production</span></p>
+<p class="rvps11"><span class="rvts14">defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','develop');</span></p>
+<p class="rvps11"><span class="rvts14">//defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','production'); </span></p>
+<p class="rvps11"><span class="rvts14"><br/></span></p>
+<p class="rvps11"><span class="rvts14">//field replacement for formating, use in extraEntityInfo.php</span></p>
+<p class="rvps11"><span class="rvts14">defined('FRPLCEMNT4FMT') or define('FRPLCEMNT4FMT','__#@!!@#__'); </span></p>
+<p class="rvps11"><span class="rvts14"><br/></span></p>
+<p class="rvps11"><span class="rvts14">//key of user info session</span></p>
+<p class="rvps11"><span class="rvts14">defined('USER_INFO_SESSION_KEY') or define('USER_INFO_SESSION_KEY','cientity_logged_in');</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">4. The file file APPPATH."\config\routes.php"</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">change default controller to 'm' like this:</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">$route['default_controller'] = 'm';</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">5. The file file APPPATH."\config\config.php"</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">In this file, just set up the codeIgniter environments as you want such as, base_url, index_page, etc. For further setting upin config.php, please read the CodeIgniter manuals.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">However, if it looks complicate to setting up CodeIgniter, you can use the configuration as posted on gitHub.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/help-authoring-tool">Easy to use tool to create HTML Help files and Help web sites</a></p>
 
             </div>
             
-            
+            <div id="topic_footer"><div id="topic_footer_content"></div></div>
         </div>  <!-- /#topic-content -->
     </article>
 

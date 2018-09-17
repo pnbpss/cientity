@@ -178,13 +178,14 @@
 
             <a id="main-content"></a>
 
-            
+            <h2>Introduction</h2>
 
             <div class="main-content">
                 
 <p></p>
 <p class="rvps4"><span class="rvts11">CI-Entity is CodeIgniter extension that help developers automatically create the interfaces of entities, tables or views, in their projects. The interfaces are common entity interfaces such as insertion, updating, deletion and searching. Just create table in database and a few line of code, entity recipes, CI-Entity will take care of the rest.</span></p>
-<p class="rvps4"><span class="rvts11">CI-Entity also create validations rules for each entity's attributes. For instance, a column which have decimal datatype and not null will be construct validation rules as "required|decimal" automatically. However, If the additional validations is required, CI-Entity allow to add it in additionalValidation Class, this is described in </span><span class="rvts13">additional validation rules section</span></p>
+<p class="rvps4"><span class="rvts11">CI-Entity also create validations rules for each entity's attributes. For instance, a column which have decimal data type and not null will be construct validation rules as "required|decimal" automatically. However, If the additional validations is required, CI-Entity allow to add it in additionalValidation Class, this is described in </span><span class="rvts13"><a href='/cientity/manuals/AdditionalValidationRules.html'>Additional Validation Rules section</a></span></p>
+<p class="rvps4"><span class="rvts14"><br/></span></p>
 <div class="rvps2"><table border="0" cellpadding="1" cellspacing="2" style="border-width: 0px; border-spacing: 2px;">
 <tr valign="top">
 <td valign="middle" style="padding: 1px;"><p class="rvps2"><span class="rvts12">Pros</span></p>
@@ -195,10 +196,12 @@
 <li class="rvps2"><span class="rvts11">Entity interface is easily to construct, just create table or view and a few lines of code.</span></li>
 <li class="rvps2"><span class="rvts11">Easily creating searching conditions input group, filter-row, for each entity.</span></li>
 <li class="rvps2"><span class="rvts11">Easily creating select2 component if a column is foreign key.</span></li>
-<li class="rvps2"><span class="rvts11">Automatically create validations rules for each attributes</span></li>
-<li class="rvps2"><span class="rvts11">If a table structure changed, column was added or deleted, CI-Entity will be changed interface automatically.</span></li>
+<li class="rvps2"><span class="rvts11">Datetime, date and time data type is automatically create datetime picker at front-end.</span></li>
+<li class="rvps2"><span class="rvts11">Automatically create validations rules for each attributes (table's column). </span></li>
+<li class="rvps2"><span class="rvts11">If a table structure have changed, column added or deleted, CI-Entity will be changed interface automatically.</span></li>
 <li class="rvps2"><span class="rvts11">Table and column name will not be disclosed to the public by using _POST and _GET method via AJAX.</span></li>
 </ul>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
 </td>
 </tr>
 <tr valign="top">
@@ -213,8 +216,51 @@
 </tr>
 </table>
 </div>
-<p></p>
-<p class="rvps5" style="clear: both;"><span class="rvts14">Created with the Personal Edition of HelpNDoc: </span><a class="rvts15" href="https://www.helpndoc.com">Easy EBook and documentation generator</a></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Automatically Create Validation Rules</span></p>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<div class="rvps2"><table width="100%" border="1" cellpadding="1" cellspacing="2" style="border-color: #000000; border-style: solid; border-spacing: 2px;">
+<tr valign="top">
+<td width="326" style="border-color: #000000; border-style: solid; padding: 1px;"><h4 class="rvps5"><span class="rvts0"><span class="rvts15">data type or constraints</span></span></h4>
+</td>
+<td width="393" style="border-color: #000000; border-style: solid; padding: 1px;"><h4 class="rvps5"><span class="rvts0"><span class="rvts15">rules that will applied</span></span></h4>
+</td>
+</tr>
+<tr valign="top">
+<td width="326" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">length of varchar, nvarchar, text,ntext, char, and nchar</span></p>
+</td>
+<td width="393" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">max_length</span></p>
+<p class="rvps2"><span class="rvts6"><br/></span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="326" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">not null</span></p>
+</td>
+<td width="393" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">required</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="326" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">int</span></p>
+</td>
+<td width="393" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">numeric</span></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="326" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">decimal</span></p>
+</td>
+<td width="393" style="border-color: #000000; border-style: solid; padding: 1px;"><p class="rvps2"><span class="rvts6">decimal</span></p>
+</td>
+</tr>
+</table>
+</div>
+<p class="rvps2"><span class="rvts11"><br/></span></p>
+<p class="rvps2"><span class="rvts11">Clone or download CI-Entity Demo on GitHub</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p class="rvps6" style="clear: both;"><span class="rvts16">CI-Entity's Manuals Created with HelpNDoc Personal Edition : </span><a class="rvts17" href="https://www.helpndoc.com">Easy EBook and documentation generator</a></p>
 
             </div>
             

@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Welcome</title>
+  <title>Creating Entity's Recipes</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Welcome">
+  <meta name="twitter:title" content="Creating Entity's Recipes">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Welcome" />
+  <meta property="og:title" content="Creating Entity's Recipes" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="CI-Entity's Manual" /> 
@@ -161,34 +161,53 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Welcome"
-		  data-hnd-context="1"
-		  data-hnd-title="Welcome"
+		  data-hnd-id="CreatingEntitysRecipes"
+		  data-hnd-context="2"
+		  data-hnd-title="Creating Entity's Recipes"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        <li><a href="Introduction.html">Introduction</a></li>
+                        <li><a href="Installations.html">Installations</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="Introduction.html" title="Introduction" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="Whatsnew.html" title="What's new" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Installations.html" title="Installations" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="CreatingCustomEntityClass.html" title="Creating Custom Entity Class" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="AdditionalValidationRules.html" title="Additional Validation Rules" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Welcome</h2>
+            <h2>Creating Entity's Recipes</h2>
 
             <div class="main-content">
                 
 <p></p>
+<p class="rvps2"><span class="rvts14">Entity Recipes is information that CI-Entity use for:</span></p>
+<ul style="text-indent: 0px; padding: 0; margin: 0 0 0 24px; list-style-position: outside;">
+<li class="rvps2"><span class="rvts14">Construct filter-bar (searching condition selector in each page of entity).</span></li>
+<li class="rvps2"><span class="rvts14">Construct SQL string for select data from table.</span></li>
+<li class="rvps2"><span class="rvts14">Construct Add/Edit interface for each entity.</span></li>
+</ul>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">The recipes file name must be followed by "_recipes.php" and saved in APPPATH.'\libraries\entityRecipes\', this for CI-Entity can recognized and included it in runtime.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">In this version of CI-Entity, I separated recipes for each entity into single file of them, for example devEmployees_recipes.php for devEmployees Class, this for easy to distinguish. Excepted the recipes for system administrations, the recipes are aggregated in single file, "sysAdmin_recipes.php"</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Please see the full descriptions of how to create entity recipes in the following file :</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">These files are located in APPPATH.'\libraries\entityRecipes\'</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps12"><span class="rvts14">devClasses.php </span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">devClassEnrollists.php</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
 <p></p>
-<p class="rvps2" style="clear: both;"><span class="rvts6">Created with the Personal Edition of HelpNDoc: </span><a class="rvts7" href="https://www.helpndoc.com/feature-tour">Easily create CHM Help documents</a></p>
 
             </div>
             
-            
+            <div id="topic_footer"><div id="topic_footer_content"></div></div>
         </div>  <!-- /#topic-content -->
     </article>
 

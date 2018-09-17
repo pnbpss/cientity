@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico"/>
 
-  <title>Database</title>
+  <title>Creating Custom Entity Class</title>
   <meta name="description" content="" /> 
   <meta name="keywords" content="">
 
@@ -19,11 +19,11 @@
 
   <!-- Twitter Card data -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Database">
+  <meta name="twitter:title" content="Creating Custom Entity Class">
   <meta name="twitter:description" content="">
 
   <!-- Open Graph data -->
-  <meta property="og:title" content="Database" />
+  <meta property="og:title" content="Creating Custom Entity Class" />
   <meta property="og:type" content="article" />
   <meta property="og:description" content="" />
   <meta property="og:site_name" content="CI-Entity's Manual" /> 
@@ -161,30 +161,64 @@
 
     <article>
         <div id="topic-content" class="container-fluid" 
-		  data-hnd-id="Database"
-		  data-hnd-context="6"
-		  data-hnd-title="Database"
+		  data-hnd-id="CreatingCustomEntityClass"
+		  data-hnd-context="1"
+		  data-hnd-title="Creating Custom Entity Class"
 		>
             
                 <div class="navigation">
                     <ol class="breadcrumb">
-                        
+                        <li><a href="Installations.html">Installations</a></li>
                     </ol>
                     <div class="nav-arrows">
-                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Systemrequirements1.html" title="System requirements" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="ProjectsFolderStructure.html" title="Project's Folder Structure" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
+                        <div class="btn-group btn-group-xs" role="group"><a class="btn btn-default" href="Installations.html" title="Installations" role="button"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></a><a class="btn btn-default" href="SettingUpCodeIgnter.html" title="Setting Up CodeIgnter" role="button"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></a><a class="btn btn-default" href="CreatingEntitysRecipes.html" title="Creating Entity's Recipes" role="button"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></a></div>
                     </div>
                 </div> 
             
 
             <a id="main-content"></a>
 
-            <h2>Database</h2>
+            <h2>Creating Custom Entity Class</h2>
 
             <div class="main-content">
                 
 <p></p>
+<p class="rvps2"><span class="rvts14">Custom Entity Class is PHP Class that will be used to create entity object, for example the file devEmployees.php in APPPAHT.'libraries\custom\'.</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Example devEmployees Class file</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts20">&lt;?php &nbsp;</span></p>
+<p class="rvps2"><span class="rvts20">/** create by application/controllers/createEntityClassLibrary , since 07:56:28 */ </span></p>
+<p class="rvps2"><span class="rvts20">require_once(APPPATH.'libraries\entity\entity.php'); &nbsp;</span></p>
+<p class="rvps2"><span class="rvts20">class devEmployees extends entity{</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">private function getTableName() </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">{ </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">return $this-&gt;name; </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">} </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">public function returnTableName() </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">{ </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">return $this-&gt;getTableName(); </span></p>
+<p class="rvps2"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">} </span></p>
+<p class="rvps2"><span class="rvts20">}</span></p>
+<p class="rvps2"><span class="rvts20">?&gt;</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Once you have created the table in you database then the entity Class file must be created as well. Otherwise the user interface for this table is unable to create. </span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">It sound boring if you have create this file for every single table. The CI-Entity got a automatic create entity file for you already. It located in controllers sub-folder, createCustomEntity.php</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Just call this controller after you table is created, the following is that controller's path:</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">(yourhost and path)/entitytools/createcustomentity</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">for example</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">http://localhost/cientity/entitytools/createcustomentity</span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">This will help you create entity's Class file. </span></p>
+<p class="rvps2"><span class="rvts14"><br/></span></p>
+<p class="rvps2"><span class="rvts14">Addition validation rules, that unable to embedded in CodeIgniter validations rules, will added in this file in form of method. For instance, the employee who will be promoted to sale manager must be experienced in sale department at least 3 years. We can not put this validation rule into CodeIgniter form's validation, so that we must put this validation mechanism in the devEmployees Class file. I will described this later in Additional Validation Rules section.</span></p>
 <p></p>
-<p class="rvps5" style="clear: both;"><span class="rvts14">Created with the Personal Edition of HelpNDoc: </span><a class="rvts15" href="https://www.helpndoc.com/help-authoring-tool">Easy to use tool to create HTML Help files and Help web sites</a></p>
+
 
             </div>
             

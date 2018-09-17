@@ -10,6 +10,7 @@ class devClassEnrollists extends entity{
 	{ 
 		return $this->getTableName(); 
 	} 
+	
 	function additionalWhereInFilterRow(){
 		$session = $this->_retSessionData();
 		//if user group is users			
@@ -22,6 +23,7 @@ class devClassEnrollists extends entity{
 			return '';
 		}
 	}
+	
 	/**
 	 * Override parent parent::doDbTransactions() for additional validation, or business rule validation.
 	 * Suppose each class is not allow student enrolled more than capacity of class
@@ -32,6 +34,7 @@ class devClassEnrollists extends entity{
 		$newSql = $sql." ".$this->devClassEnrollists_verify_enrollistNotExceededClassCapacity();				
 		return parent::doDbTransactions($newSql);
 	}
+	
 	/**
 	 * call from doDbTransaction to add more SQL string for be verified that class enroll list is not exceed class capacity.
 	 * @return string

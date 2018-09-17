@@ -48,7 +48,6 @@
 		</script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>
-		<!--script type="text/javascript" src="<?php echo base_url();?>scripts/bpsInterface_userLogin.js"></script!-->
+        <script type="text/javascript" src="<?php echo base_url();?>assets/js/app.js"></script>		
     </body>
 </html>
