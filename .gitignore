@@ -32,9 +32,10 @@ todo-phpunitComposer.txt
 *.sublime-workspace
 *.sublime-project
 
-/tests/tests/
-/tests/results/
+/tests/
+
 /themes/smarthr-v1.2/
+
 /sql/
 /node_modules/
 
