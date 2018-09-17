@@ -31,10 +31,12 @@ todo-phpunitComposer.txt
 *.stTheme.cache
 *.sublime-workspace
 *.sublime-project
+
 /tests/tests/
 /tests/results/
 /themes/smarthr-v1.2/
 /sql/
+/node_modules/
 
 *.xlsx
 *.xls
