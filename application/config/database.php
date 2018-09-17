@@ -71,16 +71,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 
-/**
-* Include cientity_db_config.php that created by CI-entity installer.
-*/
-require_once(APPPATH.'config/cientity_db_config.php');
-/*
 $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> '',
+	#'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => 'homeservice',
 	'password' => 'homeservice',
@@ -89,15 +84,14 @@ $db['default'] = array(
 	'dbprefix' => 'hds_',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+	#'cache_on' => FALSE,
+	#'cachedir' => '',
+	#'char_set' => 'utf8',
+	#'dbcollat' => 'utf8_general_ci',
+	#'swap_pre' => '',
+	#'encrypt' => FALSE,
+	#'compress' => FALSE,
+	#'stricton' => FALSE,
+	#'failover' => array(),
+	#'save_queries' => TRUE
 );
-*/

@@ -83,6 +83,7 @@ require_once APPPATH."views/incPage.php";
 													<li>Entity interface is easily to construct, just create table or view and a few lines of code.</li>
 													<li>Easily creating searching conditions input group, filter-row, for each entity.</li>
 													<li>Easily creating select2 component if a column is foreign key.</li>
+													<li>Datetime, date and time data type is automatically create datetime picker at front-end.</li>
 													<li>Automatically create validations rules for each attributes</li>
 													<li>If a table structure changed, column was added or deleted, CI-Entity will be changed interface automatically.</li>
 													<li>Table and column name will not be disclosed to the public by using _POST and _GET method via AJAX.</li>
@@ -99,6 +100,7 @@ require_once APPPATH."views/incPage.php";
 										</tr>
 									</tbody>
 								</table>
+								<p>Clone or download CI-Entity on GitHub</p>
 								<div class="pro-deadline m-b-15">
 									<div class="sub-title">
 										last update:

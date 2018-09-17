@@ -1,16 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/*
-	define evironment develop or production
-*/
+//define evironment develop or production
 defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','develop');
 //defined('CODING_ENVIROMENT') or define('CODING_ENVIROMENT','production');
 
-#field replacement for formating, use in extraEntityInfo.php
+//field replacement for formating, use in extraEntityInfo.php
 defined('FRPLCEMNT4FMT') or define('FRPLCEMNT4FMT','__#@!!@#__'); 
 
-#key of user info session
+//key of user info session
 defined('USER_INFO_SESSION_KEY') or define('USER_INFO_SESSION_KEY','cientity_logged_in');
 
 /*
