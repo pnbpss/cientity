@@ -36,12 +36,12 @@
 								</div>
 							</form>
 							<div class="form-group form-focus">
-								<label class="control-label">User name and password for demo
-								<br />administrator=&gt;u:sysadmin,pw:989899
-								<br />manager=&gt;E000573,pw:989899
-								<br />user=&gt;E000511,pw:989899
+								User names and passwords for login demo:
+								<br />administrator=&gt;user name:sysadmin,password:989899
+								<br />manager=&gt;user name:E000573,password:989899
+								<br />user=&gt;user name:E000511,password:989899
 								<p>&nbsp;<p>
-								</label>									
+								
 							</div>
 						</div>
 					</div>
