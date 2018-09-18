@@ -186,38 +186,40 @@
 <p class="rvps2"><span class="rvts14">Although CI-Entity automatically create a validation</span></p>
 <p class="rvps2"><span class="rvts14">There two types of adding additional validation rules</span></p>
 <p class="rvps2"><span class="rvts14"><br/></span></p>
-<h4 class="rvps5"><span class="rvts0"><span class="rvts22">1. Adding rules in APPPATH.'libraries\additionalValidationRules.php'</span></span></h4>
+<h4 class="rvps5"><span class="rvts0"><span class="rvts25">1. Adding rules in APPPATH.'libraries\additionalValidationRules.php'</span></span></h4>
 <p class="rvps8"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
 <p class="rvps13"><span class="rvts14">If you want validate form data that submitted from user, and the rules is/are not complicated. For instance, you have to validate field email in table devEmployees as valid email address the, you can put this rule in to additionalValidationRules.php as following:</span></p>
 <p class="rvps2"><span class="rvts14"><br/></span></p>
-<p class="rvps11"><span class="rvts20">&lt;?php</span></p>
-<p class="rvps11"><span class="rvts20">namespace cientity;</span></p>
-<p class="rvps11"><span class="rvts20">class additionalValidation {</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">const rules = </span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">[</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">'devExtInstructors'=&gt;[</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">'IDNo'=&gt;'exact_length[13]|numeric'</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'emailAddress'=&gt;'valid_emails'</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'phoneNumber'=&gt;'min_length[10]'</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">]</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'devClassBudgets'=&gt;[</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">'amount'=&gt;'greater_than_equal_to[20]'</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">]</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'devExpenseTypes'=&gt;[</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">'accountCode'=&gt;'numeric|min_length[5]'</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">]</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'devSubjects'=&gt;['shopDuration'=&gt;'greater_than_equal_to[0]']</span></p>
-<p class="rvps11"><span class="rvts20"><br/></span></p>
-<p class="rvps11"><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">,'devEmployees'=&gt;['email'=&gt;'valid_email'] </span><span class="rvts21">//&lt;&lt;===== This array member must be added</span></p>
-<p class="rvps11"><span class="rvts20"></span><span class="rvts20"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts20">];</span></p>
-<p class="rvps11"><span class="rvts20">...</span></p>
-<p class="rvps11"><span class="rvts20">...</span></p>
-<p class="rvps2"><span class="rvts20"><br/></span></p>
-<h4 class="rvps5"><span class="rvts0"><span class="rvts22">2. Use Method in Entity Class as said earlier in Creating Custom Entity Class section</span></span></h4>
+<p class="rvps11"><span class="rvts23">&lt;?php</span></p>
+<p class="rvps11"><span class="rvts23">namespace cientity;</span></p>
+<p class="rvps11"><span class="rvts23">class additionalValidation {</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">const rules = </span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">[</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">'devExtInstructors'=&gt;[</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">'IDNo'=&gt;'exact_length[13]|numeric'</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'emailAddress'=&gt;'valid_emails'</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'phoneNumber'=&gt;'min_length[10]'</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">]</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'devClassBudgets'=&gt;[</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">'amount'=&gt;'greater_than_equal_to[20]'</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">]</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'devExpenseTypes'=&gt;[</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">'accountCode'=&gt;'numeric|min_length[5]'</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">]</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'devSubjects'=&gt;['shopDuration'=&gt;'greater_than_equal_to[0]']</span></p>
+<p class="rvps11"><span class="rvts23"><br/></span></p>
+<p class="rvps11"><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">,'devEmployees'=&gt;['email'=&gt;'valid_email'] </span><span class="rvts24">//&lt;&lt;===== This array member must be added</span></p>
+<p class="rvps11"><span class="rvts23"></span><span class="rvts23"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts23">];</span></p>
+<p class="rvps11"><span class="rvts23">...</span></p>
+<p class="rvps11"><span class="rvts23">...</span></p>
+<p class="rvps2"><span class="rvts23"><br/></span></p>
+<h4 class="rvps5"><span class="rvts0"><span class="rvts25">2. Use Method in Entity Class as said earlier in Creating Custom Entity Class section</span></span></h4>
 <p class="rvps2"><span class="rvts14"><br/></span></p>
 <p class="rvps2"><span class="rvts14"> &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="rvts14">You have to use this way to validate a complicate rules &nbsp;that unable to use CodeIgniter Form Validation. For Instance, the amount of employees in each training must not exceeded the class capacity. </span></p>
 <p class="rvps12"><span class="rvts14">Please see example of using this way by open file APPPATH.'\libraries\entityRecipes\devClassEnrollist.php'. The method doDbTransactions($sql) overrode parent::doDbTransactions($sql) to modify SQL before perform executed in parent::doDbTransactions($sql). It modifies normal SQL that will be executed after users submitted insert data. The modification is insert the SQL that verifying the number of class member after inserted, the number of class member must not exceeded class capacity.</span></p>
 <p></p>
+<p class="rvps6" style="clear: both;"><span class="rvts19">Created with the Personal Edition of HelpNDoc: </span><a class="rvts20" href="https://www.helpndoc.com/feature-tour/iphone-website-generation">Free iPhone documentation generator</a></p>
+
             </div>
             
             <div id="topic_footer"><div id="topic_footer_content"></div></div>
