@@ -33,11 +33,21 @@
 								</div>
 								<div class="form-group text-center">
 									<button class="btn btn-primary btn-block account-btn inputField"  type="submit">login</button>
-								</div>								
+								</div>
 							</form>
-							
+							<div class="form-group form-focus">
+								<label class="control-label">User name and password for demo
+								<br />administrator=&gt;u:sysadmin,pw:989899
+								<br />manager=&gt;E000573,pw:989899
+								<br />user=&gt;E000511,pw:989899
+								<p>&nbsp;<p>
+								</label>									
+							</div>
 						</div>
 					</div>
+					
+					
+					
 				</div>
 			</div>
         </div>
