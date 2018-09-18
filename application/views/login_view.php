@@ -34,15 +34,7 @@
 								<div class="form-group text-center">
 									<button class="btn btn-primary btn-block account-btn inputField"  type="submit">login</button>
 								</div>
-							</form>
-							<div class="form-group form-focus">
-								User names and passwords for login demo:
-								<br />administrator=&gt;user name:sysadmin,password:989899
-								<br />manager=&gt;user name:E000573,password:989899
-								<br />user=&gt;user name:E000511,password:989899
-								<p>&nbsp;<p>
-								
-							</div>
+							</form>							
 						</div>
 					</div>
 					
