@@ -20,7 +20,7 @@ require_once APPPATH."views/incPage.php";
         <div class="main-wrapper">
             <div class="header">
                 <div class="header-left">
-                    <a href="index.html" class="logo">
+                    <a href="<?php echo base_url();?>m/dashboard" class="logo">
 						<img src="<?php echo base_url();?>assets/img/logo.png" width="40" height="40" alt="">
 					</a>
                 </div>
