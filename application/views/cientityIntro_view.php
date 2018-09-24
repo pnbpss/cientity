@@ -108,7 +108,15 @@ require_once APPPATH."views/incPage.php";
 									<div class="text-muted">
 										14 Sep 2018
 									</div>
-								</div>								
+								</div>
+								<div>
+									<div class="sub-title">
+										Panu Boonpromsook
+									</div>
+									<div class="text-muted">
+										pnbpss@gmail.com
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
