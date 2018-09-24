@@ -25,12 +25,14 @@ class User extends CI_controller{
 		$Username = trim($this->input->post('Username',true));
 		$Password = strtoupper(MD5(trim($this->input->post('Password',false))));
 		$validateUserResult = $this->validateUser($Username,$Password);
-		if($validateUserResult['status']!='F')
-		{
+		$remoteip = $this->input->ip_address();
+		if($validateUserResult['status']!='F'){
+			$sql = "insert into {$this->db->dbprefix}sysUserLoginLogs (userName,loggedInAt,LoginResult,ipAddress) values ('{$Username}',getdate(),'pass','{$remoteip}');";
+			$this->db->query($sql);
 			redirect(base_url().'');
-		}
-		else
-		{
+		}else{
+			$sql = "insert into {$this->db->dbprefix}sysUserLoginLogs (userName,loggedInAt,LoginResult,ipAddress) values ('{$Username}',getdate(),'fail','{$remoteip}');";
+			$this->db->query($sql);
 			redirect(base_url().'user/loginform/code01');
 		}
 	}	
