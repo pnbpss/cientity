@@ -18,7 +18,7 @@ Requirements
 ************
 Installations & configurations
 ************
-Please read the installations and configurations guides `here <http://www.pnplanet.com/manual>`_.
+Please read the installations and configurations guides `here <http://www.pnplanet.com/cientity/manuals/>`_.
 
 *******
 License
