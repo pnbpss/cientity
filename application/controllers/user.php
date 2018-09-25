@@ -17,6 +17,9 @@ class User extends CI_controller{
 			if($this->uri->segment(3)=='code01'){
 				$viewData['loginErrorMessage']="<div class=\"alert alert-danger alert-dismissible\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button><strong>Error!</strong>, Unable to logged in, try again.</div>";
 			}
+			$remoteip = $this->input->ip_address();
+			$sql = "insert into {$this->db->dbprefix}sysUserLoginLogs (userName,loggedInAt,LoginResult,ipAddress) values ('_loginPage_',getdate(),'_in_','{$remoteip}');";
+			$this->db->query($sql);
 			$this->load->view('login_view',$viewData);
 		}
 	}
@@ -75,7 +78,7 @@ class User extends CI_controller{
 			$this->session->set_userdata(USER_INFO_SESSION_KEY, $sess_array);					
 		}else{
 			$arr['status'] = 'F';
-			$arr['msg'] = 'ล้มเหลว ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';					
+			$arr['msg'] = 'login failed, username or password incorrect';					
 		}		
 		//var_dump($arr);exit;
 		return $arr;
