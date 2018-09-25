@@ -16,16 +16,9 @@ Requirements
 
 
 ************
-Installation
+Installations & configurations
 ************
-
-Installation guide will be avalaible next.
-
-************
-configuration
-************
-
-Installation guide will be avalaible next.
+Please read the installations and configurations guides `here <http://www.pnplanet.com/manual>`_.
 
 *******
 License
